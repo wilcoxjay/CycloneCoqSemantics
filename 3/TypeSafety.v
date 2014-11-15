@@ -26,7 +26,7 @@ Inductive NotStuck : H -> St -> Prop :=
                         NotStuck h (retn v)
   | NotStuck_progress :
       forall (h: H) (s : St),
-      (exists (h' : H) (s' : St), Sstar (state h s) (state h' s')) ->
+      (exists (h' : H) (s' : St), Sstar h s h' s') ->
       NotStuck h s.
 
 Definition Stuck : H -> St -> Prop := 

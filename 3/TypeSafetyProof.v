@@ -25,10 +25,10 @@ Require Export TypeSafety.
 Theorem Type_Safety :
 (*   If ·; ·; ·; τ styp s, ret s, and ·; s → H ; s *)
  forall (s : St) (tau : Tau),
-        styp (c [] [] []) tau s ->
+        styp [] [] [] tau s ->
         ret s ->
         exists (h' : H) (s' : St), 
-           Sstar (state [] s) (state h' s') -> 
+           Sstar [] s h' s' -> 
            NotStuck h' s'.
 Proof.
 Admitted.
@@ -62,8 +62,8 @@ Lemma A_2_Term_Weakening_2 :
   forall (d: Delta) (u u' : Upsilon) (g g' : Gamma)
          (e : E) (tau : Tau),
     WFC d (u ++ u') (g ++ g') ->
-    ltyp (c d u g) e tau ->
-    ltyp (c d (u ++ u') (g++g')) e tau.
+    ltyp d u g e tau ->
+    ltyp d (u ++ u') (g++g') e tau.
 Proof.
 Admitted.
 
@@ -71,8 +71,8 @@ Lemma A_2_Term_Weakening_3 :
   forall (d: Delta) (u u' : Upsilon) (g g' : Gamma)
          (e : E) (tau : Tau),
     WFC d (u ++ u') (g ++ g') ->
-    rtyp (c d u g) e tau ->
-    rtyp (c d (u ++ u') (g++g')) e tau.  
+    rtyp d u g e tau ->
+    rtyp d (u ++ u') (g++g') e tau.  
 Proof.
 Admitted.
 
@@ -80,8 +80,8 @@ Lemma A_2_Term_Weakening_4 :
   forall (d: Delta) (u u' : Upsilon) (g g' : Gamma)
          (s : St) (tau : Tau),
     WFC d (u ++ u') (g ++ g') ->
-    styp (c d u g)               tau s ->
-    styp (c d (u ++ u') (g++g')) tau s.
+    styp d u g               tau s ->
+    styp d (u ++ u') (g++g') tau s.
 Proof.
 Admitted.
 
@@ -200,8 +200,8 @@ Lemma A_6_Substitution_8_1:
   forall (d : Delta) (alpha : TVar) (u : Upsilon) (g : Gamma) 
          (e : E) (tau tau' : Tau) (k : Kappa),
     AK d tau k ->
-    ltyp (c (d ++ [(alpha,k)]) u g)  e tau' ->
-    ltyp (c d u (subst_Gamma g tau alpha))
+    ltyp (d ++ [(alpha,k)]) u g  e tau' ->
+    ltyp d u (subst_Gamma g tau alpha)
               (subst_E e tau alpha)
               (subst_Tau tau' tau alpha).
 Proof.
@@ -211,8 +211,8 @@ Lemma A_6_Substitution_8_2:
   forall (d : Delta) (alpha : TVar) (u : Upsilon) (g : Gamma) 
          (e : E) (tau tau' : Tau) (k : Kappa),
     AK d tau k ->
-    rtyp (c (d ++ [(alpha,k)]) u g)  e tau' ->
-    rtyp (c d u (subst_Gamma g tau alpha))
+    rtyp (d ++ [(alpha,k)]) u g  e tau' ->
+    rtyp d u (subst_Gamma g tau alpha)
               (subst_E e tau alpha)
               (subst_Tau tau' tau alpha).
 Proof.
@@ -222,8 +222,8 @@ Lemma A_6_Substitution_8_3:
   forall (d : Delta) (alpha : TVar) (u : Upsilon) (g : Gamma) 
          (s : St) (tau tau' : Tau) (k : Kappa),
     AK d tau k ->
-    styp (c (d ++ [(alpha,k)]) u g) tau' s ->
-    styp (c d u (subst_Gamma g tau alpha))
+    styp (d ++ [(alpha,k)]) u g tau' s ->
+    styp d u (subst_Gamma g tau alpha)
               (subst_Tau tau' tau alpha)
               (subst_St s tau alpha).
 Proof.
@@ -240,7 +240,7 @@ Admitted.
 
 Lemma A_7_Typing_Well_Formedness_2 :
   forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (e : E),
-  ltyp (c d u g) e tau ->
+  ltyp d u g e tau ->
   (WFC d u g /\ 
    K d tau A).
 Proof.
@@ -248,7 +248,7 @@ Admitted.
 
 Lemma A_7_Typing_Well_Formedness_3 :
   forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (e : E),
-    rtyp (c d u g) e tau ->
+    rtyp d u g e tau ->
     (WFC d u g /\ 
      K d tau A).
 Proof.
@@ -256,14 +256,14 @@ Admitted.
 
 Lemma A_7_Typing_Well_Formedness_4 :
   forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (s : St),
-    styp (c d u g) tau s ->
+    styp d u g tau s ->
     WFC d u g.
 Proof.
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_5 :
   forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (s : St),
-    styp (c d u g) tau s ->
+    styp d u g tau s ->
     ret s ->
     K d tau A.
 Proof.
@@ -272,14 +272,14 @@ Admitted.
 Lemma A_8_Return_Preservation:
   forall (s s' : St) (h h' : H),
   ret s ->
-  S (state h s) (state h' s') ->
+  S h s h' s' ->
   ret s'.
 Proof.
 Admitted.
 
 Lemma A_9_Cannonical_Forms_1:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau : Tau),
-    rtyp (c [] u g) v tau ->
+    rtyp [] u g v tau ->
     Value v ->
     tau = cint -> 
     exists z : Z, v = (i_e (i_i z)).
@@ -288,7 +288,7 @@ Admitted.
 
 Lemma A_9_Cannonical_Forms_2:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau t0 t1 : Tau),
-    rtyp (c [] u g) v tau ->
+    rtyp [] u g v tau ->
     Value v ->  
     tau = (cross t0 t1) ->
     exists (v0 v1 : E),
@@ -298,7 +298,7 @@ Admitted.
 
 Lemma A_9_Cannonical_Forms_3:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau t0 t1 : Tau),
-    rtyp (c [] u g) v tau ->
+    rtyp [] u g v tau ->
     Value v ->
     tau = (arrow t0 t1) ->
     exists (v0 v1 : E) (x : EVar) (s : St), 
@@ -308,7 +308,7 @@ Admitted.
 
 Lemma A_9_Cannonical_Forms_4:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau t' : Tau),
-    rtyp (c [] u g) v tau ->
+    rtyp [] u g v tau ->
     Value v ->
     tau = (ptype t') ->
     exists (x : EVar) (p : P),
@@ -319,7 +319,7 @@ Admitted.
 Lemma A_9_Cannonical_Forms_5:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau tau' : Tau) (alpha : TVar)
          (k : Kappa),
-    rtyp (c [] u g) v tau ->
+    rtyp [] u g v tau ->
     Value v ->
     tau = (utype alpha k tau') ->
     exists (f : F),
@@ -330,7 +330,7 @@ Admitted.
 Lemma A_9_Cannonical_Forms_6:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau tau' : Tau) (alpha : TVar)
          (k : Kappa),
-    rtyp (c [] u g) v tau ->
+    rtyp [] u g v tau ->
     Value v ->
     tau = (etype nowitnesschange alpha k tau') ->
     exists (tau'' : Tau) (v' : E),
@@ -342,7 +342,7 @@ Admitted.
 Lemma A_9_Cannonical_Forms_7:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau tau' : Tau) (alpha : TVar)
          (k : Kappa),
-    rtyp (c [] u g) v tau ->
+    rtyp [] u g v tau ->
     Value v ->
     tau = (etype aliases alpha k tau') ->
     exists (tau'' : Tau) (v' : E),
@@ -423,11 +423,11 @@ Lemma A_11_Heap_Object_Safety_3:
     htyp u g h g ->
     getH h x = Some vhx ->
     get vhx p1 v1 ->
-    rtyp (c [] u g) v1 t1 ->
+    rtyp [] u g v1 t1 ->
     gettype u x p1 t1 p2 = Some t2 ->
     (exists (v2 : E),
        get vhx (p1 ++ p2) v2 /\ 
-       rtyp (c [] u g) v2 t2) /\
+       rtyp [] u g v2 t2) /\
     (forall (v2' : E),
        Value v2' ->
        (exists (v1' : E),
@@ -457,57 +457,57 @@ Inductive extends_Upsilon : Upsilon -> Upsilon -> Prop :=
 
 Lemma A_13_Term_Preservation_1:
   forall (u : Upsilon) (g : Gamma) (e e' : E) (tau : Tau) (h h' : H),
-    (ltyp (c [] u g) e tau /\ L (state h (e_s e))  (state h' (e_s e'))) ->
+    (ltyp [] u g e tau /\ L h (e_s e)  h' (e_s e')) ->
     exists (g' : Gamma) (u' : Upsilon),
       htyp u' g' h' g' /\ 
       refp h' u' /\
-      ltyp (c [] u' g') e' tau.
+      ltyp [] u' g' e' tau.
 Proof.
 Admitted.
 
 Lemma A_13_Term_Preservation_2:
   forall (u : Upsilon) (g : Gamma) (e e' : E) (tau : Tau) (h h' : H),
-    (rtyp (c [] u g) e tau /\ R (state h (e_s e))  (state h' (e_s e'))) ->
+    (rtyp [] u g e tau /\ R h (e_s e)  h' (e_s e')) ->
     exists (g' : Gamma) (u' : Upsilon),
       htyp u' g' h' g' /\ 
       refp h' u' /\
-      rtyp (c [] u' g') e' tau.
+      rtyp [] u' g' e' tau.
 Proof.
 Admitted.
 
 Lemma A_13_Term_Preservation_3:
   forall (u : Upsilon) (g : Gamma) (s s': St) (tau : Tau) (h h' : H),
-    (styp (c [] u g) tau s /\ S (state h s)  (state h' s')) ->
+    (styp [] u g tau s /\ S h s  h' s') ->
     exists (g' : Gamma) (u' : Upsilon),
       htyp u' g' h' g' /\ 
       refp h' u' /\
-      styp (c [] u' g') tau s'.
+      styp [] u' g' tau s'.
 Proof.
 Admitted.
 
 Lemma A_14_Term_Progress_1:
   forall (g : Gamma) (u : Upsilon) (h : H) (e : E) (tau : Tau),
     (htyp u g h g /\ refp h u) ->
-    (ltyp (c [] u g) e tau -> 
+    (ltyp [] u g e tau -> 
      (exists (x : EVar) (p : P), e = (p_e x p) \/
-      exists (h' : H) (e' : E),  L (state h (e_s e)) (state h' (e_s e')))).
+      exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e'))).
 Proof.
 Admitted.
 
 Lemma A_14_Term_Progress_2:
   forall (g : Gamma) (u : Upsilon) (h : H) (e : E) (tau : Tau),
     (htyp u g h g /\ refp h u) ->
-    (rtyp (c [] u g) e tau -> 
+    (rtyp [] u g e tau -> 
      (Value e \/
-      exists (h' : H) (e' : E),  R (state h (e_s e)) (state h' (e_s e')))).
+      exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e'))).
 Proof.
 Admitted.
 
 Lemma A_14_Term_Progress_3:
   forall (g : Gamma) (u : Upsilon) (h : H) (s : St) (tau : Tau),
     (htyp u g h g /\ refp h u) ->
-    (styp (c [] u g) tau s -> 
+    (styp [] u g tau s -> 
      ((exists (v : E), Value v /\ (s = (e_s v) \/ s = retn v)) \/
-      (exists (h' : H) (s' : St), S (state h s) (state h' s')))).
+      (exists (h' : H) (s' : St), S h s h' s'))).
 Proof.
 Admitted.

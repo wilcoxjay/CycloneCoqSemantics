@@ -12,6 +12,7 @@ Require Import ZArith.
 Require Import Init.Datatypes.
 Require Import Coq.Init.Logic.
 
+(* TODO make use of the induction hypotheses to see that these are correct. *)
 (* A very simple mutually recursive subset of our language. *)
 
 Inductive Kappa : Type :=

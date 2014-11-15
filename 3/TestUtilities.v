@@ -95,4 +95,5 @@ Definition ufg  := (ufun gamma A faa).
 Definition ufaa := (ufun alpha A faa).
 Definition ufbb := (ufun beta  A faa).
 
-Definition cnil := (c [] [] []).
+
+

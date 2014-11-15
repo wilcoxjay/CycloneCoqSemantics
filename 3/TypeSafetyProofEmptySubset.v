@@ -58,10 +58,10 @@ Theorem Type_Safety_Empty_Bad_Induction:
  forall (s : St) (tau : Tau),
    EmptySubsetSt s ->
    EmptySubsetTau tau ->
-   styp (c [] [] []) tau s ->
+   styp [] [] [] tau s ->
    ret s ->
    exists (h' : H) (s' : St), 
-     Sstar (state [] s) (state h' s') -> 
+     Sstar [] s h' s' -> 
      NotStuck h' s'.
 Proof.
   intros s tau.
@@ -72,10 +72,10 @@ Theorem Type_Safety_Empty_Mutual_Induction:
  forall (s : St) (tau : Tau),
    EmptySubsetSt s ->
    EmptySubsetTau tau ->
-   styp (c [] [] []) tau s ->
+   styp [] [] [] tau s ->
    ret s ->
    exists (h' : H) (s' : St), 
-     Sstar (state [] s) (state h' s') -> 
+     Sstar [] s h' s' -> 
      NotStuck h' s'.
 Proof.
   intros s tau.
@@ -138,8 +138,8 @@ Lemma A_2_Term_Weakening_2 :
     EmptySubsetE   e ->
 *)
     WFC d (u ++ u') (g ++ g') ->
-    ltyp (c d u g) e tau ->
-    ltyp (c d (u ++ u') (g++g')) e tau.
+    ltyp d u g e tau ->
+    ltyp d (u ++ u') (g++g') e tau.
 Proof.
 (*
   intros *.
@@ -159,8 +159,8 @@ Proof.
            (fun (c1 : C) (tau : Tau) (s : St) (st : styp c1 tau s) =>
                  forall (u' : Upsilon) (g' : Gamma),
                    match c1 with
-                     | (c d u g) =>
-                       ltyp (c d (u ++ u') (g ++ g')) e tau
+                     | d u g =>
+                       ltyp d (u ++ u') (g ++ g') e tau
                    end)).
 *)
   (* C failing to match so I either have to restructure the theorems or
@@ -173,8 +173,8 @@ Lemma A_2_Term_Weakening_3 :
     EmptySubsetTau tau ->
     EmptySubsetE e ->
     WFC d (u ++ u') (g ++ g') ->
-    rtyp (c d u g) e tau ->
-    rtyp (c d (u ++ u') (g++g')) e tau.  
+    rtyp d u g e tau ->
+    rtyp d (u ++ u') (g++g') e tau.  
 Proof.
   intros *.
   intros NoSuchType NoSuchExpression.
@@ -190,8 +190,8 @@ Lemma A_2_Term_Weakening_4 :
     EmptySubsetTau tau ->
     EmptySubsetSt s ->
     WFC d (u ++ u') (g ++ g') ->
-    styp (c d u g)               tau s ->
-    styp (c d (u ++ u') (g++g')) tau s.
+    styp d u g               tau s ->
+    styp d (u ++ u') (g++g') tau s.
 Proof.
   intros *.
   intros NoSuchType NoSuchStatement.
@@ -414,8 +414,8 @@ Lemma A_6_Substitution_8_1:
     EmptySubsetTau tau' ->
     EmptySubsetE e ->
     AK d tau k ->
-    ltyp (c (d ++ [(alpha,k)]) u g)  e tau' ->
-    ltyp (c d u (subst_Gamma g tau alpha))
+    ltyp (d ++ [(alpha,k)]) u g  e tau' ->
+    ltyp d u (subst_Gamma g tau alpha)
               (subst_E e tau alpha)
               (subst_Tau tau' tau alpha).
 Proof.
@@ -436,8 +436,8 @@ Lemma A_6_Substitution_8_2:
     EmptySubsetTau tau' ->
     EmptySubsetE e ->
     AK d tau k ->
-    rtyp (c (d ++ [(alpha,k)]) u g)  e tau' ->
-    rtyp (c d u (subst_Gamma g tau alpha))
+    rtyp (d ++ [(alpha,k)]) u g  e tau' ->
+    rtyp d u (subst_Gamma g tau alpha)
               (subst_E e tau alpha)
               (subst_Tau tau' tau alpha).
 Proof.
@@ -458,8 +458,8 @@ Lemma A_6_Substitution_8_3:
     EmptySubsetTau tau' ->
     EmptySubsetSt s ->
     AK d tau k ->
-    styp (c (d ++ [(alpha,k)]) u g) tau' s ->
-    styp (c d u (subst_Gamma g tau alpha))
+    styp (d ++ [(alpha,k)]) u g tau' s ->
+    styp d u (subst_Gamma g tau alpha)
               (subst_Tau tau' tau alpha)
               (subst_St s tau alpha).
 Proof.
@@ -493,7 +493,7 @@ Lemma A_7_Typing_Well_Formedness_2 :
   forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (e : E),
     EmptySubsetTau tau ->
     EmptySubsetE   e ->
-    ltyp (c d u g) e tau ->
+    ltyp d u g e tau ->
     (WFC d u g /\ 
      K d tau A).
 Proof.
@@ -509,7 +509,7 @@ Lemma A_7_Typing_Well_Formedness_3 :
   forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (e : E),
     EmptySubsetTau tau ->
     EmptySubsetE   e ->
-    rtyp (c d u g) e tau ->
+    rtyp d u g e tau ->
     (WFC d u g /\ 
      K d tau A).
 Proof.
@@ -524,7 +524,7 @@ Lemma A_7_Typing_Well_Formedness_4 :
   forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (s : St),
     EmptySubsetTau tau ->
     EmptySubsetSt  s ->
-    styp (c d u g) tau s ->
+    styp d u g tau s ->
     WFC d u g.
 Proof.
   intros *.
@@ -538,7 +538,7 @@ Lemma A_7_Typing_Well_Formedness_5 :
   forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (s : St),
     EmptySubsetTau tau ->
     EmptySubsetSt  s ->
-    styp (c d u g) tau s ->
+    styp d u g tau s ->
     ret s ->
     K d tau A.
 Proof.
@@ -554,7 +554,7 @@ Lemma A_8_Return_Preservation:
   EmptySubsetSt  s ->
   EmptySubsetSt  s' ->
   ret s ->
-  S (state h s) (state h' s') ->
+  S h s h' s' ->
   ret s'.
 Proof.
   intros *.
@@ -571,7 +571,7 @@ Lemma A_9_Cannonical_Forms_1:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau : Tau),
     EmptySubsetTau tau ->
     EmptySubsetE   v ->
-    rtyp (c [] u g) v tau ->
+    rtyp [] u g v tau ->
     Value v ->
     tau = cint -> 
     exists z : Z, v = (i_e (i_i z)).
@@ -611,9 +611,9 @@ Lemma A_14_Term_Progress_1:
   forall (g : Gamma) (u : Upsilon) (h : H) (e : E) (tau : Tau),
     htyp u g h g ->
     refp h u ->
-    (ltyp (c [] u g) e tau -> 
+    (ltyp [] u g e tau -> 
      (exists (x : EVar) (p : P), e = (p_e x p) \/
-      exists (h' : H) (e' : E),  L (state h (e_s e)) (state h' (e_s e')))).
+      exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e'))).
 Proof.
   intros g u h e tau.
   intros H.

@@ -6,45 +6,6 @@
 
 *)
 
-(* TODO: 
-
-   TODO Check in to git hub.
-
-   TODO It appears that I can use functional induction on gettype.
-
-   TODO Get the inductive cases for simultaneous induction worked out.
-    Have: term
-    Need: gettype (function induction may work)
-          typ*
-          S/R/L - 
-    Is not mutual:
-       gettype
-       WF*
-
-   TODO Do I have to unbundle state and context in order to apply
-    induction on SLR judgements? No.
-   Definition sofState (s : State) := let (h, s') := s in s'.
-   But this seems to break the unification of cases with subsetting.
-
-   TODO Think about alpha conversion.
-
-   TODO Think about context matching.
-
-   TODO Think through the SS 3.7 and 3.8 bugs.
-
-   TODO Finish every test case.
-
-   TODO Check test cases for validity. 
-
-   TODO Finish typed simply lambda calculus in SF. 
-
-   TODO Do I need syntactic sugar in here.    
-
-   TODO Should getU realy check paths?
-
-   TODO Use the standard definition of reflexive transitive closure.
-*)
-
 (*
   Typographic conventions 
 
@@ -158,11 +119,13 @@ Fixpoint path_eq (p q : P) : bool :=
     | []  , _    => false
   end.
 
-(* Make a value type judgement. Dan does this syntactically but that's not Coq able. *)
-(* TODO Can this just be a function ? *)
+(* Make a value type judgement. Dan does this syntactically but that's not representable
+ in Coq. *)
+
 Inductive Value : E -> Prop :=
  | IIsAValue    : forall (i : I),              Value (i_e i)
- | AmpIsAValue  : forall (e : EVar) (p : P),   Value (amp (p_e e p))
+                                                     
+ | AmpIsAValue  : forall (e : EVar) (p : P),   Value (amp (p_e e p))  (* TODO totally wrong ? *)
  | DfunIsAValue : forall (t1 t2 : Tau) (x : EVar) (s : St), 
                         Value (f_e (dfun t1 x t2 s))
  | UfunIsAValue : 
@@ -191,9 +154,6 @@ Fixpoint getH (h : H) (x : EVar) : option E :=
       else getH h' x
     | _ , nil => None
   end.
-
-Inductive State : Type :=
- | state : H -> St -> State.                            
 
 (* The context is three part: kind assignment, type assignments and path assignments. *)
 
@@ -236,5 +196,3 @@ Fixpoint getU (u : Upsilon) (x: EVar) (p : P) : option Tau :=
     | _ , [] => None
   end.
 
-Inductive C :=
-  | c : Delta -> Upsilon -> Gamma -> C.

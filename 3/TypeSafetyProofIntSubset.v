@@ -35,50 +35,52 @@ Fixpoint IntSubsetI    (i : I)        := True.
 Fixpoint IntSubsetEVar (x : EVar)     := False.
 Fixpoint IntSubsetTVar (alpha : TVar) := False.
 
+Fixpoint IntSubsetF (f : E) := False.
+
+Fixpoint IntSubsetE (e : E) :=
+  match e with 
+    | i_e i => IntSubsetI i
+    | _ => False
+  end.
+
 Fixpoint IntSubsetSt (s : St) :=
   match s with
     | (retn e) => IntSubsetE e
     | (e_s e) => IntSubsetE e
     | _ => False
-  end
-with IntSubsetE (e : E) :=
-  match e with 
-    | i_e i => IntSubsetI i
-    | _ => False
-  end
-with IntSubsetF (f : E) := False.
+  end.
 
 (* I'm first searching through the theorems to get each type of
   simultaneous induction and setting up their apply. *)
 
 Theorem Type_Safety_Int :
  forall (s : St) (tau : Tau),
-   styp (c [] [] []) tau s ->
+   styp [] [] [] tau s ->
    IntSubsetSt s ->
    IntSubsetTau tau ->
    ret s ->
    exists (h' : H) (s' : St), 
-     Sstar (state [] s) (state h' s') -> 
+     Sstar [] s h' s' -> 
      NotStuck h' s'.
 Proof.
-  Function Thm (s : St) (tau : Tau) : Prop := 
+ Definition Thm (s : St) (tau : Tau) : Prop := 
     (IntSubsetSt s ->
      IntSubsetTau tau ->
      ret s ->
      exists (h' : H) (s' : St), 
-       Sstar (state [] s) (state h' s') -> 
+       Sstar [] s h' s' -> 
        NotStuck h' s').
   intros s tau.
   (* This works without the subsetting. *)
   apply (Term_ind_mutual
            (fun (s : St) =>  
-              forall (tau : Tau) (ts : (styp (c [] [] []) tau s)), 
+              forall (tau : Tau) (ts : (styp [] [] [] tau s)), 
                 Thm s tau)
            (fun (e : E ) =>
-              forall (tau : Tau) (ts : (styp (c [] [] []) tau (e_s e))),
+              forall (tau : Tau) (ts : (styp [] [] [] tau (e_s e))),
                 Thm (e_s e) tau)
            (fun (f : F) =>
-              forall (ts : (styp (c [] [] []) tau (e_s (f_e f)))),
+              forall (ts : (styp [] [] [] tau (e_s (f_e f)))),
                 Thm (e_s (f_e f)) tau));
         repeat (unfold Thm; crush).
   (* Case (retn (e_s e)). *)
@@ -92,14 +94,12 @@ Proof.
   inversion H1.
 Qed. 
 
-Check typ_ind_mutual.
-
 (* Mutual Induction on *typ. *)
 (* Hmm, this is really A.7 2,3,4 but missing ret. *)
 (* Perhaps this is close. *)
 Lemma A_7_Typing_Well_Formedness_2 :
   forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (e : E),
-    ltyp (c d u g) e tau ->
+    ltyp d u g e tau ->
     IntSubsetE e ->
     IntSubsetTau tau ->
     (WFC d u g /\ 
@@ -107,51 +107,54 @@ Lemma A_7_Typing_Well_Formedness_2 :
 Proof.
   intros d g u tau e.
   apply (typ_ind_mutual
-           (fun (c : C) (t: Tau) (s: St)  (st : styp c t s) =>
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t: Tau) (s: St)  (st : styp d u g t s) =>
               IntSubsetE e ->
               IntSubsetTau tau ->
               (WFC d u g /\ K d tau A))
-           (fun (c : C) (e : E) (t : Tau) (lt : ltyp c e t) =>
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) (lt : ltyp d u g e t) =>
               IntSubsetE e ->
               IntSubsetTau tau ->
               (WFC d u g /\ K d tau A))
-           (fun (c : C) (e : E) (t : Tau) (rt : rtyp c e t) =>
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) (rt : rtyp d u g e t) =>
               IntSubsetE e ->
               IntSubsetTau tau ->
               (WFC d u g /\ K d tau A)));
     crush.
 Admitted.
 
+(*
+Check R_ind.
+Check L_ind.
+Check S_ind.
 
+(* Pretty deep printing depth is required. *)
+Set Printing Depth 80.
+Check R_ind_mutual.
+Check S_ind_mutual.
+Check L_ind_mutual.
 Check SLR_ind_mutual.
+*)
 
 (* Mutual induction on the S/R/L. *)
 Lemma A_8_Return_Preservation:
   forall (s s' : St) (h h' : H),
     ret s ->
-    S (state h s) (state h' s') ->
-    (* IntSubsetSt s -> *)
+    S h s h' s' ->
+    IntSubsetSt s ->
     ret s'.
 Proof.
   intros s s' h h'.
   intros rets.
-  (* Bug 39 ? Free H's in SLR inductions ? 
-   Not in SLR, I'll check ret. *)
   apply (SLR_ind_mutual
-           (fun (s s' : State) (rd : R s s') =>
-              let (h, st ) := s  in
-              let (h',st') := s' in
-              (* IntSubsetSt st -> *)
-              ret st')
-           (fun (s s' : State) (sd : S s s') =>
-              let (h, st ) := s  in
-              let (h',st') := s' in
-              (* IntSubsetSt st -> *)
-              ret st')
-           (fun (s s' : State) (ld : L s s') =>
-              let (h, st ) := s  in
-              let (h',st') := s' in
-              (* IntSubsetSt st -> *)
-              ret st')).
-  Focus 2.
-Admitted.
+           (fun (h : H) (s : St) (h' : H) (s' : St) (rd : R h s h' s') =>
+              IntSubsetSt s -> 
+              ret s')
+           (fun (h : H) (s : St) (h' : H) (s' : St) (sd : S h s h' s') =>
+              IntSubsetSt s -> 
+              ret s')
+           (fun (h : H) (s : St) (h' : H) (s' : St) (ld : L h s h' s') =>
+              IntSubsetSt s -> 
+              ret s')); intros; crush; eauto with Chapter3.
+  eauto with Chapter3.
+  apply ret_ret. (* TODO Why will ret not apply, it's in Tacticals. *)
+Qed.

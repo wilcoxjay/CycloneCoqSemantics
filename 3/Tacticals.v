@@ -69,9 +69,16 @@ Hint Extern 2 (WFDG _ [?x])     => try rewrite <- app_nil_l with (l:=[x]).
 Hint Extern 2 (htyp _ _ _ [?x]) => try rewrite <- app_nil_l with (l:=[x]).
 Hint Extern 2 (htyp _ _ [?y] _) => try rewrite app_nil_l_nil with (l:=[y]).
 Hint Extern 2 (refp _ [?y])     => try rewrite app_nil_l_nil with (l:=[y]).
-Hint Extern 2 (ltyp (c _ _ [?y]) _)
+Hint Extern 2 (ltyp  _ _ [?y] _)
                                 => try rewrite app_nil_l_nil with (l:=[y]).
-Hint Extern 2 (R _ (state [?h] _))
+Hint Extern 2 (R [?h] _ _ _)
+                                => try rewrite app_nil_l_nil with (l:=[h]).
+Hint Extern 2 (R _ _ [?h] _)
+                                => try rewrite app_nil_l_nil with (l:=[h]).
+
+Hint Extern 2 (S [?h] _ _ _)
+                                => try rewrite app_nil_l_nil with (l:=[h]).
+Hint Extern 2 (S _ _ [?h] _)
                                 => try rewrite app_nil_l_nil with (l:=[h]).
 
 (* TODO can I just use the automation here to reorder heaps ? *)
