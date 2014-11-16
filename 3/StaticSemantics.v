@@ -74,8 +74,7 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
   | styp_let_3_6    :  forall (d : Delta) (u : Upsilon) (g : Gamma)
                                (x : EVar)  (tau tau' : Tau) 
                                (s : St) (e : E),
-                          styp d u (g ++ [(x,tau')])
-                                            tau' s ->
+                          styp d u (g ++ [(x,tau')]) tau' s ->
                           rtyp d u g e    tau' ->
                           styp d u g tau  (letx x e s)
 
@@ -215,15 +214,17 @@ with   rtyp_ind_mutual := Induction for rtyp Sort Prop.
 Combined Scheme typ_ind_mutual from
           styp_ind_mutual, ltyp_ind_mutual, rtyp_ind_mutual.
 
+(* TODO this is really a universally quantified test over all of the heap values. *)
 Inductive htyp: Upsilon -> Gamma -> H -> Gamma -> Prop :=
   | htyp_empty : forall (u : Upsilon) (g: Gamma),
-                      htyp u g nil nil
+                      htyp u g [] []
   | htyp_xv    : forall (u : Upsilon) (g g': Gamma) (h h': H) (x : EVar) (v : E) (tau : Tau),
                       Value v -> 
                       htyp u g (h ++ h') g' ->
                       rtyp nil u g v tau ->
                       htyp u g (h ++ [(x,v)] ++ h') (g' ++ [(x, tau)]).
 
+(* TODO this is really a universally quantified test over all of the pathing assignments. *)
 Inductive refp  : H -> Upsilon -> Prop :=
   | refp_empty  : forall (h : H),
                        refp h nil

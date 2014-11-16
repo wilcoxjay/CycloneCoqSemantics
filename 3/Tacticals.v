@@ -45,7 +45,7 @@ Hint Constructors WFC       : Chapter3.
 Hint Extern 4 => discriminate : Chapter3. (* For ifs. *)
 (* Getting eauto to evaluate functions requires some of this. *)
 Hint Extern 0 (gettype _ _ _ _ _ = Some _) => try reflexivity : Chapter3.
-Hint Extern 2 ((getH _ _) = Some _) => try reflexivity : Chapter3.
+(* Hint Extern 2 ((getH _ _) = Some _) => try reflexivity : Chapter3. *)
 Hint Extern 2 ((getD _ _) = Some _) => try reflexivity : Chapter3.
 Hint Extern 2 ((getG _ _) = Some _) => try reflexivity : Chapter3. 
 Hint Extern 2 ((getU _ _) = Some _) => try reflexivity : Chapter3.

@@ -64,9 +64,11 @@ Inductive EVar : Type :=
 Inductive I  : Type :=  
  | i_i       : Z -> I.                         (* An integer value in an expression or statement. *)
 
-Inductive PE : Type :=                             (* Path Element, the empty path is nil. *)
+
+
+Inductive PE : Type :=                        (* Path Element, the empty path is nil. *)
  | i_pe      : I -> PE                        (* An integer in a path. *)
- | u_pe      : PE.                             (* An access into an existential type. *)
+ | u_pe      : PE.                            (* An access into an existential type. *)
 
 Definition P : Type := list PE.              (* Paths are lists of path elements. *)
 
@@ -146,6 +148,7 @@ Definition HE : Type := prod EVar E.
 Definition H  : Type := list HE.
 
 (* Bug 2, 3 *)
+
 Fixpoint getH (h : H) (x : EVar) : option E :=
     match x, h with 
     | evar x', (evar y',v) :: h' =>
@@ -154,6 +157,16 @@ Fixpoint getH (h : H) (x : EVar) : option E :=
       else getH h' x
     | _ , nil => None
   end.
+
+Fixpoint setH (h : H) (x : EVar) (e : E) : H :=
+  match x, h with
+    | evar x', (evar y',v) :: h' =>
+      if beq_nat x' y'
+      then [(x,e)] ++ h'
+      else (evar y',v) :: (setH h' x e)
+    | (evar x'), _ => [(x,e)]
+ end.
+
 
 (* The context is three part: kind assignment, type assignments and path assignments. *)
 
@@ -195,4 +208,3 @@ Fixpoint getU (u : Upsilon) (x: EVar) (p : P) : option Tau :=
     | _, (cons bad worse)  => None   (* Should not happen. *)
     | _ , [] => None
   end.
-

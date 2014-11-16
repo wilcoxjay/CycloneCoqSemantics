@@ -77,13 +77,13 @@ Proof.
 Qed.
 
 Example NotInDomHsingle :
-  getH [(x,v0)] x = Some v0.
+  getH [] (evar 0)  = None.
 Proof.
   reflexivity.
 Qed.
 
 Example NotInDomHdifferent :
-   getH [(x,v0)] y = None.
+  getH [(x,v0)] y = None. 
 Proof.
   reflexivity.
 Qed.

@@ -92,7 +92,7 @@ Qed.
 Definition etau := (etype aliases alpha A tau).
 Definition H38 := [(x,(pack etau v etau))].
 Example pack_value:
-  (getH H38 x) = Some v' ->
+  getH H38 x = Some v' ->
   Value v'.
 Proof.
   intros H.
@@ -174,9 +174,10 @@ Qed.
 
 (* Test R. *)
 
+Definition h703 := [(x,v)].
 Example R_get_3_1_test:
-  R [(x,v)]  (e_s (p_e x nil)) 
-    [(x,v)]  (e_s v).
+  R h703  (e_s (p_e x nil)) 
+    h703  (e_s v).
 Proof.
   (* I don't care because eauto can find this v'. *)
   apply R_get_3_1 with (v':=v); 
@@ -186,7 +187,7 @@ Qed.
 (* Dan Bug,  Set rule 1 should be set(v',[],v,v'') ? *)
 Definition h32xv   := ([] ++ [(x,v')]  ++ []).
 Definition h32xv'' := ([] ++ [(x,v'')] ++ []).
-(* Definition h32xv'' := [(x,v'')]. *)
+
 Example R_read_heap_3_2_test:
   R h32xv   (e_s (assign (p_e x []) (i_e (i_i 3))))
     h32xv'' (e_s (i_e (i_i 3))).
