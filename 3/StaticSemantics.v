@@ -45,6 +45,7 @@ Inductive ret : St -> Prop :=
                        ret s ->
                        ret (openstar e alpha x s).
 
+(* TODO inconsistent naming. *)
 Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
   | styp_e_3_1    : forall (d : Delta) (u : Upsilon) (g : Gamma) (tau tau' : Tau) (e : E),        (* This is correct, return at end of program. *)
                       rtyp d u g e   tau' ->

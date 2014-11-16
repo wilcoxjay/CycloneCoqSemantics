@@ -125,7 +125,7 @@ Fixpoint path_eq (p q : P) : bool :=
 Inductive Value : E -> Prop :=
  | IIsAValue    : forall (i : I),              Value (i_e i)
                                                      
- | AmpIsAValue  : forall (e : EVar) (p : P),   Value (amp (p_e e p))  (* TODO totally wrong ? *)
+ | AmpIsAValue  : forall (x : EVar) (p : P),   Value (amp (p_e x p)) 
  | DfunIsAValue : forall (t1 t2 : Tau) (x : EVar) (s : St), 
                         Value (f_e (dfun t1 x t2 s))
  | UfunIsAValue : 

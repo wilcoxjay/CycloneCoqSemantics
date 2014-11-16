@@ -44,8 +44,11 @@ Hint Constructors WFU       : Chapter3.
 Hint Constructors WFC       : Chapter3.
 Hint Extern 4 => discriminate : Chapter3. (* For ifs. *)
 (* Getting eauto to evaluate functions requires some of this. *)
-Hint Extern 0 (getG _ _ = Some _)           => apply eq_refl : Chapter3.
-Hint Extern 0 (gettype _ _ _ _ _ = Some _) => apply eq_refl : Chapter3.
+Hint Extern 0 (gettype _ _ _ _ _ = Some _) => try reflexivity : Chapter3.
+Hint Extern 2 ((getH _ _) = Some _) => try reflexivity : Chapter3.
+Hint Extern 2 ((getD _ _) = Some _) => try reflexivity : Chapter3.
+Hint Extern 2 ((getG _ _) = Some _) => try reflexivity : Chapter3. 
+Hint Extern 2 ((getU _ _) = Some _) => try reflexivity : Chapter3.
 
 (* Some contexts require (cons nil [v]) for empty matches. *)
 Theorem app_nil_l_nil:
@@ -60,6 +63,8 @@ Proof.
   rewrite <- IHl.
   reflexivity.
 Qed.
+
+(* TODO I need a real solution to search the heap. *)
 
 Hint Extern 2 (K [?x] _ _)      => try rewrite <- app_nil_l with (l:=[x]).
 Hint Extern 2 (ASGN [?x] _ )    => try rewrite <- app_nil_l with (l:=[x]).
@@ -81,4 +86,5 @@ Hint Extern 2 (S [?h] _ _ _)
 Hint Extern 2 (S _ _ [?h] _)
                                 => try rewrite app_nil_l_nil with (l:=[h]).
 
-(* TODO can I just use the automation here to reorder heaps ? *)
+
+

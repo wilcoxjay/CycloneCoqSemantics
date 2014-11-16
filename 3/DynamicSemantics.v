@@ -93,10 +93,10 @@ Inductive S : H -> St -> H -> St -> Prop :=
 with R : H -> St -> H -> St -> Prop :=
 
  | R_get_3_1 : forall (h  : H) (x : EVar) (p : P) (v v' : E),
+                    getH h x = Some v' -> 
+                    get v' p v ->
                     Value v ->
                     Value v' ->
-                    get v' p v ->
-                    getH h x = Some v' -> 
                     R h (e_s (p_e x p))
                       h (e_s v)
 
@@ -109,7 +109,8 @@ with R : H -> St -> H -> St -> Prop :=
        R (h ++ ([(x,v')] ++ h'))  (e_s (assign (p_e x p) v))
          (h ++ ([(x,v'')] ++ h')) (e_s v)
 
- | R_star_3_3:   forall (h : H) (x : EVar) (p : P),
+ | R_star_amp_3_3:  
+                 forall (h : H) (x : EVar) (p : P),
                    R h (e_s (star (amp (p_e x p))))
                      h (e_s (p_e x p))
 

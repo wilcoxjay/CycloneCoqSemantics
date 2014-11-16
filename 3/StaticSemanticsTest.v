@@ -172,31 +172,53 @@ Example styp_open_test:
        cint 
        (open (pack cint 
                    (cpair (i_e (i_i 0)) (i_e (i_i 1)))
-                   (etype aliases alpha A 
+                   (etype aliases alpha B 
                           (cross (tv_t alpha) (tv_t alpha))))
              alpha x (e_s (p_e x [i_pe (i_i 0)]))).
 Proof.
   apply styp_open_3_7
         with (p    := aliases)
-             (k    := A)
+             (k    := B)
              (tau  := cint)
-             (tau' := (cross (tv_t alpha) (tv_t alpha))).
+             (tau' := (cross (tv_t alpha) (tv_t alpha)));
   eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
-  (* Closer *)
+  apply SR_3_12; eauto 10 with Chapter3.
+  apply styp_e_3_1 with (tau':= (tv_t alpha)).
+  eapply SR_3_1.
+  reflexivity.
   Focus 2.
   eauto 10 with Chapter3.
-Admitted.
-
-(* ditto *)
-Example styp_openstar_test:
-  styp [] [] [] tau (openstar e alpha x s).
-Proof.
-(*  apply styp_openstar_3_8. *)
+  Focus 2.
   eauto 10 with Chapter3.
-Admitted.
+  compute.
+  reflexivity.
+Qed.
+
+Example styp_openstar_test:
+  styp [] [] [] 
+       cint 
+       (openstar (pack cint 
+                   (cpair (i_e (i_i 0)) (i_e (i_i 1)))
+                   (etype aliases alpha B 
+                          (cross (tv_t alpha) (tv_t alpha))))
+             alpha x (e_s (p_e x [i_pe (i_i 0)]))).
+Proof.
+  apply styp_openstar_3_8
+        with (k    := B)
+             (tau  := cint)
+             (tau' := (cross (tv_t alpha) (tv_t alpha)));
+  eauto 10 with Chapter3.
+  apply SR_3_12; eauto 10 with Chapter3.
+  apply styp_e_3_1 with (tau':= (tv_t alpha)).
+  eapply SR_3_1.
+  reflexivity.
+  Focus 2.
+  eauto 10 with Chapter3.
+  Focus 2.
+  eauto 10 with Chapter3.
+  compute.
+  reflexivity.
+Qed.
 
 (* Test rtyp. *)
 
@@ -290,34 +312,42 @@ Qed.
 
 (* TODO totally bogus e in here. *)
 Example SR_3_11_test:
-  rtyp [] [] [] (inst e tau) (subst_Tau tau' tau alpha).
+  rtyp 
+    [] [] [] 
+    (inst (f_e (ufun alpha B
+                     (dfun (tv_t alpha) x (tv_t alpha) (retn (p_e x [])))))
+          cint)
+    (subst_Tau (arrow (tv_t alpha) (tv_t alpha)) cint alpha).
 Proof.
-  apply SR_3_11 with (k:= A).
+  (* eauto 20 with Chapter3. *)
+  apply SR_3_11 with (k:= B).
+  apply SR_3_14.
+  eauto 10 with Chapter3.
   eauto 10 with Chapter3.
   Focus 2.
   eauto 10 with Chapter3.
+  apply SR_3_13.
   eauto 10 with Chapter3.
-Admitted.
+  Focus 2.
+  eauto 10 with Chapter3.
+  apply styp_return_3_2.
+  eapply SR_3_1.
+  reflexivity.
+  reflexivity.
+  eauto 10 with Chapter3.
+  eauto 10 with Chapter3.
+Qed.
 
-(* Okay something is not kinding right down here.
-   Is (cross alpha alpha) a valid thing for this? 
- *)
+(* TODO why wont' this kind at A? *)
 Example SR_3_12_test:
   rtyp [] [] []
        (pack cint (cpair (i_e (i_i 0)) (i_e (i_i 1))) 
-             (etype aliases alpha A (cross (tv_t alpha) (tv_t alpha))))
-       (etype aliases alpha A (cross (tv_t alpha) (tv_t alpha))).
+             (etype aliases alpha B (cross (tv_t alpha) (tv_t alpha))))
+       (etype aliases alpha B (cross (tv_t alpha) (tv_t alpha))).
 Proof.
-  eauto 10 with Chapter3.
   apply SR_3_12.
   eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
-  apply K_etype.
-  eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
-  apply K_cross.
-Admitted.
+Qed.
 
 Example SR_3_13_test:
   rtyp [] [] [] 

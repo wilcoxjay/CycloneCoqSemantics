@@ -17,8 +17,10 @@ Require Export FormalSyntax.
 
 Inductive get : E -> P -> E -> Prop := 
 (* Dan Bug, v' required. *)
+(* Bug 39, forgot value v'. *)
  | get_pdot: forall (v v': E),
                Value v ->
+               Value v' ->
                get v [] v'
  | get_l:    forall (v v0 v1 : E) (p : P),
                Value v  ->

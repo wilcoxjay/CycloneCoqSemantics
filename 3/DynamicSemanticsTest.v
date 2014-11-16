@@ -199,7 +199,7 @@ Example R_star_3_3_test:
   R hxv (e_s (star (amp (p_e x nil))))
     hxv (e_s (p_e x nil)).
 Proof.
-  apply R_star_3_3.
+  apply R_star_amp_3_3.
 Qed.
 
 Example R_dot_3_4_0_test:
