@@ -345,7 +345,7 @@ Example SR_3_12_test:
              (etype aliases alpha B (cross (tv_t alpha) (tv_t alpha))))
        (etype aliases alpha B (cross (tv_t alpha) (tv_t alpha))).
 Proof.
-  apply SR_3_12.
+  apply SR_3_12;
   eauto 10 with Chapter3.
 Qed.
 

@@ -19,7 +19,7 @@ Require Export Tacticals.
 
 Example test_get_pdot : get vi0 [] vi0.
 Proof.
-  apply get_pdot.
+  apply get_pdot;
   eauto 10 with Chapter3.
 Qed.
 
