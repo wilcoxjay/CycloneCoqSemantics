@@ -20,7 +20,7 @@ Require Export DynamicSemanticsTypeSubstitution.
 Require Export StaticSemanticsKindingAndContextWellFormedness.
 Require Export StaticSemantics.
 Require Export TypeSafety.
-
+Require Export CpdtTactics.
 
 Theorem Type_Safety :
 (*   If ·; ·; ·; τ styp s, ret s, and ·; s → H ; s *)
@@ -31,6 +31,23 @@ Theorem Type_Safety :
            Sstar [] s h' s' -> 
            NotStuck h' s'.
 Proof.
+ Definition Thm (s : St) (tau : Tau) : Prop := 
+   (ret s ->
+     exists (h' : H) (s' : St), 
+       Sstar [] s h' s' -> 
+       NotStuck h' s').
+  intros s tau.
+  apply (Term_ind_mutual
+           (fun (s : St) =>  
+              forall (tau : Tau) (ts : (styp [] [] [] tau s)), 
+                Thm s tau)
+           (fun (e : E ) =>
+              forall (tau : Tau) (ts : (styp [] [] [] tau (e_s e))),
+                Thm (e_s e) tau)
+           (fun (f : F) =>
+              forall (ts : (styp [] [] [] tau (e_s (f_e f)))),
+                Thm (e_s (f_e f)) tau));
+        repeat (unfold Thm; crush).
 Admitted.
 
 Lemma A_1_Context_Weakening_1:
@@ -38,6 +55,9 @@ Lemma A_1_Context_Weakening_1:
     K d tau k ->
     K (d ++ d') tau k.
 Proof.
+  intros d d' tau k.
+  intros Kder.
+  induction Kder.
 Admitted.
 
 Lemma A_1_Context_Weakening_2:
@@ -47,6 +67,8 @@ Lemma A_1_Context_Weakening_2:
     getU u x p = Some tau ->
     K d tau A.
 Proof.
+  intros u d t x p WFUder.
+  induction WFUder.
 Admitted.
 
 Lemma A_2_Term_Weakening_1 :
@@ -56,33 +78,30 @@ Lemma A_2_Term_Weakening_1 :
     gettype u x p tau p' = Some tau' ->
     gettype (u ++ u') x p tau p' = Some tau'.
 Proof.
+  intros d u u' g g' x p p' tau tau'.
+  intros WFCd.
+  intros gettypederivation.
+  functional induction (gettype u x p tau p'); try inversion NoSuchTypeTau.
 Admitted.
 
-Lemma A_2_Term_Weakening_2 :
+Lemma A_2_Term_Weakening_2_3_4 :
   forall (d: Delta) (u u' : Upsilon) (g g' : Gamma)
          (e : E) (tau : Tau),
     WFC d (u ++ u') (g ++ g') ->
     ltyp d u g e tau ->
     ltyp d (u ++ u') (g++g') e tau.
 Proof.
-Admitted.
-
-Lemma A_2_Term_Weakening_3 :
-  forall (d: Delta) (u u' : Upsilon) (g g' : Gamma)
-         (e : E) (tau : Tau),
-    WFC d (u ++ u') (g ++ g') ->
-    rtyp d u g e tau ->
-    rtyp d (u ++ u') (g++g') e tau.  
-Proof.
-Admitted.
-
-Lemma A_2_Term_Weakening_4 :
-  forall (d: Delta) (u u' : Upsilon) (g g' : Gamma)
-         (s : St) (tau : Tau),
-    WFC d (u ++ u') (g ++ g') ->
-    styp d u g               tau s ->
-    styp d (u ++ u') (g++g') tau s.
-Proof.
+  intros d u u' g g' e tau WFC.
+  apply (typ_ind_mutual
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
+                (st : styp d u g t s) =>
+              ltyp d (u ++ u') (g++g') e tau)
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (lt : ltyp d u g e t) =>
+              ltyp d (u ++ u') (g++g') e tau)
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (rt : rtyp d u g e t) =>
+              ltyp d (u ++ u') (g++g') e tau)).
 Admitted.
 
 Lemma A_3_Heap_Weakening_1:
@@ -90,6 +109,9 @@ Lemma A_3_Heap_Weakening_1:
    (WFC [] (u ++ u') (g ++ g') /\ htyp u g h g'') ->
     htyp (u ++ u') (g ++ g') h g''.
 Proof.
+  intros u u' g g' g'' h.
+  intros WFCder.
+  induction WFCder.
 Admitted.
 
 Lemma A_3_Heap_Weakening_2:
@@ -97,6 +119,9 @@ Lemma A_3_Heap_Weakening_2:
     refp h u ->
     refp (h ++ h') u.
 Proof.
+  intros u u' h h'.
+  intros refpder.
+  induction refpder.
 Admitted.
 
 Lemma A_4_Useless_Substitutions_1:
@@ -105,6 +130,9 @@ Lemma A_4_Useless_Substitutions_1:
     K d tau' k ->
     subst_Tau tau' tau alpha = tau'.
 Proof.
+  intros d alpha tau tau' k.
+  intros gd Kder.
+  induction Kder.
 Admitted.    
 
 Lemma A_4_Useless_Substitutions_2:
@@ -113,6 +141,9 @@ Lemma A_4_Useless_Substitutions_2:
     WFDG d g ->
     subst_Gamma g tau alpha = g.
 Proof.
+  intros d alpha tau tau' k.
+  intros gd Kder.
+  (* apply A_4_Useless_Substitutions_1. *)
 Admitted.    
 
 Lemma A_4_Useless_Substitutions_3:
@@ -123,7 +154,10 @@ Lemma A_4_Useless_Substitutions_3:
     getU u x p = Some tau' ->
     subst_Tau tau' tau alpha = tau'.
 Proof.
-Admitted.    
+  intros d alpha tau tau' k.
+  intros gd Kder.
+  (* apply A_4_Useless_Substitutions_1. *)
+Admitted.
 
 (* TODO do I have the ordering right? *)
 Lemma A_5_Commuting_Substitutions:
@@ -134,6 +168,9 @@ Lemma A_5_Commuting_Substitutions:
               (subst_Tau t1 t2 alpha)
               beta).
 Proof.
+  intros alpha beta t0 t1 t2.
+  intros NF.
+  induction t0.
 Admitted.
 
 Lemma A_6_Substitution_1:
@@ -142,14 +179,20 @@ Lemma A_6_Substitution_1:
     K (d ++ [(alpha,k)]) tau' k' ->
     K d (subst_Tau tau' tau alpha) k'.
 Proof.
+  intros d alpha tau tau' k k'.
+  intros AKder Kder.
+  induction Kder.
 Admitted.    
 
 Lemma A_6_Substitution_2:
   forall (d : Delta) (alpha : TVar) (tau tau' : Tau) (k k': Kappa),
     AK d tau k -> 
-    K (d ++ [(alpha,k)]) tau' k' ->
+    AK (d ++ [(alpha,k)]) tau' k' ->
     AK d (subst_Tau tau' tau alpha) k'.
 Proof.
+  intros d alpha tau tau' k k'.
+  intros AKder AKder2.
+  induction AKder2.
 Admitted.    
 
 Lemma A_6_Substitution_3:
@@ -158,6 +201,9 @@ Lemma A_6_Substitution_3:
     ASGN (d ++ [(alpha, k)]) tau' ->
     ASGN d (subst_Tau tau' tau alpha).
 Proof.
+  intros d alpha tau tau' k k'.
+  intros ASGNder.
+  induction ASGNder.
 Admitted.    
 
 Lemma A_6_Substitution_4:
@@ -166,6 +212,9 @@ Lemma A_6_Substitution_4:
     WFDG (d ++ [(alpha,k)]) g ->
     WFDG d (subst_Gamma g tau alpha).
 Proof.
+  intros d alpha tau tau' k AKder.
+  intros WFDGder.
+  induction WFDGder.
 Admitted.    
 
 Lemma A_6_Substitution_5:
@@ -175,6 +224,9 @@ Lemma A_6_Substitution_5:
     WFC (d ++ [(alpha,k)]) u g ->
     WFC d u (subst_Gamma g tau alpha).
 Proof.
+  intros d u alpha tau g k.
+  intros AKder WFCder.
+  induction WFCder.
 Admitted.    
 
 Lemma A_6_Substitution_6:
@@ -183,6 +235,8 @@ Lemma A_6_Substitution_6:
     ret s ->
     ret (subst_St s tau alpha).
 Proof.
+  intros d alpha tau s k AKder retder.
+  induction retder.
 Admitted.    
 
 Lemma A_6_Substitution_7:
@@ -194,39 +248,51 @@ Lemma A_6_Substitution_7:
     gettype u x p (subst_Tau t1 tau alpha) p' = 
     Some (subst_Tau t2 tau alpha).
 Proof.
+  intros d u alpha x t1 t2 tau p p' k.
+  intros AKder WFUder.
+  functional induction (gettype u x p t1 p').
+  
 Admitted.    
 
-Lemma A_6_Substitution_8_1:
-  forall (d : Delta) (alpha : TVar) (u : Upsilon) (g : Gamma) 
+(* TODO I'm pretty sure with the change of ltyp/styp this covers
+   all three cases. *)
+(* TODO how do I put this in? (d ++ [(alpha,k)]) *)
+(* Do I take it out ? *)
+(* Okay it type checks but is it right? *)
+(* Dan, is that last ltyp supposed to be an styp? *)
+
+Lemma A_6_Substitution_8_1_2_3:
+  forall (d d': Delta) (alpha : TVar) (u : Upsilon) (g : Gamma) 
          (e : E) (tau tau' : Tau) (k : Kappa),
     AK d tau k ->
-    ltyp (d ++ [(alpha,k)]) u g  e tau' ->
+    ltyp (d ++ [(alpha,k)]) u g e tau' ->
+    d = (d' ++ [(alpha,k)]) ->
     ltyp d u (subst_Gamma g tau alpha)
-              (subst_E e tau alpha)
-              (subst_Tau tau' tau alpha).
+         (subst_E e tau alpha)
+         (subst_Tau tau' tau alpha).
 Proof.
-Admitted.    
+  intros d d' alpha u g e tau tau' k.
+  intros AKder D'.
+  apply (typ_ind_mutual
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
+                (st : styp d u g t s) => 
+              d = (d' ++ [(alpha,k)]) ->
+              styp d u (subst_Gamma g tau alpha)
+                   (subst_Tau tau' tau alpha)
+                   (subst_St s tau alpha))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
+                (lt : ltyp d u g  e tau') =>
+              d = (d' ++ [(alpha,k)]) ->
+              ltyp d u (subst_Gamma g tau alpha)
+                   (subst_E e tau alpha)
+                   (subst_Tau tau' tau alpha))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (rt : rtyp d u g e t) =>
+              d = (d' ++ [(alpha,k)]) ->
+              rtyp d u (subst_Gamma g tau alpha)
+                   (subst_E e tau alpha)
+                   (subst_Tau tau' tau alpha))).
 
-Lemma A_6_Substitution_8_2:
-  forall (d : Delta) (alpha : TVar) (u : Upsilon) (g : Gamma) 
-         (e : E) (tau tau' : Tau) (k : Kappa),
-    AK d tau k ->
-    rtyp (d ++ [(alpha,k)]) u g  e tau' ->
-    rtyp d u (subst_Gamma g tau alpha)
-              (subst_E e tau alpha)
-              (subst_Tau tau' tau alpha).
-Proof.
-Admitted.    
-
-Lemma A_6_Substitution_8_3:
-  forall (d : Delta) (alpha : TVar) (u : Upsilon) (g : Gamma) 
-         (s : St) (tau tau' : Tau) (k : Kappa),
-    AK d tau k ->
-    styp (d ++ [(alpha,k)]) u g tau' s ->
-    styp d u (subst_Gamma g tau alpha)
-              (subst_Tau tau' tau alpha)
-              (subst_St s tau alpha).
-Proof.
 Admitted.    
 
 Lemma A_7_Typing_Well_Formedness_1 :

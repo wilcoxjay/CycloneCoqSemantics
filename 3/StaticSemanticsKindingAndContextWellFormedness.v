@@ -90,8 +90,6 @@ Inductive ASGN : Delta -> Tau -> Prop :=
                       ASGN (d ++ [(alpha, k)]) tau ->
                       ASGN d (etype nowitnesschange alpha k tau).
 
-(* Bug 40, 41 These are really foralls. *)
-(* TODO foralls. *)
 Inductive WFDG : Delta -> Gamma -> Prop :=
   | WFDG_d_nil : forall (d: Delta),
                      WFDG d nil

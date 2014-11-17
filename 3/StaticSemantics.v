@@ -215,6 +215,7 @@ Combined Scheme typ_ind_mutual from
           styp_ind_mutual, ltyp_ind_mutual, rtyp_ind_mutual.
 
 (* TODO this is really a universally quantified test over all of the heap values. *)
+(* Bug 42 *)
 Inductive htyp: Upsilon -> Gamma -> H -> Gamma -> Prop :=
   | htyp_empty : forall (u : Upsilon) (g: Gamma),
                       htyp u g [] []
@@ -225,6 +226,7 @@ Inductive htyp: Upsilon -> Gamma -> H -> Gamma -> Prop :=
                       htyp u g (h ++ [(x,v)] ++ h') (g' ++ [(x, tau)]).
 
 (* TODO this is really a universally quantified test over all of the pathing assignments. *)
+(* Bug 43 *)
 Inductive refp  : H -> Upsilon -> Prop :=
   | refp_empty  : forall (h : H),
                        refp h nil

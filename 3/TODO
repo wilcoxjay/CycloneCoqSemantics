@@ -4,8 +4,7 @@
 
  This defines the formal syntax, pg. 57. 
 
-   TODO We need to either go to partial maps or at least hide the variable lookup in a 
-     function. 
+   TODO Think about alpha conversion.
 
    TODO Get the inductive cases for simultaneous induction worked out.
     Have: term
@@ -16,13 +15,11 @@
        gettype
        WF*
 
-   TODO Think about alpha conversion.
+   TODO Should I add syntactic sugar?
 
-   TODO Think about context matching.
+   TODO Should I break each proof/lemma off into it's own file for
+    efficiency? And the subsets then into their own files?
 
-   TODO Think through the SS 3.7 and 3.8 bugs.
 
-   TODO Finish typed simply lambda calculus in SF. 
-
-   TODO Do I need syntactic sugar in here.    
-*)
+   
+   

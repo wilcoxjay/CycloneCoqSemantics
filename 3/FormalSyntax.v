@@ -182,6 +182,16 @@ Fixpoint getD (d : Delta) (alpha : TVar) : option Kappa :=
     | _ , nil => None
   end.
 
+
+Fixpoint setD (d : Delta) (alpha : TVar) (k : Kappa) : Delta :=
+  match alpha, d with 
+    | tvar a', (tvar b', k') :: d' =>
+      if beq_nat a' b' 
+      then (alpha,k) :: d' 
+      else (tvar b', k') :: (setD d' alpha k)
+    | _ , nil => [(alpha,k)]
+  end.
+
 Definition GE : Type := prod EVar Tau.
 Definition Gamma     := list GE.
 

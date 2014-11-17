@@ -118,6 +118,36 @@ Proof.
   reflexivity.
 Qed.
 
+Example setD_nil :
+  setD [] alpha A = [(alpha,A)].
+Proof.
+  reflexivity.
+Qed.
+
+Example setD_exists :
+  setD [(alpha,B)] alpha A = [(alpha,A)].
+Proof.
+  reflexivity.
+Qed.
+
+Example setD_add_to_end :
+  setD [(alpha,B)] beta A = [(alpha,B); (beta,A)].
+Proof.
+  reflexivity.
+Qed.
+
+Example setD_overwrite_at_end :
+  setD [(alpha,B); (beta, B)] beta A = [(alpha,B); (beta,A)].
+Proof.
+  reflexivity.
+Qed.
+
+Example setD_overwrite_at_start :
+  setD [(alpha,B); (beta, B)] alpha A = [(alpha,A); (beta,B)].
+Proof.
+  reflexivity.
+Qed.
+
 Example getGx : 
   getG [(x,tau)] x = Some tau.
 Proof.

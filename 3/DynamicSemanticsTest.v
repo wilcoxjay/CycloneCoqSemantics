@@ -184,16 +184,27 @@ Proof.
   eauto 10 with Chapter3.
 Qed.
 
-(* Dan Bug,  Set rule 1 should be set(v',[],v,v'') ? *)
-Definition h32xv   := ([] ++ [(x,v')]  ++ []).
-Definition h32xv'' := ([] ++ [(x,v'')] ++ []).
-
-Example R_read_heap_3_2_test:
-  R h32xv   (e_s (assign (p_e x []) (i_e (i_i 3))))
-    h32xv'' (e_s (i_e (i_i 3))).
+Example R_assign_3_2_test:
+  R [(x,(i_e (i_i 2)))] (e_s (assign (p_e x []) (i_e (i_i 3))))
+    [(x,(i_e (i_i 3)))] (e_s (i_e (i_i 3))).
 Proof.
-  apply R_assign_3_2;
+ (* eauto 10 with Chapter3, works. *)
+  eapply R_assign_3_2.
+  reflexivity.
+  eauto 10 with Chapter3.  
+  reflexivity.
   eauto 10 with Chapter3.
+  eauto 10 with Chapter3.
+  eauto 10 with Chapter3.
+Qed.
+
+(* Dan Bug, initial assignment. *)
+Example R_initial_assign_3_2_test:
+  R [] (e_s (assign (p_e x []) (i_e (i_i 3))))
+    [(x,(i_e (i_i 3)))] (e_s (i_e (i_i 3))).
+Proof.
+ apply R_initial_assign_3_2;
+ eauto 10 with Chapter3.
 Qed.
 
 Example R_star_3_3_test:

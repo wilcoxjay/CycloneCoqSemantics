@@ -1,0 +1,25 @@
+
+
+
+Lemma A_6_Substitution_8_2:
+  forall (d : Delta) (alpha : TVar) (u : Upsilon) (g : Gamma) 
+         (e : E) (tau tau' : Tau) (k : Kappa),
+    AK d tau k ->
+    rtyp (d ++ [(alpha,k)]) u g  e tau' ->
+    rtyp d u (subst_Gamma g tau alpha)
+              (subst_E e tau alpha)
+              (subst_Tau tau' tau alpha).
+Proof.
+Admitted.    
+
+Lemma A_6_Substitution_8_3:
+  forall (d : Delta) (alpha : TVar) (u : Upsilon) (g : Gamma) 
+         (s : St) (tau tau' : Tau) (k : Kappa),
+    AK d tau k ->
+    styp (d ++ [(alpha,k)]) u g tau' s ->
+    styp d u (subst_Gamma g tau alpha)
+              (subst_Tau tau' tau alpha)
+              (subst_St s tau alpha).
+Proof.
+Admitted.    
+

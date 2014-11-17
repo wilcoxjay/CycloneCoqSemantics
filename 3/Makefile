@@ -1,13 +1,13 @@
 -include coq.depends
 all: src tactic test proof TAGS TODO
 
-SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo TypeSafety.vo
+SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TypeSafety.vo
 
 TESTFILES=TestUtilities.vo FormalSyntaxTest.vo DynamicSemanticsHeapObjectsTest.vo DynamicSemanticsTypeSubstitutionTest.vo DynamicSemanticsTest.vo StaticSemanticsTest.vo StaticSemanticsKindingAndContextWellFormednessTest.vo StaticSemanticsTypingHeapObjectsTest.vo MutualRecursionProof.vo
 
 PROOFFILES=TypeSafetyProof.vo TypeSafetyProofEmptySubset.vo TypeSafetyProofIntSubset.vo 
 
-TACTICFILES=Tacticals.vo CpdtTactics.vo
+TACTICFILES=CpdtTactics.vo
 
 %.vo: %.v 
 	coqc $<

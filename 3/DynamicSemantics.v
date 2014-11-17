@@ -102,12 +102,22 @@ with R : H -> St -> H -> St -> Prop :=
 
  | R_assign_3_2:
      forall (h' h : H) (v v' v'' : E) (x : EVar) (p : P),
+       getH h x = Some v' ->
+       set v' p v v'' ->
+       setH h x v'' = h' -> 
        Value v   ->
        Value v'  ->
        Value v'' ->
-       set v' p v v'' ->
-       R (h ++ ([(x,v')] ++ h'))  (e_s (assign (p_e x p) v))
-         (h ++ ([(x,v'')] ++ h')) (e_s v)
+       R h  (e_s (assign (p_e x p) v))
+         h' (e_s v)
+
+ | R_initial_assign_3_2:
+     forall (h' h : H) (v : E) (x : EVar),
+       getH h x = None ->
+       setH h x v = h' -> 
+       Value v   ->
+       R h  (e_s (assign (p_e x []) v))
+         h' (e_s v)
 
  | R_star_amp_3_3:  
                  forall (h : H) (x : EVar) (p : P),

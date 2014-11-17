@@ -45,10 +45,11 @@ Hint Constructors WFC       : Chapter3.
 Hint Extern 4 => discriminate : Chapter3. (* For ifs. *)
 (* Getting eauto to evaluate functions requires some of this. *)
 Hint Extern 0 (gettype _ _ _ _ _ = Some _) => try reflexivity : Chapter3.
-(* Hint Extern 2 ((getH _ _) = Some _) => try reflexivity : Chapter3. *)
+Hint Extern 2 ((getH _ _) = Some _) => try reflexivity : Chapter3.
 Hint Extern 2 ((getD _ _) = Some _) => try reflexivity : Chapter3.
 Hint Extern 2 ((getG _ _) = Some _) => try reflexivity : Chapter3. 
 Hint Extern 2 ((getU _ _) = Some _) => try reflexivity : Chapter3.
+Hint Extern 2 ((setH _ _) = _) => try reflexivity : Chapter3.
 
 (* Some contexts require (cons nil [v]) for empty matches. *)
 Theorem app_nil_l_nil:
@@ -65,6 +66,7 @@ Proof.
 Qed.
 
 (* TODO I need a real solution to search the heap. *)
+(* TODO am I really searching the whole context lists here? in WFG and WFU. *)
 
 Hint Extern 2 (K [?x] _ _)      => try rewrite <- app_nil_l with (l:=[x]).
 Hint Extern 2 (ASGN [?x] _ )    => try rewrite <- app_nil_l with (l:=[x]).
