@@ -128,16 +128,19 @@ Inductive Value : E -> Prop :=
  | IIsAValue    : forall (i : I),              Value (i_e i)
                                                      
  | AmpIsAValue  : forall (x : EVar) (p : P),   Value (amp (p_e x p)) 
+
  | DfunIsAValue : forall (t1 t2 : Tau) (x : EVar) (s : St), 
                         Value (f_e (dfun t1 x t2 s))
  | UfunIsAValue : 
      forall (t : TVar) (k : Kappa) (f : F),
        Value (f_e (ufun t k f))
+
  | PairIsAValue :
      forall (v0 v1 : E), 
        Value v0 ->
        Value v1 ->
        Value (cpair v0 v1)
+
  | PackIsAValue :
      forall (tau tau': Tau) (v : E),
        Value (pack tau v tau').

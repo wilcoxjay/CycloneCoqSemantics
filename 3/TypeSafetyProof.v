@@ -298,10 +298,13 @@ Admitted.
 Lemma A_7_Typing_Well_Formedness_1 :
   forall (d: Delta) (u : Upsilon) (x : EVar) (tau tau' : Tau) (p p' : P),
     WFU u ->
-    gettype u x p tau p' = Some tau' ->
     K d tau A ->
+    gettype u x p tau p' = Some tau' ->
     K d tau' A.
 Proof.
+  intros d u x tau tau' p p'.
+  intros WFUder Kder.
+  functional induction (gettype u x p tau p').
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_2 :
@@ -310,6 +313,17 @@ Lemma A_7_Typing_Well_Formedness_2 :
   (WFC d u g /\ 
    K d tau A).
 Proof.
+  intros d g u tau e.
+  apply (typ_ind_mutual
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
+                (st : styp d u g t s) => 
+              (WFC d u g /\  K d tau A))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
+                (lt : ltyp d u g  e tau') =>
+              (WFC d u g /\  K d tau A))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (rt : rtyp d u g e t) =>
+              (WFC d u g /\  K d tau A))).
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_3 :
@@ -318,6 +332,17 @@ Lemma A_7_Typing_Well_Formedness_3 :
     (WFC d u g /\ 
      K d tau A).
 Proof.
+  intros d g u tau e.
+  apply (typ_ind_mutual
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
+                (st : styp d u g t s) => 
+              (WFC d u g /\  K d tau A))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
+                (lt : ltyp d u g  e tau') =>
+              (WFC d u g /\  K d tau A))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (rt : rtyp d u g e t) =>
+              (WFC d u g /\  K d tau A))).
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_4 :
@@ -325,6 +350,17 @@ Lemma A_7_Typing_Well_Formedness_4 :
     styp d u g tau s ->
     WFC d u g.
 Proof.
+  intros d g u tau e.
+  apply (typ_ind_mutual
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
+                (st : styp d u g t s) => 
+              (WFC d u g /\  K d tau A))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
+                (lt : ltyp d u g  e tau') =>
+              (WFC d u g /\  K d tau A))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (rt : rtyp d u g e t) =>
+              (WFC d u g /\  K d tau A))).
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_5 :
@@ -333,6 +369,18 @@ Lemma A_7_Typing_Well_Formedness_5 :
     ret s ->
     K d tau A.
 Proof.
+  intros d g u tau e.
+  apply (typ_ind_mutual
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
+                (st : styp d u g t s) => 
+                  ret s ->
+                  K d tau A)
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
+                (lt : ltyp d u g  e tau') =>
+                  K d tau A)
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (rt : rtyp d u g e t) =>
+                  K d tau A)).
 Admitted.
 
 Lemma A_8_Return_Preservation:
@@ -341,81 +389,126 @@ Lemma A_8_Return_Preservation:
   S h s h' s' ->
   ret s'.
 Proof.
+  intros s s' h h' retder.
+  apply (SLR_ind_mutual 
+           (fun (h : H) (s : St) (h' : H) (s' : St) (r: R h s h' s') =>
+              ret s')
+           (fun (h : H) (s : St) (h' : H) (s' : St) (r: S h s h' s') =>
+              ret s')
+           (fun (h : H) (s : St) (h' : H) (s' : St) (r: L h s h' s') =>
+              ret s')).
 Admitted.
 
+(* Wow, my first real proof! *)
 Lemma A_9_Cannonical_Forms_1:
-  forall (u : Upsilon) (g : Gamma) (v : E) (tau : Tau),
-    rtyp [] u g v tau ->
+  forall (u : Upsilon) (g : Gamma) (v : E),
     Value v ->
-    tau = cint -> 
+    rtyp [] u g v cint ->
     exists z : Z, v = (i_e (i_i z)).
 Proof.
-Admitted.
+  intros u g v valv.
+  intros rtypder.
+  destruct valv; inversion rtypder.
+  exists z.
+  reflexivity.
+Qed.
 
 Lemma A_9_Cannonical_Forms_2:
-  forall (u : Upsilon) (g : Gamma) (v : E) (tau t0 t1 : Tau),
-    rtyp [] u g v tau ->
+  forall (u : Upsilon) (g : Gamma) (v : E) (t0 t1 : Tau),
     Value v ->  
-    tau = (cross t0 t1) ->
+    rtyp [] u g v (cross t0 t1) ->
     exists (v0 v1 : E),
       Value v0 /\  Value v1 /\ v = (cpair v0 v1).
 Proof.
-Admitted.
+  intros u g v t0 t1 valv.
+  intros rtypder.
+  destruct valv; inversion rtypder.
+  exists v0.
+  exists v1.
+  eauto.
+Qed.
 
 Lemma A_9_Cannonical_Forms_3:
-  forall (u : Upsilon) (g : Gamma) (v : E) (tau t0 t1 : Tau),
-    rtyp [] u g v tau ->
+  forall (u : Upsilon) (g : Gamma) (v : E) (t0 t1 : Tau),
     Value v ->
-    tau = (arrow t0 t1) ->
-    exists (v0 v1 : E) (x : EVar) (s : St), 
-      Value v0 /\  Value v1 /\ v = (f_e (dfun t0 x t1 s)).
+    rtyp [] u g v (arrow t0 t1) ->
+    exists (x : EVar) (s : St), 
+      v = (f_e (dfun t0 x t1 s)).
 Proof.
-Admitted.
+  intros u g v t0 t1 valv.
+  intros rtypder.
+  destruct valv; inversion rtypder.
+  subst.
+  exists x.
+  exists s.
+  reflexivity.
+Qed.
 
 Lemma A_9_Cannonical_Forms_4:
-  forall (u : Upsilon) (g : Gamma) (v : E) (tau t' : Tau),
-    rtyp [] u g v tau ->
+  forall (u : Upsilon) (g : Gamma) (v : E) (t' : Tau),
     Value v ->
-    tau = (ptype t') ->
+    rtyp [] u g v (ptype t') ->
     exists (x : EVar) (p : P),
       v = (amp (p_e x p)).
 Proof.
-Admitted.
+  intros u g v t' valv.
+  intros rtypder.
+  destruct valv; inversion rtypder.
+  subst.
+  exists x.
+  exists p.
+  reflexivity.
+Qed.
 
 Lemma A_9_Cannonical_Forms_5:
-  forall (u : Upsilon) (g : Gamma) (v : E) (tau tau' : Tau) (alpha : TVar)
+  forall (u : Upsilon) (g : Gamma) (v : E) (tau' : Tau) (alpha : TVar)
          (k : Kappa),
-    rtyp [] u g v tau ->
     Value v ->
-    tau = (utype alpha k tau') ->
+    rtyp [] u g v (utype alpha k tau') ->
     exists (f : F),
       v = (f_e (ufun alpha k f)).
 Proof.
-Admitted.
+  intros u g v tau' alpha kappa valv.
+  intros rtypder.
+  destruct valv; inversion rtypder.
+  subst.
+  exists f.
+  reflexivity.
+Qed.
 
 Lemma A_9_Cannonical_Forms_6:
-  forall (u : Upsilon) (g : Gamma) (v : E) (tau tau' : Tau) (alpha : TVar)
+  forall (u : Upsilon) (g : Gamma) (v : E) (tau' : Tau) (alpha : TVar)
          (k : Kappa),
-    rtyp [] u g v tau ->
     Value v ->
-    tau = (etype nowitnesschange alpha k tau') ->
+    rtyp [] u g v (etype nowitnesschange alpha k tau') ->
     exists (tau'' : Tau) (v' : E),
-      Value v /\ 
       v = (pack tau'' v' (etype nowitnesschange alpha k tau')).
 Proof.
-Admitted.
+  intros u g v tau' alpha kappa valv.
+  intros rtypder.
+  destruct valv; inversion rtypder.
+  subst.
+  exists tau.
+  exists v.
+  reflexivity.
+Qed.
 
 Lemma A_9_Cannonical_Forms_7:
-  forall (u : Upsilon) (g : Gamma) (v : E) (tau tau' : Tau) (alpha : TVar)
+  forall (u : Upsilon) (g : Gamma) (v : E) (tau' : Tau) (alpha : TVar)
          (k : Kappa),
-    rtyp [] u g v tau ->
     Value v ->
-    tau = (etype aliases alpha k tau') ->
+    rtyp [] u g v (etype aliases alpha k tau') ->
     exists (tau'' : Tau) (v' : E),
-      Value v /\ 
       v = (pack tau'' v' (etype aliases alpha k tau')).
 Proof.
-Admitted.
+  intros u g v tau' alpha kappa valv.
+  intros rtypder.
+  destruct valv; inversion rtypder.
+  subst.
+  exists tau.
+  exists v.
+  reflexivity.
+Qed.
 
 (* Ask Dan about the we can not derive clauses. 
    If he uses them in proof they'd just be inversions. *)
