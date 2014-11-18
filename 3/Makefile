@@ -1,11 +1,11 @@
 -include coq.depends
-all: src tactic test proof TAGS TODO
+all: src tactic test proof TAGS TODOS
 
 SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TypeSafety.vo
 
 TESTFILES=TestUtilities.vo FormalSyntaxTest.vo DynamicSemanticsHeapObjectsTest.vo DynamicSemanticsTypeSubstitutionTest.vo DynamicSemanticsTest.vo StaticSemanticsTest.vo StaticSemanticsKindingAndContextWellFormednessTest.vo StaticSemanticsTypingHeapObjectsTest.vo MutualRecursionProof.vo
 
-PROOFFILES=TypeSafetyProof.vo TypeSafetyProofEmptySubset.vo TypeSafetyProofIntSubset.vo 
+PROOFFILES=TypeSafetyProof.vo TypeSafetyProofEmptySubset.vo TypeSafetyProofIntSubset.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
 
 TACTICFILES=CpdtTactics.vo
 
@@ -43,10 +43,10 @@ count:
 depends: 
 	coqdep -I . *.v > coq.depends 
 
-TODO:
+TODOS:
 	grep Admitted *.v | grep -v Proof | wc -l
 	grep Admitted *.v | grep Proof | wc -l
-	grep TODO *.v | wc -l
+	grep TODO TODO *.v | wc -l
 	grep '?' *.v | grep -v Tacticals | wc -l
 	grep -e Admitted -e TODO -e '?' *.v | wc -l
 
