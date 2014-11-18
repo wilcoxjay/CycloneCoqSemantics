@@ -3,23 +3,6 @@
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
   The trivial subset of the language. 
-
- This is an attempt to see if I can work with these proofs.
- It is teaching me a few things but most of it is just rubbish. 
-
- Lessons: 
-
- So far it has shown me that I have to make gettype a relation again,
- as we induct on the structure of its derivation.
-
- Also it is checking for unused quantifiers.
-
- And it is teaching me how to do a proof by derivation of a relation.
-
- And it is teaching me how to set up a simultaneous instruction.
-
- And it is showing me how to do a proof by inspection and the form of values.
-
 *)
 
 Require Import List.

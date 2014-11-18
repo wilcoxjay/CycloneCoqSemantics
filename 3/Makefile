@@ -5,7 +5,7 @@ SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHea
 
 TESTFILES=TestUtilities.vo FormalSyntaxTest.vo DynamicSemanticsHeapObjectsTest.vo DynamicSemanticsTypeSubstitutionTest.vo DynamicSemanticsTest.vo StaticSemanticsTest.vo StaticSemanticsKindingAndContextWellFormednessTest.vo StaticSemanticsTypingHeapObjectsTest.vo MutualRecursionProof.vo
 
-PROOFFILES=TypeSafetyProof.vo TypeSafetyProofEmptySubset.vo TypeSafetyProofIntSubset.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
+PROOFFILES=TypeSafetyProof.vo EmptySubset.vo IntSubset.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
 
 TACTICFILES=CpdtTactics.vo
 
@@ -58,9 +58,9 @@ BUGS:
 
 ttpbis:
 	echo "To Prove"
-	grep -e Lemma -e Theorem TypeSafetyProof.v | wc -l
+	grep -e Lemma -e Theorem *Proof.v | grep -v Subset | wc -l
 	echo "Proven".
-	grep -e Qed TypeSafetyProof.v | wc -l
+	grep -e Qed *Proof.v | grep -v Subset | wc -l
 
 dan: 
 	echo "Ask Dan's"
