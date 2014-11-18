@@ -121,8 +121,8 @@ Fixpoint path_eq (p q : P) : bool :=
     | []  , _    => false
   end.
 
-(* Make a value type judgement. Dan does this syntactically but that's not representable
- in Coq. *)
+(* Make a value type judgement. The thesis does this syntactically 
+but that's not representable in Coq. *)
 
 Inductive Value : E -> Prop :=
  | IIsAValue    : forall (i : I),              Value (i_e i)

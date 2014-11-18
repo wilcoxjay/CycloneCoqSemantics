@@ -55,3 +55,14 @@ BUGS:
 	grep Bug *.v | wc -l
 	grep 'Test Bug' *.v | wc -l
 	grep 'Dan Bug' *.v | wc -l
+
+ttpbis:
+	echo "To Prove"
+	grep -e Lemma -e Theorem TypeSafetyProof.v | wc -l
+	echo "Proven".
+	grep -e Qed TypeSafetyProof.v | wc -l
+
+dan: 
+	echo "Ask Dan's"
+	grep -e Dan *.v | grep -v formal | wc -l
+

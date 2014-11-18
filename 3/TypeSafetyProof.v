@@ -48,8 +48,10 @@ Proof.
               forall (ts : (styp [] [] [] tau (e_s (f_e f)))),
                 Thm (e_s (f_e f)) tau));
         repeat (unfold Thm; crush).
+  (* Crush gets one. *)
 Admitted.
 
+(* Try a context weakening. *)
 Lemma A_1_Context_Weakening_1:
   forall (d d' : Delta) (tau : Tau) (k : Kappa),
     K d tau k ->
@@ -57,18 +59,21 @@ Lemma A_1_Context_Weakening_1:
 Proof.
   intros d d' tau k.
   intros Kder.
-  induction Kder.
+  induction Kder; crush.
+  (* Crush get's zero, no wonder, no inductive hypothesis. *)
 Admitted.
 
 Lemma A_1_Context_Weakening_2:
   forall (u : Upsilon) (d : Delta) (tau : Tau) 
          (x : EVar) (p : P),
-    WFU u ->
     getU u x p = Some tau ->
+    WFU u ->
     K d tau A.
 Proof.
-  intros u d t x p WFUder.
-  induction WFUder.
+  intros u d t x p getUder WFUder.
+  (* Losing wfu nil. *)
+  induction WFUder. 
+  (* crush gets zero. *)
 Admitted.
 
 Lemma A_2_Term_Weakening_1 :
@@ -81,7 +86,9 @@ Proof.
   intros d u u' g g' x p p' tau tau'.
   intros WFCd.
   intros gettypederivation.
-  functional induction (gettype u x p tau p'); try inversion NoSuchTypeTau.
+  functional induction (gettype u x p tau p'); crush.
+  (* Warning: Collision between bound varibles of name x *)
+  (* Crush gets 25. *)
 Admitted.
 
 Lemma A_2_Term_Weakening_2_3_4 :
@@ -101,7 +108,8 @@ Proof.
               ltyp d (u ++ u') (g++g') e tau)
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
-              ltyp d (u ++ u') (g++g') e tau)).
+              ltyp d (u ++ u') (g++g') e tau)); crush.
+  (* Crush get's 3. *)
 Admitted.
 
 Lemma A_3_Heap_Weakening_1:
@@ -112,6 +120,8 @@ Proof.
   intros u u' g g' g'' h.
   intros WFCder.
   induction WFCder.
+  (* Collision. *)
+  (* Crush get's 0. *)
 Admitted.
 
 Lemma A_3_Heap_Weakening_2:
@@ -122,6 +132,8 @@ Proof.
   intros u u' h h'.
   intros refpder.
   induction refpder.
+  (* Crush gets 0. *)
+  Focus 2.
 Admitted.
 
 Lemma A_4_Useless_Substitutions_1:
@@ -132,7 +144,8 @@ Lemma A_4_Useless_Substitutions_1:
 Proof.
   intros d alpha tau tau' k.
   intros gd Kder.
-  induction Kder.
+  induction Kder; crush.
+  (* Crush gets 5 goals. *)
 Admitted.    
 
 Lemma A_4_Useless_Substitutions_2:
@@ -170,7 +183,8 @@ Lemma A_5_Commuting_Substitutions:
 Proof.
   intros alpha beta t0 t1 t2.
   intros NF.
-  induction t0.
+  induction t0; crush.
+  (* crush get's six. *)
 Admitted.
 
 Lemma A_6_Substitution_1:
@@ -182,6 +196,7 @@ Proof.
   intros d alpha tau tau' k k'.
   intros AKder Kder.
   induction Kder.
+  (* Crush gets 0. *)
 Admitted.    
 
 Lemma A_6_Substitution_2:
@@ -193,6 +208,7 @@ Proof.
   intros d alpha tau tau' k k'.
   intros AKder AKder2.
   induction AKder2.
+  (* crush gets 0. *)
 Admitted.    
 
 Lemma A_6_Substitution_3:
@@ -204,6 +220,7 @@ Proof.
   intros d alpha tau tau' k k'.
   intros ASGNder.
   induction ASGNder.
+  (* crush gets 0. *)
 Admitted.    
 
 Lemma A_6_Substitution_4:
@@ -215,6 +232,7 @@ Proof.
   intros d alpha tau tau' k AKder.
   intros WFDGder.
   induction WFDGder.
+  (* crush gets 0. *)
 Admitted.    
 
 Lemma A_6_Substitution_5:
@@ -227,6 +245,7 @@ Proof.
   intros d u alpha tau g k.
   intros AKder WFCder.
   induction WFCder.
+(* crush gets 0. *)
 Admitted.    
 
 Lemma A_6_Substitution_6:
@@ -237,6 +256,7 @@ Lemma A_6_Substitution_6:
 Proof.
   intros d alpha tau s k AKder retder.
   induction retder.
+  (* crush gets 0. *)
 Admitted.    
 
 Lemma A_6_Substitution_7:
@@ -250,15 +270,10 @@ Lemma A_6_Substitution_7:
 Proof.
   intros d u alpha x t1 t2 tau p p' k.
   intros AKder WFUder.
-  functional induction (gettype u x p t1 p').
-  
+  functional induction (gettype u x p t1 p'); crush.
+  (* crush gets 24/26. *)
 Admitted.    
 
-(* TODO I'm pretty sure with the change of ltyp/styp this covers
-   all three cases. *)
-(* TODO how do I put this in? (d ++ [(alpha,k)]) *)
-(* Do I take it out ? *)
-(* Okay it type checks but is it right? *)
 (* Dan, is that last ltyp supposed to be an styp? *)
 
 Lemma A_6_Substitution_8_1_2_3:
@@ -292,7 +307,7 @@ Proof.
               rtyp d u (subst_Gamma g tau alpha)
                    (subst_E e tau alpha)
                    (subst_Tau tau' tau alpha))).
-
+  (* crush gets zero. *)
 Admitted.    
 
 Lemma A_7_Typing_Well_Formedness_1 :
@@ -304,7 +319,8 @@ Lemma A_7_Typing_Well_Formedness_1 :
 Proof.
   intros d u x tau tau' p p'.
   intros WFUder Kder.
-  functional induction (gettype u x p tau p').
+  functional induction (gettype u x p tau p'); crush.
+  (* Wow, crush gets 23/26. *)
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_2 :
@@ -323,7 +339,8 @@ Proof.
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
-              (WFC d u g /\  K d tau A))).
+              (WFC d u g /\  K d tau A))); crush.
+  (* Crush gets 21 subgoals. *)
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_3 :
@@ -342,7 +359,8 @@ Proof.
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
-              (WFC d u g /\  K d tau A))).
+              (WFC d u g /\  K d tau A))); crush.
+  (* Wow crush gets 21/26. *)
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_4 :
@@ -360,7 +378,8 @@ Proof.
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
-              (WFC d u g /\  K d tau A))).
+              (WFC d u g /\  K d tau A))); crush.
+  (* crush gets 21/26. *)
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_5 :
@@ -380,7 +399,8 @@ Proof.
                   K d tau A)
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
-                  K d tau A)).
+                  K d tau A)); crush.
+  (* Crush gets 21/16 goals. *)
 Admitted.
 
 Lemma A_8_Return_Preservation:
@@ -391,12 +411,13 @@ Lemma A_8_Return_Preservation:
 Proof.
   intros s s' h h' retder.
   apply (SLR_ind_mutual 
-           (fun (h : H) (s : St) (h' : H) (s' : St) (r: R h s h' s') =>
+           (fun (h : H) (s : St) (h' : H) (s' : St) (rstep: R h s h' s') =>
               ret s')
-           (fun (h : H) (s : St) (h' : H) (s' : St) (r: S h s h' s') =>
+           (fun (h : H) (s : St) (h' : H) (s' : St) (sstep: S h s h' s') =>
               ret s')
-           (fun (h : H) (s : St) (h' : H) (s' : St) (r: L h s h' s') =>
-              ret s')).
+           (fun (h : H) (s : St) (h' : H) (s' : St) (lstep: L h s h' s') =>
+              ret s')); crush.
+  (* Crush get's 1 goal. *)
 Admitted.
 
 (* Wow, my first real proof! *)
@@ -510,72 +531,104 @@ Proof.
   reflexivity.
 Qed.
 
-(* Ask Dan about the we can not derive clauses. 
-   If he uses them in proof they'd just be inversions. *)
+(* Ask Dan if this is correct. 
+   TODO Interesting that we have i here where only 0/1 really do. *)
 Lemma A_10_Path_Extension_1_A:
-  forall (v v0 v1 : E) (p : P),
-    Value v ->
-    Value v0 ->
-    Value v1 -> 
-    get v p (cpair v0 v1) ->
-    get v (p ++ [i_pe (i_i 0)]) v0 /\ 
-    get v (p ++ [i_pe (i_i 1)]) v1.
+  forall (v v' v0 v1 : E) (p : P) (n : nat),
+    Value v  ->
+    Value v' ->
+    get v p v' ->
+    n = length p ->
+    ((v' = (cpair v0 v1) ->
+      (get v (p ++ [i_pe (i_i 0)]) v0) /\ 
+      (get v (p ++ [i_pe (i_i 1)]) v1)) \/
+     forall (i : Z) (p' : P) (v'' : E),
+      ~(get v (p ++ [i_pe (i_i i)] ++ p') v'')).
 Proof.
+  intros v v' v0 v1 p n.
+  intros valv valv' getvpv'.
+  induction n.
 Admitted.
 
-(* TODO ask Dan, I don't trust this. *)
 Lemma A_10_Path_Extension_1_B:
   forall (v v' v0 : E) (tau tau' : Tau) (alpha : TVar) (k : Kappa)
-         (p : P),
+         (p : P) (n : nat),
+    Value v  ->
     Value v' ->
-    Value v0 ->
-    v' = (pack tau' v0 (etype aliases alpha k tau)) ->
-    get v (p ++ [u_pe]) v0.
+    get v p v' ->
+    n = length p ->
+    ((v' = (pack tau' v0 (etype aliases alpha k tau)) ->
+      (get v (p ++ [u_pe]) v0)) \/
+     forall (p' : P) (v'' : E),
+      ~(get v (p ++ [u_pe] ++ p') v'')).
 Proof.
+  intros v v' v0 v1 p n.
+  intros valv valv' getvpv'.
+  induction n.
+  (* crush gets 0. *)
 Admitted.
 
 Lemma A_10_Path_Extension_2_A:
-  forall (u : Upsilon) (x : EVar) (p p' : P) (t' tau t0 t1 : Tau),
-    t' = (cross t0 t1) ->
+  forall (u : Upsilon) (x : EVar) (p p' : P) (tau tau' t0 t1 : Tau)
+         (n : nat),
+    gettype u x p tau p' = Some tau' ->
+    tau' = (cross t0 t1) ->
+    n = length p' ->
     (gettype u x p tau (p' ++ [i_pe (i_i 0)]) = Some t0  /\
      gettype u x p tau (p' ++ [i_pe (i_i 1)]) = Some t1).
 Proof.
+  intros.
+  induction n.
+  (* Wierd, crush gives subgoals. *)
 Admitted.
 
 Lemma A_10_Path_Extension_2_B:
-  forall (u : Upsilon) (x : EVar) (p p' : P) (t' ut tau t0: Tau)
-         (alpha : TVar) (k : Kappa),
-    t' = (etype aliases alpha k t0) ->
-    getU u x p = Some ut ->
-    gettype u x p tau (p' ++ [u_pe]) = Some (subst_Tau t0 ut alpha).
+  forall (u : Upsilon) (alpha : TVar) (x : EVar) (p p' : P) 
+         (tau tau' t0 uxp: Tau) (k : Kappa) (n : nat),
+    gettype u x p tau p' = Some tau' ->
+    tau' = (etype nowitnesschange alpha k t0) ->
+    getU u x p = Some uxp->
+    n = length p' ->
+    gettype u x p tau (p' ++ [u_pe]) = Some (subst_Tau uxp uxp alpha).
 Proof.
+  intros.
+  induction n. 
+  (* crush gets 0. *)
 Admitted.
 
 (* TODO are the orderings of quantifiers correct? *)
 Lemma A_11_Heap_Object_Safety_1:
-  forall (v1 : E) (p : P),
+  forall (v1 : E) (p : P) (n : nat),
     Value v1 ->
+    n = length p ->
     exists ! (v2 : E),
       Value v2 ->
       get v1 p v2.
 Proof.
+  intros.
+  induction n.
+  (* crush gets 0. *)
 Admitted.
 
 Lemma A_11_Heap_Object_Safety_2:
-  forall (v0 v1 v2 : E) (p1 p2 : P),
+  forall (v0 v1 v2 : E) (p1 p2 : P) (n : nat),
     Value v0 ->
     Value v1 ->
     Value v2 ->
-    (get v0 p1 v1 /\ get v0 (p1 ++ p2) v2) ->
+    n = length p1 ->
+    get v0 p1 v1 ->
+    get v0 (p1 ++ p2) v2 ->
     get v1 p2 v2.
 Proof.
+  intros.
+  induction n.
+  (* crush gets 0. *)
 Admitted.
 
-(* TODO is this the right formulation of the theorem ? *)
 Lemma A_11_Heap_Object_Safety_3:
   forall (h : H) (u : Upsilon) (g : Gamma) 
          (x : EVar) (p1 p2 : P) (t1 t2 : Tau)
-         (v1 v2 vhx : E),
+         (v1 v2 vhx : E) (n : nat),
     Value v1 ->
     Value v2 ->
     refp h u ->
@@ -584,6 +637,7 @@ Lemma A_11_Heap_Object_Safety_3:
     get vhx p1 v1 ->
     rtyp [] u g v1 t1 ->
     gettype u x p1 t1 p2 = Some t2 ->
+    n = length p2 ->
     (exists (v2 : E),
        get vhx (p1 ++ p2) v2 /\ 
        rtyp [] u g v2 t2) /\
@@ -593,15 +647,38 @@ Lemma A_11_Heap_Object_Safety_3:
           Value v1' ->
           set v1 p2 v2' v1')).
 Proof.
+  intros.
+  induction n.
+  (* crush adds 2 goals. *)
 Admitted.
 
-(* TODO interesting, how to write this. *)
-(*
+
+(* Just instantiating the above at H(x) = v and p1 = nil. *)
+(* Dan, is U; \Gamma supposed to be \Upsilon ; \Gamma ? *)
 Lemma A_11_Heap_Object_Safety_3_Corollary :
+  forall (h : H) (u : Upsilon) (g : Gamma) 
+         (x : EVar) (p2 : P) (t1 t2 : Tau)
+         (v1 v2 vhx : E),
+    Value v1 ->
+    Value v2 ->
+    refp h u ->
+    htyp u g h g ->
+    getH h x = Some v1 ->
+    get vhx [] v1 ->
+    rtyp [] u g v1 t1 ->
+    gettype u x [] t1 p2 = Some t2 ->
+    (exists (v2 : E),
+       get vhx ([] ++ p2) v2 /\ 
+       rtyp [] u g v2 t2) /\
+    (forall (v2' : E),
+       Value v2' ->
+       (exists (v1' : E),
+          Value v1' ->
+          set v1 p2 v2' v1')).
 Proof.
+  (* Prove using A_11_Heap_Object_Safety_3 *)
 Admitted.
-*)
-
+  
 Inductive extends_Gamma : Gamma -> Gamma -> Prop := 
   | A_12_Extension_Gamma : 
       forall (g1 g2 : Gamma),
@@ -615,58 +692,203 @@ Inductive extends_Upsilon : Upsilon -> Upsilon -> Prop :=
         extends_Upsilon u2 u1.
 
 Lemma A_13_Term_Preservation_1:
-  forall (u : Upsilon) (g : Gamma) (e e' : E) (tau : Tau) (h h' : H),
-    (ltyp [] u g e tau /\ L h (e_s e)  h' (e_s e')) ->
-    exists (g' : Gamma) (u' : Upsilon),
-      htyp u' g' h' g' /\ 
-      refp h' u' /\
-      ltyp [] u' g' e' tau.
+  forall (u : Upsilon) (g : Gamma) 
+         (e e' : E) (tau : Tau) (h h' : H),
+    htyp u g h g ->
+    refp h u -> 
+    ltyp [] u g e tau -> 
+    L h (e_s e)  h' (e_s e') ->
+     exists (g' : Gamma) (u' : Upsilon),
+       (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+       htyp u' g' h' g' /\
+       refp h' u' /\
+       ltyp [] u' g' e' tau.
 Proof.
+  intros u g e e' tau h h'.
+  intros htypder refpder ltypder.
+  (* TODO am I proving the right theorem? e_s e not here. *)
+  apply (SLR_ind_mutual
+           (fun (h : H) (s : St) (h' : H) (s' : St) 
+                (rstep: R h s h' s') =>
+              exists (g' : Gamma) (u' : Upsilon),
+                (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+                htyp u' g' h' g' /\
+                refp h' u' /\
+                ltyp [] u' g' e' tau)
+           (fun (h : H) (s : St) (h' : H) (s' : St) 
+                (sstep: S h s h' s') =>
+              exists (g' : Gamma) (u' : Upsilon),
+                (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+                htyp u' g' h' g' /\
+                refp h' u' /\
+                ltyp [] u' g' e' tau)
+           (fun (h : H) (s : St) (h' : H) (s' : St) 
+                (lstep: L h s h' s') =>
+              exists (g' : Gamma) (u' : Upsilon),
+                (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+                htyp u' g' h' g' /\
+                refp h' u' /\
+                ltyp [] u' g' e' tau)); crush.
+  (* crush gives 19/41. *)
 Admitted.
 
 Lemma A_13_Term_Preservation_2:
   forall (u : Upsilon) (g : Gamma) (e e' : E) (tau : Tau) (h h' : H),
-    (rtyp [] u g e tau /\ R h (e_s e)  h' (e_s e')) ->
+    htyp u g h g ->
+    refp h u -> 
+    rtyp [] u g e tau ->
+    R h (e_s e)  h' (e_s e') ->
     exists (g' : Gamma) (u' : Upsilon),
+      (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
       htyp u' g' h' g' /\ 
       refp h' u' /\
       rtyp [] u' g' e' tau.
 Proof.
+  intros u g e e' tau h h'.
+  intros htypder refpder ltypder.
+  apply (SLR_ind_mutual
+           (fun (h : H) (s : St) (h' : H) (s' : St) 
+                (rstep: R h s h' s') =>
+              exists (g' : Gamma) (u' : Upsilon),
+                (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+                htyp u' g' h' g' /\
+                refp h' u' /\
+                rtyp [] u' g' e' tau)
+           (fun (h : H) (s : St) (h' : H) (s' : St) 
+                (sstep: S h s h' s') =>
+              exists (g' : Gamma) (u' : Upsilon),
+                (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+                htyp u' g' h' g' /\
+                refp h' u' /\
+                rtyp [] u' g' e' tau)
+           (fun (h : H) (s : St) (h' : H) (s' : St) 
+                (lstep: L h s h' s') =>
+              exists (g' : Gamma) (u' : Upsilon),
+                (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+                htyp u' g' h' g' /\
+                refp h' u' /\
+                rtyp [] u' g' e' tau)); crush.
+  (* crush gets 19/41. *)
 Admitted.
 
 Lemma A_13_Term_Preservation_3:
   forall (u : Upsilon) (g : Gamma) (s s': St) (tau : Tau) (h h' : H),
-    (styp [] u g tau s /\ S h s  h' s') ->
+    htyp u g h g ->
+    refp h u -> 
+    styp [] u g tau s -> 
+    S h s  h' s' ->
     exists (g' : Gamma) (u' : Upsilon),
+      (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
       htyp u' g' h' g' /\ 
       refp h' u' /\
       styp [] u' g' tau s'.
 Proof.
+  intros u g e e' tau h h'.
+  intros htypder refpder ltypder.
+  apply (SLR_ind_mutual
+           (fun (h : H) (s : St) (h' : H) (s' : St) 
+                (rstep: R h s h' s') =>
+              exists (g' : Gamma) (u' : Upsilon),
+                (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+                htyp u' g' h' g' /\
+                refp h' u' /\
+                styp [] u' g' tau e')
+           (fun (h : H) (s : St) (h' : H) (s' : St) 
+                (sstep: S h s h' s') =>
+              exists (g' : Gamma) (u' : Upsilon),
+                (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+                htyp u' g' h' g' /\
+                refp h' u' /\
+                styp [] u' g' tau e')
+           (fun (h : H) (s : St) (h' : H) (s' : St) 
+                (lstep: L h s h' s') =>
+              exists (g' : Gamma) (u' : Upsilon),
+                (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
+                htyp u' g' h' g' /\
+                refp h' u' /\
+                styp [] u' g' tau e')); crush.
+  (* crush gives 19/41. *)
 Admitted.
 
 Lemma A_14_Term_Progress_1:
   forall (g : Gamma) (u : Upsilon) (h : H) (e : E) (tau : Tau),
-    (htyp u g h g /\ refp h u) ->
-    (ltyp [] u g e tau -> 
-     (exists (x : EVar) (p : P), e = (p_e x p) \/
-      exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e'))).
+    htyp u g h g -> 
+    refp h u ->
+    ltyp [] u g e tau -> 
+    (exists (x : EVar) (p : P), e = (p_e x p)) \/ 
+    (exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e')).
+
 Proof.
+  intros g u h e tau.
+  intros htypder refpder.
+  apply (typ_ind_mutual 
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
+                (st : styp d u g t s) => 
+              (exists (x : EVar) (p : P), e = (p_e x p)) \/ 
+              (exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e')))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
+                (lt : ltyp d u g  e tau') =>
+              (exists (x : EVar) (p : P), e = (p_e x p)) \/ 
+              (exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e')))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (rt : rtyp d u g e t) =>
+              (exists (x : EVar) (p : P), e = (p_e x p)) \/ 
+              (exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e')))).
+  (* crush goes up many goals here. *)
 Admitted.
 
 Lemma A_14_Term_Progress_2:
   forall (g : Gamma) (u : Upsilon) (h : H) (e : E) (tau : Tau),
-    (htyp u g h g /\ refp h u) ->
-    (rtyp [] u g e tau -> 
-     (Value e \/
-      exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e'))).
+    htyp u g h g -> 
+    refp h u ->
+    rtyp [] u g e tau -> 
+    (Value e \/
+     exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')).
 Proof.
+  intros g u h e tau.
+  intros htypder refpder.
+  apply (typ_ind_mutual 
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
+                (st : styp d u g t s) => 
+              (Value e \/
+               exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
+                (lt : ltyp d u g  e tau') =>
+              (Value e \/
+               exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (rt : rtyp d u g e t) =>
+              (Value e \/
+               exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')))).
+  (* crush goes up many goals here. *)
 Admitted.
+
+(* TODO can't get this formulated right due to the statement that only
+    appears in s types.
+   I'm just not sure that I'm proving the inductive hypotheses right
+   in the L/R cases by weakening them. 
+ Dan? *)
 
 Lemma A_14_Term_Progress_3:
   forall (g : Gamma) (u : Upsilon) (h : H) (s : St) (tau : Tau),
-    (htyp u g h g /\ refp h u) ->
-    (styp [] u g tau s -> 
-     ((exists (v : E), Value v /\ (s = (e_s v) \/ s = retn v)) \/
-      (exists (h' : H) (s' : St), S h s h' s'))).
+    htyp u g h g ->
+    refp h u ->
+    styp [] u g tau s -> 
+     (exists (v : E), Value v /\ (s = (e_s v) \/ s = retn v)) \/
+     (exists (h' : H) (s' : St), S h s h' s').
 Proof.
+  intros g u h e tau.
+  intros htypder refpder.
+  apply (typ_ind_mutual 
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
+                (st : styp d u g t s) => 
+              (exists (v : E), Value v /\ (s = (e_s v) \/ s = retn v)) \/
+              (exists (h' : H) (s' : St), S h s h' s'))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
+                (lt : ltyp d u g  e tau') =>
+              (exists (h' : H) (s' : St), S h (e_s e) h' s'))
+           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
+                (rt : rtyp d u g e t) =>
+              (exists (h' : H) (s' : St), S h (e_s e) h' s'))).
+  (* crush goes up many goals here. *)
 Admitted.

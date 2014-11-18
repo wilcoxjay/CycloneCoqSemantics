@@ -1,8 +1,5 @@
-(* 
  This is the definition of formal syntax for Dan Grossman's Thesis, 
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
-
- This defines the formal syntax, pg. 57. 
 
    TODO Think about alpha conversion.
 
@@ -20,6 +17,9 @@
    TODO Should I break each proof/lemma off into it's own file for
     efficiency? And the subsets then into their own files?
 
+   TODO get dan to answer questions.
 
-   
-   
+   TODO prove everything.
+
+   TODO think about how I should actually prove things in Coq? What's
+    for free. 
