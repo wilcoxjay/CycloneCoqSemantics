@@ -1,6 +1,9 @@
  This is the definition of formal syntax for Dan Grossman's Thesis, 
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
+   TODO context matches for weakening d ++ (alpha,tau) ++ d'.
+    No uniqueness in the context wf rules. 
+
    TODO Think about alpha conversion.
 
    TODO Get the inductive cases for simultaneous induction worked out.

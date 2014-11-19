@@ -19,9 +19,12 @@ Inductive K : Delta -> Tau -> Kappa -> Prop :=
                   K d cint B
 
  | K_B     : forall (d : Delta) (alpha : TVar),
-                  K (d ++ [(alpha, B)]) (tv_t alpha) B
+               getD d alpha = None ->
+               getD (d ++ [(alpha, B)]) alpha = Some B ->
+               K (d ++ [(alpha, B)]) (tv_t alpha) B
 
  | K_star_A  : forall (d : Delta) (alpha : TVar),
+                 getD d alpha = None ->
                   K  (d ++ [(alpha, A)]) (ptype (tv_t alpha)) B
 
  | K_B_A     : forall (d : Delta) (tau : Tau),
@@ -59,7 +62,8 @@ Inductive AK : Delta -> Tau -> Kappa -> Prop :=
                    AK d tau k
 
  | AK_A     : forall (d : Delta) (alpha : TVar),
-                   AK d (tv_t alpha) A.
+                getD d alpha = None ->
+                AK d (tv_t alpha) A.
                          
 Inductive ASGN : Delta -> Tau -> Prop :=
 
@@ -67,28 +71,31 @@ Inductive ASGN : Delta -> Tau -> Prop :=
                       ASGN d cint
 
   | ASGN_B     : forall (d : Delta) (alpha : TVar),
-                      ASGN (d ++ [(alpha, B)]) (tv_t alpha)
+                   getD d alpha = None ->
+                   ASGN (d ++ [(alpha, B)]) (tv_t alpha)
 
   | ASGN_ptype : forall (d : Delta) (tau : Tau),
-                      ASGN d (ptype tau)
+                   ASGN d (ptype tau)
 
   | ASGN_cross : forall (d : Delta) (t0 t1 : Tau),
-                      ASGN d t0 -> 
-                      ASGN d t1 -> 
-                      ASGN d (cross t0 t1)
+                   ASGN d t0 -> 
+                   ASGN d t1 -> 
+                   ASGN d (cross t0 t1)
 
   | ASGN_arrow : forall (d : Delta) (t0 t1 : Tau),
-                      ASGN d t0 -> 
-                      ASGN d t1 -> 
-                      ASGN d (arrow t0 t1)
+                   ASGN d t0 -> 
+                   ASGN d t1 -> 
+                   ASGN d (arrow t0 t1)
 
   | ASGN_utype : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau),
-                      ASGN (d ++ [(alpha, k)]) tau ->
-                      ASGN d (utype alpha k tau)
+                   getD d alpha = None ->
+                   ASGN (d ++ [(alpha, k)]) tau ->
+                   ASGN d (utype alpha k tau)
 
   | ASGN_etype : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau),
-                      ASGN (d ++ [(alpha, k)]) tau ->
-                      ASGN d (etype nowitnesschange alpha k tau).
+                   getD d alpha = None ->
+                   ASGN (d ++ [(alpha, k)]) tau ->
+                   ASGN d (etype nowitnesschange alpha k tau).
 
 Inductive WFDG : Delta -> Gamma -> Prop :=
   | WFDG_d_nil : forall (d: Delta),

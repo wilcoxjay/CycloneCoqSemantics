@@ -68,6 +68,10 @@ Qed.
 (* TODO I need a real solution to search the heap. *)
 (* TODO am I really searching the whole context lists here? in WFG and WFU. *)
 
+(* Really want to try allowing contexts with more than one typing element
+   to try them all. *)
+(* Hint Extern 2 (K d _ _b) = _)  => try  *)
+
 Hint Extern 2 (K [?x] _ _)      => try rewrite <- app_nil_l with (l:=[x]).
 Hint Extern 2 (ASGN [?x] _ )    => try rewrite <- app_nil_l with (l:=[x]).
 Hint Extern 2 (WFU  [?x]   )    => try rewrite <- app_nil_l with (l:=[x]).
@@ -88,5 +92,6 @@ Hint Extern 2 (S [?h] _ _ _)
 Hint Extern 2 (S _ _ [?h] _)
                                 => try rewrite app_nil_l_nil with (l:=[h]).
 
-
+Hint Extern 2 ([] ++ _ = _) => try reflexivity.
+Hint Extern 2 (_ = [] + _) => try reflexivity.
 

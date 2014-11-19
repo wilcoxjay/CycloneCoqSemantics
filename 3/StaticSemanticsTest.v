@@ -159,6 +159,18 @@ Proof.
   eauto 10 with Chapter3.
 Qed.
 
+Example K_B_test:
+  K [(alpha,B)] (tv_t alpha) B.
+Proof.
+  apply K_B with (d:=[]); eauto 10 with Chapter3.
+Qed.
+
+Example K_B_test2:
+  K ([] ++ [(alpha,B)]) (tv_t alpha) B.
+Proof.
+  apply K_B with (d:=[]); eauto 10 with Chapter3.
+Qed.
+
 (* Let's make some polymorphic pairs. *)
 Definition axaa  := etype aliases alpha A (cross (tv_t alpha) (tv_t alpha)).
 Definition paxaa := pack cint (cpair (i_e (i_i 0)) (i_e (i_i 1))) axaa.
@@ -184,14 +196,10 @@ Proof.
   eauto 10 with Chapter3.
   apply SR_3_12; eauto 10 with Chapter3.
   apply styp_e_3_1 with (tau':= (tv_t alpha)).
-  eapply SR_3_1.
-  reflexivity.
-  Focus 2.
+  apply SR_3_1 with 
+    (tau:= (tv_t alpha))
+    (tau':=cross (tv_t alpha) (tv_t alpha)); 
   eauto 10 with Chapter3.
-  Focus 2.
-  eauto 10 with Chapter3.
-  compute.
-  reflexivity.
 Qed.
 
 Example styp_openstar_test:
@@ -208,16 +216,10 @@ Proof.
              (tau  := cint)
              (tau' := (cross (tv_t alpha) (tv_t alpha)));
   eauto 10 with Chapter3.
+  (* TODO lack of syntax direction. *)
   apply SR_3_12; eauto 10 with Chapter3.
   apply styp_e_3_1 with (tau':= (tv_t alpha)).
-  eapply SR_3_1.
-  reflexivity.
-  Focus 2.
-  eauto 10 with Chapter3.
-  Focus 2.
-  eauto 10 with Chapter3.
-  compute.
-  reflexivity.
+  eapply SR_3_1;   eauto 10 with Chapter3.
 Qed.
 
 (* Test rtyp. *)

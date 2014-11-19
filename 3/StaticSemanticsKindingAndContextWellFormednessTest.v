@@ -30,8 +30,8 @@ Qed.
 Example K_B_test:
   K [(alpha, B)] (tv_t alpha) B.
 Proof.
-  (* eapply K_B. but it needs context adjustment. *)
-  eauto 10 with Chapter3.
+  (* TODO tacticals? but it needs context adjustment. *)
+  apply K_B with (d:=[]); eauto 10 with Chapter3.
 Qed.
 
 Example K_star_A_test:
@@ -97,6 +97,7 @@ Example AK_A_test:
   AK [] (tv_t alpha) A.
 Proof.
  apply AK_A.
+ reflexivity.
 Qed.
 
 (* Test assgn *)
@@ -137,14 +138,14 @@ Qed.
 Example ASGN_utype_test:
   ASGN [] (utype alpha k tau).
 Proof.
- apply ASGN_utype.
+ apply ASGN_utype;
  eauto 10 with Chapter3.
 Qed.
 
 Example ASGN_etype_test:
   ASGN [] (etype nowitnesschange alpha k tau).
 Proof.
- apply ASGN_etype.
+ apply ASGN_etype;
  eauto 10 with Chapter3.
 Qed.
 

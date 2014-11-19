@@ -79,6 +79,8 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
                           styp d u g tau  (letx x e s)
 
 (* Bug 33, alpha conversion of alpha here ? *)
+(* TODO can I unfold the expected pack here and make these syntax directed ? *)
+(* I think so. *)
 
   | styp_open_3_7   :  forall (d : Delta) (u : Upsilon) (g : Gamma)
                                (x : EVar)  (p : Phi) (alpha : TVar)
@@ -193,7 +195,8 @@ with      rtyp :  Delta -> Upsilon -> Gamma -> E   -> Tau -> Prop :=
                    rtyp d u g e (subst_Tau tau tau' alpha) ->
                    AK   d tau' k -> 
                    K    d (etype p alpha k tau) A ->
-                   rtyp d u g (pack tau' e (etype p alpha k tau)) (etype p alpha k tau)
+                   rtyp d u g (pack tau' e (etype p alpha k tau)) 
+                              (etype p alpha k tau)
 
   | SR_3_13 : forall (d : Delta) (u : Upsilon) (g : Gamma) (tau tau': Tau) (s : St) (x : EVar),
                    getG g x = None ->

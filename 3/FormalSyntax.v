@@ -221,3 +221,4 @@ Fixpoint getU (u : Upsilon) (x: EVar) (p : P) : option Tau :=
     | _, (cons bad worse)  => None   (* Should not happen. *)
     | _ , [] => None
   end.
+

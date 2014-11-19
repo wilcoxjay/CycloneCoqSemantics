@@ -1,13 +1,13 @@
 -include coq.depends
 all: src tactic test proof TAGS TODOS
 
-SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TypeSafety.vo
+SRCFILES=FormalSyntax.vo GetLemmas.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TypeSafety.vo
 
 TESTFILES=TestUtilities.vo FormalSyntaxTest.vo DynamicSemanticsHeapObjectsTest.vo DynamicSemanticsTypeSubstitutionTest.vo DynamicSemanticsTest.vo StaticSemanticsTest.vo StaticSemanticsKindingAndContextWellFormednessTest.vo StaticSemanticsTypingHeapObjectsTest.vo MutualRecursionProof.vo
 
 PROOFFILES=TypeSafetyProof.vo EmptySubset.vo IntSubset.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
 
-TACTICFILES=CpdtTactics.vo
+TACTICFILES=CpdtTactics.vo Case.vo
 
 %.vo: %.v 
 	coqc $<
@@ -34,11 +34,11 @@ TAGS:
 
 count: 
 	echo "Source "
-	ls -1 *.v | grep -vi Test | grep -v Dead | grep -v Proof| xargs wc -l 
+	ls -1 *.v | grep -vi Test | grep -v Dead | grep -v Proof | grep -v Subset | grep -v Cpdt | xargs wc -l 
 	echo "Test "
 	ls -1 *.v | grep -i Test | xargs wc -l 
 	echo "TypeSafety "
-	ls -1 *.v | grep -i Proof | xargs wc -l 
+	ls -1 *.v | grep -i Proof | grep -v Subset | xargs wc -l 
 
 depends: 
 	coqdep -I . *.v > coq.depends 
