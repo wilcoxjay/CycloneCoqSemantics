@@ -19,8 +19,6 @@ Require Export DynamicSemantics.
 Require Export StaticSemanticsKindingAndContextWellFormedness.
 Require Export StaticSemantics.
 
-(* e/auto using *)
-
 Create HintDb Chapter3.
 Hint Constructors Value     : Chapter3.
 Hint Constructors S         : Chapter3.
@@ -43,55 +41,66 @@ Hint Constructors WFDG      : Chapter3.
 Hint Constructors WFU       : Chapter3.
 Hint Constructors WFC       : Chapter3.
 Hint Extern 4 => discriminate : Chapter3. (* For ifs. *)
+
 (* Getting eauto to evaluate functions requires some of this. *)
 Hint Extern 0 (gettype _ _ _ _ _ = Some _) => try reflexivity : Chapter3.
-Hint Extern 2 ((getH _ _) = Some _) => try reflexivity : Chapter3.
-Hint Extern 2 ((getD _ _) = Some _) => try reflexivity : Chapter3.
-Hint Extern 2 ((getG _ _) = Some _) => try reflexivity : Chapter3. 
-Hint Extern 2 ((getU _ _) = Some _) => try reflexivity : Chapter3.
-Hint Extern 2 ((setH _ _) = _) => try reflexivity : Chapter3.
+Hint Extern 0 ((getH _ _) = Some _) => try reflexivity : Chapter3.
+Hint Extern 0 ((setH _ _) = _) => try reflexivity : Chapter3.
+Hint Extern 0 ((deleteH _ _) = _) => try reflexivity : Chapter3.
 
-(* Some contexts require (cons nil [v]) for empty matches. *)
-Theorem app_nil_l_nil:
-  forall (A : Type) (l : list A),
-    l = nil ++ l ++ nil.
-Proof.
-  intros A l.
-  induction l.
-  reflexivity.
-  simpl in IHl.
-  simpl.
-  rewrite <- IHl.
-  reflexivity.
-Qed.
+Hint Extern 0 ((getD _ _) = Some _) => try reflexivity : Chapter3.
+Hint Extern 0 ((getG _ _) = Some _) => try reflexivity : Chapter3. 
+Hint Extern 0 ((getU _ _) = Some _) => try reflexivity : Chapter3.
 
-(* TODO I need a real solution to search the heap. *)
-(* TODO am I really searching the whole context lists here? in WFG and WFU. *)
+(* A lot of the judgements just iterate through their contexts,
+ popping off elements on the right. To make eauto work in these
+ cases we break a single element off the right of the list. *)
 
-(* Really want to try allowing contexts with more than one typing element
-   to try them all. *)
-(* Hint Extern 2 (K d _ _b) = _)  => try  *)
+Ltac right_list_recurse_gamma m :=
+  rewrite app_removelast_last with (l:= m) (d:=(evar(1000),cint));
+  try simpl removelast;
+  try simpl last;
+  try discriminate.
 
-Hint Extern 2 (K [?x] _ _)      => try rewrite <- app_nil_l with (l:=[x]).
-Hint Extern 2 (ASGN [?x] _ )    => try rewrite <- app_nil_l with (l:=[x]).
-Hint Extern 2 (WFU  [?x]   )    => try rewrite <- app_nil_l with (l:=[x]).
-Hint Extern 2 (WFC _ _ [?x])    => try rewrite <- app_nil_l with (l:=[x]).
-Hint Extern 2 (WFDG _ [?x])     => try rewrite <- app_nil_l with (l:=[x]).
-Hint Extern 2 (htyp _ _ _ [?x]) => try rewrite <- app_nil_l with (l:=[x]).
-Hint Extern 2 (htyp _ _ [?y] _) => try rewrite app_nil_l_nil with (l:=[y]).
-Hint Extern 2 (refp _ [?y])     => try rewrite app_nil_l_nil with (l:=[y]).
-Hint Extern 2 (ltyp  _ _ [?y] _)
-                                => try rewrite app_nil_l_nil with (l:=[y]).
-Hint Extern 2 (R [?h] _ _ _)
-                                => try rewrite app_nil_l_nil with (l:=[h]).
-Hint Extern 2 (R _ _ [?h] _)
-                                => try rewrite app_nil_l_nil with (l:=[h]).
+Ltac right_list_recurse_delta m :=
+  rewrite app_removelast_last with (l:= m) (d:=(tvar(1000),A));
+  try simpl removelast;
+  try simpl last;
+  try discriminate.
+ 
+Ltac right_list_recurse_upsilon m :=
+  rewrite app_removelast_last with (l:= m) (d:=((p_e (evar 1000) []),cint));
+  try simpl removelast;
+  try simpl last;
+  try discriminate.
 
-Hint Extern 2 (S [?h] _ _ _)
-                                => try rewrite app_nil_l_nil with (l:=[h]).
-Hint Extern 2 (S _ _ [?h] _)
-                                => try rewrite app_nil_l_nil with (l:=[h]).
+Ltac right_list_matcher :=
+   match goal with
+     | [ |- htyp _ _ _ (?x ++ ?l) ] => try eapply htyp_xv with (g':=x)
+     | [ |- htyp _ _ _ ?l ]         => try right_list_recurse_gamma l
 
-Hint Extern 2 ([] ++ _ = _) => try reflexivity.
-Hint Extern 2 (_ = [] + _) => try reflexivity.
+     | [ |- ASGN (?x ++ ?y) _ ]   => try constructor
+     | [ |- ASGN ?x         _ ]   
+       => try (right_list_recurse_delta x; constructor)
 
+     | [ |- WFU (?x ++ ?y)      ]   => try constructor
+     | [ |- WFU ?x              ]   
+       => try (right_list_recurse_upsilon x; constructor)
+
+     | [ |- WFDG _ (?x ++ ?y)   ]   => try constructor
+     | [ |- WFDG _ ?x           ]   
+       => try (right_list_recurse_gamma x; constructor)
+
+     | [ |- refp _ (?x ++ ?y)   ]   => try constructor
+     | [ |- refp _ ?x           ]   
+       => try (right_list_recurse_upsilon x; constructor)
+   end.
+
+Hint Extern 3 (htyp _ _ _ _)   => right_list_matcher.
+Hint Extern 3 (ASGN _  _)      => right_list_matcher.
+Hint Extern 3 (WFU  _   )      => right_list_matcher.
+Hint Extern 3 (WFDG _ _)       => right_list_matcher.
+Hint Extern 3 (refp _ _)       => right_list_matcher.
+
+Hint Extern 5 ([] ++ _ = _) => try reflexivity.
+Hint Extern 5 (_ = [] + _)  => try reflexivity.

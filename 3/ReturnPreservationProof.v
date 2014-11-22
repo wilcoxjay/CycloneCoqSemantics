@@ -11,6 +11,8 @@ Export ListNotations.
 Require Import ZArith.
 Require Import Init.Datatypes.
 Require Import Coq.Init.Logic.
+Require Import Coq.Program.Tactics.
+Require Import Coq.Program.Equality.
 
 Require Export FormalSyntax.
 Require Export DynamicSemanticsTypeSubstitution.
@@ -21,21 +23,101 @@ Require Export StaticSemanticsKindingAndContextWellFormedness.
 Require Export StaticSemantics.
 Require Export TypeSafety.
 Require Export CpdtTactics.
+Require Export Case.
+Require Export SubstitutionsProof.
 
+(* Thesis Bug: Have to have correctly typed statements. *)
 Lemma A_8_Return_Preservation:
-  forall (s s' : St) (h h' : H),
-  ret s ->
-  S h s h' s' ->
-  ret s'.
+  forall (s : St),
+    ret s ->
+    forall (h h' : H) (s' : St),
+      S h s h' s' ->
+      ret s'.
 Proof.
-  intros s s' h h' retder.
-  apply (SLR_ind_mutual 
-           (fun (h : H) (s : St) (h' : H) (s' : St) (rstep: R h s h' s') =>
-              ret s')
-           (fun (h : H) (s : St) (h' : H) (s' : St) (sstep: S h s h' s') =>
-              ret s')
-           (fun (h : H) (s : St) (h' : H) (s' : St) (lstep: L h s h' s') =>
-              ret s')); crush.
-  (* Crush get's 1 goal. *)
+  intros s retder.
+  induction retder.
+  (* Cases are all messed up due to quantifier changes! *)
+  Case "retn e".
+   intros h h' s' H.
+   inversion H.
+   constructor.
+  Case "if".
+   intros h h' s' H.
+   inversion H.
+   SCase "if 0".
+    rewrite <- H5.
+    assumption.
+   SCase "if <> 0".
+    rewrite <- H5.
+    assumption.
+   SCase "if e->e'".
+    constructor.
+    SSCase "ret s1".
+    assumption.
+    SSCase "ret s2".
+    assumption.
+  Case "seq s1 s2".
+   intros h h' s'0 H.
+   inversion H.
+   SCase "seq (e_s v) s'".
+   subst.
+   inversion retder. (* e_s v does not return. *)
+   SCase "ret (retn v)".
+   constructor.
+   subst.
+   SCase "(seq s1 s2) (seq s1' s2)".
+   constructor.
+   specialize (IHretder h h' s'1).
+   apply IHretder in H5.
+   assumption.
+   SCase "ret (seq s'1 s)".
+   intros h h' s'0 H.
+   inversion H.
+   crush.
+   constructor.
+   crush.
+   (* Oh this is the we don't care that s1 does not have a return, s does case.*)
+   apply ret_seq_2 with (s:= s'1) (s':= s') in retder. 
+   assumption.
+  Case "let".
+   intros h h' s' H.
+   inversion H.
+   SCase "let s->s'".
+   rewrite H5 in retder.
+   assumption.
+   SCase "let e->e'".
+   constructor.
+   exact retder.
+   Focus 2.
+   Case "open".
+   intros h h' s' H.
+   inversion H.
+   constructor.
+   simpl.
+   crush.
+   (* Need a substitution lemma and its there. *)
+   apply A_6_Substitution_6 with (tau:= tau) (k:=A) (d:=[]).
+   Focus 2.
+   assumption.
+   Focus 2.
+   crush.
+   constructor.
+   assumption.
+   
+(* Openstar should be the same proof as above. *)
+(*
+   Focus 2.
+   Case "openstar".
+   intros h h' s' H.
+   inversion H.
+   constructor.
+   crush.
+   eapply A_6_Substitution_6 with (tau:= tau).
+   Focus 2.
+   assumption.
+   Focus 2.
+   constructor.
+   assumption.
+*)
 Admitted.
 

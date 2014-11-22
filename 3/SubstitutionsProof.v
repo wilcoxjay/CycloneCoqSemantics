@@ -22,6 +22,8 @@ Require Export StaticSemantics.
 Require Export TypeSafety.
 Require Export CpdtTactics.
 
+(* Alpha conversion is required? *)
+
 Lemma A_4_Useless_Substitutions_1:
   forall (d : Delta) (alpha : TVar) (tau tau' : Tau) (k : Kappa),
     getD d alpha = None ->

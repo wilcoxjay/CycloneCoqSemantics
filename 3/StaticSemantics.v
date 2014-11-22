@@ -30,8 +30,8 @@ Inductive ret : St -> Prop :=
                        ret (seq s s')
 
 | ret_seq_2     : forall (s s' : St),
-                       ret s ->
-                       ret (seq s' s)
+                       ret s' ->
+                       ret (seq s s')
 
 | ret_let       : forall (x : EVar) (e : E) (s : St),
                        ret s ->
@@ -47,25 +47,31 @@ Inductive ret : St -> Prop :=
 
 (* TODO inconsistent naming. *)
 Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
-  | styp_e_3_1    : forall (d : Delta) (u : Upsilon) (g : Gamma) (tau tau' : Tau) (e : E),        (* This is correct, return at end of program. *)
+(* This is correct, return at end of program. *)
+  | styp_e_3_1    : forall (d : Delta) (u : Upsilon) (g : Gamma) 
+                           (tau tau' : Tau) (e : E),      
                       rtyp d u g e   tau' ->
                       styp d u g tau (e_s e)
 
-  | styp_return_3_2 : forall (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (e : E),
+  | styp_return_3_2 : forall (d : Delta) (u : Upsilon) (g : Gamma)
+                             (tau : Tau) (e : E),
                          rtyp d u g e tau ->
                          styp d u g tau (retn e)
 
-  | styp_seq_3_3    : forall (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (s1 s2 : St),
+  | styp_seq_3_3    : forall (d : Delta) (u : Upsilon) (g : Gamma)
+                             (tau : Tau) (s1 s2 : St),
                          styp d u g tau s1 ->
                          styp d u g tau s2 ->
                          styp d u g tau (seq s1 s2)
 
-  | styp_while_3_4  : forall (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (e: E) (s : St),
+  | styp_while_3_4  : forall (d : Delta) (u : Upsilon) (g : Gamma) 
+                             (tau : Tau) (e: E) (s : St),
                          rtyp d u g e cint ->
                          styp d u g tau s ->
                          styp d u g tau (while e s)
 
-  | styp_if_3_5     :  forall (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (e: E) (s1 s2 : St),
+  | styp_if_3_5     :  forall (d : Delta) (u : Upsilon) (g : Gamma) 
+                              (tau : Tau) (e: E) (s1 s2 : St),
                           rtyp d u g e cint ->
                           styp d u g tau s1 ->
                           styp d u g tau s2 ->
@@ -74,6 +80,7 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
   | styp_let_3_6    :  forall (d : Delta) (u : Upsilon) (g : Gamma)
                                (x : EVar)  (tau tau' : Tau) 
                                (s : St) (e : E),
+                          getG g x = None ->
                           styp d u (g ++ [(x,tau')]) tau' s ->
                           rtyp d u g e    tau' ->
                           styp d u g tau  (letx x e s)
@@ -81,7 +88,7 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
 (* Bug 33, alpha conversion of alpha here ? *)
 (* TODO can I unfold the expected pack here and make these syntax directed ? *)
 (* I think so. *)
-
+(* Bug 44, forgot not in domain checks. *)
   | styp_open_3_7   :  forall (d : Delta) (u : Upsilon) (g : Gamma)
                                (x : EVar)  (p : Phi) (alpha : TVar)
                                (k : Kappa) (tau tau' : Tau)
@@ -100,9 +107,9 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
                                (s : St) (e : E),
                           rtyp d u g e (etype aliases alpha k tau') -> 
                           styp (d ++ [(alpha,k)])
-                                  u 
-                                  (g ++ [(x,tau')])
-                                  tau s ->
+                               u 
+                               (g ++ [(x,tau')])
+                               tau s ->
                           getD d alpha = None ->
                           getG g x = None ->
                           K d tau A      ->
@@ -217,16 +224,17 @@ with   rtyp_ind_mutual := Induction for rtyp Sort Prop.
 Combined Scheme typ_ind_mutual from
           styp_ind_mutual, ltyp_ind_mutual, rtyp_ind_mutual.
 
-(* TODO this is really a universally quantified test over all of the heap values. *)
 (* Bug 42 *)
 Inductive htyp: Upsilon -> Gamma -> H -> Gamma -> Prop :=
   | htyp_empty : forall (u : Upsilon) (g: Gamma),
                       htyp u g [] []
   | htyp_xv    : forall (u : Upsilon) (g g': Gamma) (h h': H) (x : EVar) (v : E) (tau : Tau),
-                      Value v -> 
-                      htyp u g (h ++ h') g' ->
+                      getH h x = Some v ->
+                      Value v ->
+                      deleteH h x = h' ->
+                      htyp u g h' g' ->
                       rtyp nil u g v tau ->
-                      htyp u g (h ++ [(x,v)] ++ h') (g' ++ [(x, tau)]).
+                      htyp u g h (g' ++ [(x, tau)]).
 
 (* TODO this is really a universally quantified test over all of the pathing assignments. *)
 (* Bug 43 *)

@@ -19,13 +19,12 @@ Inductive K : Delta -> Tau -> Kappa -> Prop :=
                   K d cint B
 
  | K_B     : forall (d : Delta) (alpha : TVar),
-               getD d alpha = None ->
-               getD (d ++ [(alpha, B)]) alpha = Some B ->
-               K (d ++ [(alpha, B)]) (tv_t alpha) B
+               getD d alpha = Some B ->
+               K d (tv_t alpha) B
 
  | K_star_A  : forall (d : Delta) (alpha : TVar),
-                 getD d alpha = None ->
-                  K  (d ++ [(alpha, A)]) (ptype (tv_t alpha)) B
+                 getD d alpha = Some A -> 
+                 K  d (ptype (tv_t alpha)) B
 
  | K_B_A     : forall (d : Delta) (tau : Tau),
                   K  d tau B ->
@@ -62,7 +61,7 @@ Inductive AK : Delta -> Tau -> Kappa -> Prop :=
                    AK d tau k
 
  | AK_A     : forall (d : Delta) (alpha : TVar),
-                getD d alpha = None ->
+                getD d alpha = Some A ->
                 AK d (tv_t alpha) A.
                          
 Inductive ASGN : Delta -> Tau -> Prop :=
@@ -71,8 +70,8 @@ Inductive ASGN : Delta -> Tau -> Prop :=
                       ASGN d cint
 
   | ASGN_B     : forall (d : Delta) (alpha : TVar),
-                   getD d alpha = None ->
-                   ASGN (d ++ [(alpha, B)]) (tv_t alpha)
+                   getD d alpha = Some B ->
+                   ASGN d (tv_t alpha)
 
   | ASGN_ptype : forall (d : Delta) (tau : Tau),
                    ASGN d (ptype tau)

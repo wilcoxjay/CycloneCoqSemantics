@@ -170,6 +170,14 @@ Fixpoint setH (h : H) (x : EVar) (e : E) : H :=
     | (evar x'), _ => [(x,e)]
  end.
 
+Fixpoint deleteH (h : H) (x : EVar) : H :=
+    match x, h with
+    | evar x', (evar y',v) :: h' =>
+      if beq_nat x' y'
+      then h'
+      else (evar y',v) :: (deleteH h' x)
+    | _, [] => []
+ end.
 
 (* The context is three part: kind assignment, type assignments and path assignments. *)
 
@@ -194,6 +202,15 @@ Fixpoint setD (d : Delta) (alpha : TVar) (k : Kappa) : Delta :=
       else (tvar b', k') :: (setD d' alpha k)
     | _ , nil => [(alpha,k)]
   end.
+
+Fixpoint deleteD (d : Delta) (alpha : TVar) : Delta :=
+    match alpha, d with
+    | tvar x', (tvar y',v) :: h' =>
+      if beq_nat x' y'
+      then h'
+      else (tvar y',v) :: (deleteD h' alpha)
+    | _, [] => []
+ end.
 
 Definition GE : Type := prod EVar Tau.
 Definition Gamma     := list GE.

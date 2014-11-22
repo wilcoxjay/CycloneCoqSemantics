@@ -162,4 +162,17 @@ Proof.
          try inversion NoSuchType).
 Admitted.
 
+(* Some contexts require (cons nil [v]) for empty matches. *)
+Theorem app_nil_l_nil:
+  forall (A : Type) (l : list A),
+    l = nil ++ l ++ nil.
+Proof.
+  intros A l.
+  induction l.
+  reflexivity.
+  simpl in IHl.
+  simpl.
+  rewrite <- IHl.
+  reflexivity.
+Qed.
 

@@ -19,9 +19,9 @@ Require Export DynamicSemanticsHeapObjects.
 Inductive S : H -> St -> H -> St -> Prop :=
 
  | S_let_3_1 : forall (x : EVar) (v : E) (h : H) (s: St),
-              Value v ->
-              getH h x = None -> 
-              S h (letx x v s) ((x,v) :: h) s
+                 Value v ->
+                 getH h x = None -> 
+                 S h (letx x v s) ((x,v) :: h) s
 
  | S_seq_3_2 : forall (v : E) (h : H) (s: St),
                   Value v ->

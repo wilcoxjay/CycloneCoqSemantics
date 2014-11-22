@@ -109,9 +109,8 @@ Qed.
 Example SL_3_4_test:
   ltyp [] [] [(x,(cross cint cint))] (dot (p_e x []) (i_i 1)) cint.
 Proof.
-  apply SL_3_4 with (t0:=cint); (* Again syntax direction. *)
-  apply SL_3_1 with (tau':=(cross cint cint));
-  eauto 10 with Chapter3.
+(* Again syntax direction. *)
+  apply SL_3_4 with (t0:=cint);   eauto 10 with Chapter3.
 Qed.
 
 (* Test styp *)
@@ -119,7 +118,7 @@ Qed.
 Example styp_e_test:
   styp [] [] [] tau (e_s e).
 Proof.
-  apply styp_e_3_1 with (tau':= cint).
+  apply styp_e_3_1 with (tau':= cint);
   eauto 10 with Chapter3.
 Qed.
 
@@ -127,7 +126,7 @@ Qed.
 Example styp_return_test:
   styp [] [] [] tau (retn e).
 Proof.
-  apply styp_return_3_2.
+  apply styp_return_3_2;
   eauto 10 with Chapter3.
 Qed.
 
@@ -162,13 +161,13 @@ Qed.
 Example K_B_test:
   K [(alpha,B)] (tv_t alpha) B.
 Proof.
-  apply K_B with (d:=[]); eauto 10 with Chapter3.
+  apply K_B; eauto 10 with Chapter3.
 Qed.
 
 Example K_B_test2:
   K ([] ++ [(alpha,B)]) (tv_t alpha) B.
 Proof.
-  apply K_B with (d:=[]); eauto 10 with Chapter3.
+  apply K_B; eauto 10 with Chapter3.
 Qed.
 
 (* Let's make some polymorphic pairs. *)
@@ -294,14 +293,8 @@ Example SR_3_9_test:
              (i_e (i_i 0)))
        cint.
 Proof.
-  apply SR_3_9 with (tau':= cint).
-  apply SR_3_13.
-  eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
+  apply SR_3_9 with (tau':= cint);   eauto 10 with Chapter3.
 Qed.
-
 
 Example SR_3_10_test:
   rtyp [] [] [] 
@@ -321,23 +314,8 @@ Example SR_3_11_test:
           cint)
     (subst_Tau (arrow (tv_t alpha) (tv_t alpha)) cint alpha).
 Proof.
-  (* eauto 20 with Chapter3. *)
-  apply SR_3_11 with (k:= B).
-  apply SR_3_14.
-  eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
-  Focus 2.
-  eauto 10 with Chapter3.
-  apply SR_3_13.
-  eauto 10 with Chapter3.
-  Focus 2.
-  eauto 10 with Chapter3.
-  apply styp_return_3_2.
-  eapply SR_3_1.
-  reflexivity.
-  reflexivity.
-  eauto 10 with Chapter3.
-  eauto 10 with Chapter3.
+  apply SR_3_11 with (k:= B);
+  eauto 20 with Chapter3.
 Qed.
 
 (* TODO why wont' this kind at A? *)
@@ -389,7 +367,9 @@ Qed.
 Example htyp_xv_test:
   htyp [] [] [(x,v)] [(x, tau)].
 Proof.
-  (*   apply htyp_xv; *)
+  (* loss of syntax direction here but we don't mind really as eauto is working. *)
+  (* eauto 10 with Chapter3. *)
+  eapply htyp_xv with (g':= nil);
   eauto 10 with Chapter3.
 Qed.
 

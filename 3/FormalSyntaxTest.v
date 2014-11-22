@@ -118,6 +118,39 @@ Proof.
   reflexivity.
 Qed.
 
+(* TODO test setH. *)
+
+Example deleteH_test_nil : 
+  deleteH [] x = [].
+Proof.
+  reflexivity.
+Qed.
+
+Example deleteH_test_x :
+  deleteH [(x,(i_e (i_i 0)))] x = [].
+Proof.
+  reflexivity.
+Qed.
+
+Example deleteH_test_xy :
+  deleteH [(y,(i_e (i_i 0))) ; (x,(i_e (i_i 0)))] x = [(y,(i_e (i_i 0)))].
+Proof.
+  reflexivity.
+Qed.
+
+Example delete_test_yx :
+  deleteH [(y,(i_e (i_i 0))) ; (x,(i_e (i_i 0)))] y = [(x,(i_e (i_i 0)))].
+Proof.
+ reflexivity.
+Qed.
+
+Example delete_test_z :
+  deleteH [(y,(i_e (i_i 0))) ; (x,(i_e (i_i 0)))] z = 
+          [(y,(i_e (i_i 0))) ; (x,(i_e (i_i 0)))].
+Proof.
+ reflexivity.
+Qed.
+
 Example setD_nil :
   setD [] alpha A = [(alpha,A)].
 Proof.

@@ -31,13 +31,13 @@ Example K_B_test:
   K [(alpha, B)] (tv_t alpha) B.
 Proof.
   (* TODO tacticals? but it needs context adjustment. *)
-  apply K_B with (d:=[]); eauto 10 with Chapter3.
+  apply K_B; eauto 10 with Chapter3.
 Qed.
 
 Example K_star_A_test:
   K  [(alpha, A)] (ptype (tv_t alpha)) B.
 Proof.
-  (* apply K_star_A. *)
+  eapply K_star_A;
   eauto 10 with Chapter3.
 Qed.
 
@@ -94,7 +94,7 @@ Proof.
 Qed.
 
 Example AK_A_test:
-  AK [] (tv_t alpha) A.
+  AK [(alpha,A)] (tv_t alpha) A.
 Proof.
  apply AK_A.
  reflexivity.
@@ -111,7 +111,7 @@ Qed.
 Example ASGN_B_test:
   ASGN [(alpha, B)] (tv_t alpha).
 Proof.
-  (* apply ASGN_B. *)
+  apply ASGN_B.
   eauto 10 with Chapter3.
 Qed.
 
