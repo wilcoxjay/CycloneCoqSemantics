@@ -10,6 +10,7 @@ DynamicSemanticsTest.vo DynamicSemanticsTest.glob DynamicSemanticsTest.v.beautif
 DynamicSemanticsTypeSubstitution.vo DynamicSemanticsTypeSubstitution.glob DynamicSemanticsTypeSubstitution.v.beautified: DynamicSemanticsTypeSubstitution.v FormalSyntax.vo
 DynamicSemanticsTypeSubstitutionTest.vo DynamicSemanticsTypeSubstitutionTest.glob DynamicSemanticsTypeSubstitutionTest.v.beautified: DynamicSemanticsTypeSubstitutionTest.v FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo TestUtilities.vo
 EmptySubset.vo EmptySubset.glob EmptySubset.v.beautified: EmptySubset.v CpdtTactics.vo FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemantics.vo TypeSafetyProof.vo TypeSafety.vo
+Foo.vo Foo.glob Foo.v.beautified: Foo.v
 FormalSyntax.vo FormalSyntax.glob FormalSyntax.v.beautified: FormalSyntax.v
 FormalSyntaxTest.vo FormalSyntaxTest.glob FormalSyntaxTest.v.beautified: FormalSyntaxTest.v FormalSyntax.vo TestUtilities.vo
 GetLemmas.vo GetLemmas.glob GetLemmas.v.beautified: GetLemmas.v FormalSyntax.vo

@@ -27,8 +27,12 @@ Require Import Init.Datatypes.
 (* The abstract syntax of kinds. *)
 
 Inductive Kappa : Type :=
- | B                                                               (* 'boxed' kind. *)
- | A.                                                              (* 'any'   kind. *)
+ | B                         (* 'boxed' kind. *)
+ | A.                       (* 'any'   kind. *)
+
+Notation " -A- " := A.
+Notation " -B- " := B.
+
 
 (* The abstract syntax of types. *)
 

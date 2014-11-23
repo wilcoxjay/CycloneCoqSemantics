@@ -64,7 +64,6 @@ Proof.
     exists A.
     constructor.
 
-(*
     elim IHtau1.
     intros [].
     intros IHtau1'.
