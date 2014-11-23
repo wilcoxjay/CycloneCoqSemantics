@@ -28,11 +28,7 @@ Require Import Init.Datatypes.
 
 Inductive Kappa : Type :=
  | B                         (* 'boxed' kind. *)
- | A.                       (* 'any'   kind. *)
-
-Notation " -A- " := A.
-Notation " -B- " := B.
-
+ | A.                        (* 'any'   kind. *)
 
 (* The abstract syntax of types. *)
 
