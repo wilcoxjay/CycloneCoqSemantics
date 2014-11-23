@@ -62,10 +62,10 @@ Proof.
  eauto 10 with Chapter3.
 Qed.
 
-Example K_A_B_test:
+Example K_ptype_test:
   K [] (ptype tau) B.
 Proof.
- apply K_A_B.
+ apply K_ptype.
  eauto 10 with Chapter3.
 Qed.
 
@@ -89,7 +89,7 @@ Qed.
 Example AK_K_AK_test:
   AK [] tau k.
 Proof.
- apply AK_K_AK.
+ apply AK_AK_K.
  eauto 10 with Chapter3.
 Qed.
 
