@@ -23,3 +23,17 @@ Lemma A_6_Substitution_8_3:
 Proof.
 Admitted.    
 
+
+
+Lemma path_length_zero_is_nil :
+  forall (p : P),
+    0 = length p ->
+    p = [].
+Proof.
+  intros p.
+  induction p. 
+  intros.
+  reflexivity.
+  intros. 
+  inversion H.
+Qed.

@@ -51,7 +51,7 @@ Qed.
 
 (* 1 bug found, no amp in source. *)
 Example AmpValue : 
-  Value (amp (p_e (evar 0) [(i_pe (i_i 1))])).
+  Value (amp (p_e (evar 0) [(i_pe one_pe)])).
 Proof.
   apply AmpIsAValue.
 Qed.
@@ -229,9 +229,16 @@ Proof.
   reflexivity.
 Qed.
 
+Example path_eq:
+  path_eq [] [] = true.
+Proof.
+  reflexivity.
+Qed.
+
 Example getUx : 
   getU ((p_e x p0, tau) :: nil) x p0 = Some tau.
 Proof.
+  compute.
   reflexivity.
 Qed.
 

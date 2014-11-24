@@ -182,7 +182,8 @@ Proof.
  reflexivity.
 Qed.
 
-Example subst_E_dot : (subst_E (dot e' i) tau alpha) = dot e' i.
+Print i.
+Example subst_E_dot : (subst_E (dot e' zero_pe) tau alpha) = dot e' zero_pe.
 Proof.
  reflexivity.
 Qed.

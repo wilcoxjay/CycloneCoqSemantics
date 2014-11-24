@@ -41,13 +41,13 @@ Definition t0 := cint.
 Definition t1 := cint.
 
 Example gettype_left_test2:
-  gettype [] x [] (cross t0 t1) [i_pe (i_i 0)] = Some tau.
+  gettype [] x [] (cross t0 t1) [i_pe zero_pe] = Some tau.
 Proof.   
   reflexivity.
 Qed.
 
 Example gettype_right_test2:
-  gettype [] x [] (cross t0 t1) [i_pe (i_i 1)] = Some tau.
+  gettype [] x [] (cross t0 t1) [i_pe one_pe] = Some tau.
 Proof.
   reflexivity.
 Qed.

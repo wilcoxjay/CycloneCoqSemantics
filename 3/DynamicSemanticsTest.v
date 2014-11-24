@@ -30,7 +30,7 @@ Definition s  := (if_s (i_e (i_i 0))
                        (e_s (i_e (i_i 1)))).
 Definition s' := (e_s (i_e (i_i 0))).
 
-Definition e  := (dot (cpair (i_e (i_i 0)) (i_e (i_i 1))) (i_i 0)).
+Definition e  := (dot (cpair (i_e (i_i 0)) (i_e (i_i 1))) zero_pe).
 Definition e' := (i_e (i_i 0)).
 
 Definition hxv := [(x,v)].
@@ -164,8 +164,8 @@ Proof.
 Qed.
 
 Example S_openstar_3_11_test :
- S [] (openstar (dot (p_e x []) (i_i 0))    alpha x s) 
-   [] (openstar      (p_e x [i_pe (i_i 0)]) alpha x s).
+ S [] (openstar (dot (p_e x []) zero_pe)    alpha x s) 
+   [] (openstar      (p_e x [i_pe zero_pe]) alpha x s).
 Proof.
   apply S_openstar_3_11.
   eauto 10 with Chapter3.
@@ -215,14 +215,14 @@ Proof.
 Qed.
 
 Example R_dot_3_4_0_test:
-  R [] (e_s (dot (cpair v0 v1) (i_i 0)))
+  R [] (e_s (dot (cpair v0 v1) zero_pe))
     [] (e_s v0).
 Proof.
   apply R_dot_3_4_0.
 Qed.
 
 Example R_dot_3_4_1_test:
-  R [] (e_s (dot (cpair v0 v1) (i_i 1)))
+  R [] (e_s (dot (cpair v0 v1) one_pe))
     [] (e_s v1).
 Proof.
   apply R_dot_3_4_1.
@@ -263,8 +263,8 @@ Qed.
 (* Originally I had an invalid left expression here. *)
 
 Example R_amp_3_9_1_test:
-  R hxv (e_s (amp (dot (p_e x nil) (i_i 0))))
-    hxv (e_s (amp (p_e x [i_pe (i_i 0)]))).
+  R hxv (e_s (amp (dot (p_e x nil) zero_pe)))
+    hxv (e_s (amp (p_e x [i_pe zero_pe]))).
 Proof.
   apply R_amp_3_9_1.
   apply L_xpi_3_1.
@@ -290,8 +290,8 @@ Proof.
 Qed.
 
 Example R_dot_3_10_2_test:
-  R [] (e_s (dot (star (amp (p_e x [])))  (i_i 0)))
-    [] (e_s (dot (p_e x [])               (i_i 0))).
+  R [] (e_s (dot (star (amp (p_e x [])))  zero_pe))
+    [] (e_s (dot (p_e x [])               zero_pe)).
 Proof.
   apply R_dot_3_10_2.
   eauto 10 with Chapter3.
@@ -377,8 +377,8 @@ Qed.
 (* Test L *)
 
 Example L_xpi_3_1_test:
-  L h (e_s (dot (p_e x nil) (i_i Z0))) 
-    h (e_s (p_e x [(i_pe (i_i Z0))])).
+  L h (e_s (dot (p_e x nil) zero_pe))
+    h (e_s (p_e x [(i_pe zero_pe)])).
 Proof.
  apply L_xpi_3_1.
 Qed.
@@ -400,8 +400,8 @@ Qed.
 
 (* Bug 19, extra quantified variable. *)
 Example L_ei_3_4_test:
-  L [] (e_s (dot (dot (p_e x []) (i_i 0)) (i_i 0)))
-    [] (e_s (dot (p_e x ([] ++ [i_pe (i_i 0)])) (i_i 0))).
+  L [] (e_s (dot (dot (p_e x []) zero_pe) zero_pe))
+    [] (e_s (dot (p_e x ([] ++ [i_pe zero_pe])) zero_pe)).
 Proof.
  apply L_ei_3_4.
  eauto 10 with Chapter3. 

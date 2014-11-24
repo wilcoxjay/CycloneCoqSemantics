@@ -31,8 +31,8 @@ Lemma A_10_Path_Extension_1_A:
     get v p v' ->
     n = length p ->
     ((v' = (cpair v0 v1) ->
-      (get v (p ++ [i_pe (i_i 0)]) v0) /\ 
-      (get v (p ++ [i_pe (i_i 1)]) v1)) \/
+      (get v (p ++ [i_pe zero_pe]) v0) /\ 
+      (get v (p ++ [i_pe one_pe]) v1)) \/
      forall (i : Z) (p' : P) (v'' : E),
       ~(get v (p ++ [i_pe (i_i i)] ++ p') v'')).
 Proof.
@@ -65,8 +65,8 @@ Lemma A_10_Path_Extension_2_A:
     gettype u x p tau p' = Some tau' ->
     tau' = (cross t0 t1) ->
     n = length p' ->
-    (gettype u x p tau (p' ++ [i_pe (i_i 0)]) = Some t0  /\
-     gettype u x p tau (p' ++ [i_pe (i_i 1)]) = Some t1).
+    (gettype u x p tau (p' ++ [i_pe zero_pe]) = Some t0  /\
+     gettype u x p tau (p' ++ [i_pe one_pe]) = Some t1).
 Proof.
   intros.
   induction n.

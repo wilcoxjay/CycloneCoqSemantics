@@ -133,11 +133,11 @@ with      ltyp :   Delta -> Upsilon -> Gamma -> E -> Tau -> Prop :=
 
   | SL_3_3     : forall (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t0 t1 : Tau),
                       ltyp d u g e (cross t0 t1) ->
-                      ltyp d u g (dot e (i_i Z0)) t0
+                      ltyp d u g (dot e zero_pe) t0
 
   | SL_3_4     : forall (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t0 t1 : Tau),
                       ltyp d u g e (cross t0 t1) ->
-                      ltyp d u g (dot e (i_i 1)) t1
+                      ltyp d u g (dot e one_pe) t1
 
 with      rtyp :  Delta -> Upsilon -> Gamma -> E   -> Tau -> Prop := 
   | SR_3_1  : forall (d : Delta) (g : Gamma) (u : Upsilon) 
@@ -156,11 +156,11 @@ with      rtyp :  Delta -> Upsilon -> Gamma -> E   -> Tau -> Prop :=
                             
   | SR_3_3  :  forall (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t0 t1 : Tau),
                         rtyp d u g e (cross t0 t1) ->
-                        rtyp d u g (dot e (i_i Z0)) t0
+                        rtyp d u g (dot e zero_pe) t0
 
   | SR_3_4  : forall (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t0 t1 : Tau),
                       rtyp d u g e (cross t0 t1) ->
-                      rtyp d u g (dot e (i_i 1)) t1
+                      rtyp d u g (dot e one_pe) t1
 
   | SR_3_5  : forall (d : Delta) (u : Upsilon) (g : Gamma) (z : Z),
                    WFC d u g ->

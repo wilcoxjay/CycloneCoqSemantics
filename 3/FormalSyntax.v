@@ -53,6 +53,27 @@ Inductive Tau : Type :=
  | utype  : TVar -> Kappa -> Tau -> Tau              (* Universal   type. *)
  | etype  : Phi -> TVar -> Kappa -> Tau -> Tau.      (* Existential type. *)
 
+Fixpoint removeTVar (alpha : TVar) (tvars : list TVar) : list TVar :=
+  match alpha, tvars with 
+   | _, [] => []
+   | tvar n, (tvar n') :: tvars' =>
+     if beq_nat n n' 
+     then removeTVar alpha tvars' 
+     else (tvar n) :: (removeTVar alpha tvars')
+  end.
+
+
+Fixpoint FreeVariablesTau (tau : Tau) : list TVar :=
+  match tau with 
+   | tv_t alpha   => [alpha]
+   | cint         => []
+   | cross t0 t1  => (FreeVariablesTau t0) ++ (FreeVariablesTau t1)
+   | arrow t0 t1  => (FreeVariablesTau t0) ++ (FreeVariablesTau t1)
+   | ptype t      => (FreeVariablesTau t)
+   | utype alpha _ t    => removeTVar alpha (FreeVariablesTau t)
+   | etype _ alpha _ t  => removeTVar alpha (FreeVariablesTau t)
+  end.
+
 (* The abstract syntax of expression variables. *)
 
 Inductive EVar : Type :=                                        
@@ -64,11 +85,14 @@ Inductive EVar : Type :=
 Inductive I  : Type :=  
  | i_i       : Z -> I.                         (* An integer value in an expression or statement. *)
 
-
-
-Inductive PE : Type :=                        (* Path Element, the empty path is nil. *)
- | i_pe      : I -> PE                        (* An integer in a path. *)
- | u_pe      : PE.                            (* An access into an existential type. *)
+(* Bug 45, should have made this just zero/one not an i to make the inductions
+   work. *)
+Inductive IPE: Type :=
+ | zero_pe                                 (* Access first of pair. *)
+ | one_pe                                  (* Access second of pair. *) 
+with PE : Type :=                          (* Path Element, the empty path is nil. *)
+ | i_pe      : IPE -> PE                   (* An access into a pair. *)
+ | u_pe      : PE.                         (* An access into an existential type. *)
 
 Definition P : Type := list PE.              (* Paths are lists of path elements. *)
 
@@ -88,7 +112,7 @@ with E : Type :=                              (* Terms for expressions. *)
  | amp       : E -> E                         (* Take the address of an expression. *)
  | star      : E -> E                         (* Derefence an expression of a pointer type. *)
  | cpair     : E -> E -> E                    (* A pair in an expression. *)
- | dot       : E -> I -> E                    (* A deference of a pair. *)
+ | dot       : E -> IPE -> E                  (* A deference of a pair. *)
  | assign    : E -> E -> E                    (* Equality expression. *)
  | appl      : E -> E -> E                    (* Application expression. app is append. *)
  | call      : St -> E                        (* A call expression for the semantics use. *)
@@ -109,16 +133,11 @@ Combined Scheme Term_ind_mutual from St_ind_mutual, E_ind_mutual, F_ind_mutual.
 
 Fixpoint path_eq (p q : P) : bool := 
   match p, q with
-    | i_pe (i_i i) :: p', i_pe (i_i i') :: q' => 
-      if Zeq_bool i i'
-      then path_eq p' q'
-      else false
+    | (i_pe zero_pe) :: p', (i_pe zero_pe) :: q' => path_eq p' q'
+    | (i_pe one_pe)  :: p', (i_pe one_pe ) :: q' => path_eq p' q'
     | u_pe :: p', u_pe :: q'  => true
-    | u_pe :: p', i_pe i :: q' => false
-    | i_pe i :: p', up_e :: q' => false
-    | []  ,  []  => true
-    | _   , []   => false
-    | []  , _    => false
+    | [], [] => true
+    | _  , _ => false
   end.
 
 (* Make a value type judgement. The thesis does this syntactically 

@@ -33,7 +33,9 @@ Proof.
   intros d alpha tau tau' k.
   intros gd Kder.
   induction Kder; crush.
-  (* Crush gets 5 goals. *)
+  (* Crush gets 5/9 goals. *)
+  Focus 3.
+  
 Admitted.    
 
 Lemma A_4_Useless_Substitutions_2:
@@ -44,8 +46,26 @@ Lemma A_4_Useless_Substitutions_2:
 Proof.
   intros d alpha tau tau' k.
   intros gd Kder.
-  (* apply A_4_Useless_Substitutions_1. *)
+  induction Kder.
+  reflexivity.
+  (* TODO this is just messed up with repeated hypotheses. *)
+  functional induction (subst_Gamma (g ++ [(x, tau0)]) tau alpha).
+  reflexivity.
+  assert (gd': getD d alpha = None).
+  assumption.
+  apply IHg0 in gd'.
+  rewrite gd'.
+  (* Apply theorem and we're done. *)
+  Focus 2.
+  assumption.
+  assert (J: subst_Tau tau'0 tau alpha = tau'0).
+  apply A_4_Useless_Substitutions_1 with (d:=d) (k:=A).
+  assumption.
+  Focus 2.
+  rewrite J.
+  reflexivity.
 Admitted.    
+
 
 Lemma A_4_Useless_Substitutions_3:
   forall (d : Delta) (alpha : TVar) (tau tau': Tau) (u : Upsilon) (p : P)
@@ -55,8 +75,13 @@ Lemma A_4_Useless_Substitutions_3:
     getU u x p = Some tau' ->
     subst_Tau tau' tau alpha = tau'.
 Proof.
-  intros d alpha tau tau' k.
-  intros gd Kder.
+  intros d alpha tau tau' u p x.
+  intros getder WFUder.
+  induction WFUder.
+  intros false.
+  inversion false.
+  (* jrw, how do I invalidate this match in the context?*)
+  Focus 2.
   (* apply A_4_Useless_Substitutions_1. *)
 Admitted.
 
@@ -66,13 +91,36 @@ Lemma A_5_Commuting_Substitutions:
     NotFreeInTau beta t2 = true ->
     (subst_Tau (subst_Tau t0 t1 beta) t2 alpha) = 
     (subst_Tau (subst_Tau t0 t2 alpha)
-              (subst_Tau t1 t2 alpha)
-              beta).
+               (subst_Tau t1 t2 alpha)
+               beta).
 Proof.
   intros alpha beta t0 t1 t2.
   intros NF.
-  induction t0; crush.
-  (* crush get's six. *)
+  induction t0.
+  (* crush get's 6/7. *)
+  (* So I get an uncrushed goal to work on. *)
+  Focus 2.
+  crush.
+  Focus 2.
+  crush.
+  Focus 2.
+  crush.
+  Focus 2.
+  crush.
+  Focus 2.
+  crush.
+  Focus 2.
+  crush.
+
+  assert (A: (t = beta  /\ t <> alpha) \/
+             (t = alpha \/ t <> beta) \/
+             (t <> beta /\ t <> alpha) \/ 
+             (t = beta /\ t = alpha)).
+  Focus 2.
+  destruct A.
+  destruct H.
+  rewrite H.
+(*  reflexivity. *)
 Admitted.
 
 Lemma A_6_Substitution_1:
@@ -158,6 +206,7 @@ Lemma A_6_Substitution_7:
 Proof.
   intros d u alpha x t1 t2 tau p p' k.
   intros AKder WFUder.
+  (* jrw Warning: Collision between bound variables of name t *)
   functional induction (gettype u x p t1 p'); crush.
   (* crush gets 24/26. *)
 Admitted.    

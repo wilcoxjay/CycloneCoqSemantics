@@ -26,13 +26,13 @@ Fixpoint gettype (u : Upsilon) (x : EVar) (p : P) (tau : Tau) (p' : P) : option 
                 | Some tau => Some tau
             end
       end
-    | _, _, _, (cross t0 t1), ((i_pe (i_i 0)) :: p') =>
-      match gettype u x (p ++ [(i_pe (i_i 0))]) t0 p' with
+    | _, _, _, (cross t0 t1), ((i_pe zero_pe) :: p') =>
+      match gettype u x (p ++ [(i_pe zero_pe)]) t0 p' with
           | None => None
           | Some tau  => Some tau
       end
-    | _, _, _, (cross t0 t1), ((i_pe (i_i 1)) :: p') =>
-      match gettype u x (p ++ [(i_pe (i_i 1))]) t1 p' with
+    | _, _, _, (cross t0 t1), ((i_pe one_pe) :: p') =>
+      match gettype u x (p ++ [(i_pe one_pe)]) t1 p' with
           | None => None
           | Some tau  => Some tau
       end

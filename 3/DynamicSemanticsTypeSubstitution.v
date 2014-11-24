@@ -75,6 +75,8 @@ Fixpoint subst_Gamma (g : Gamma) (tau : Tau) (alpha : TVar) : Gamma :=
            (subst_Gamma g' tau alpha)
 end.
 
+Functional Scheme subst_Gamma_ind := Induction for subst_Gamma Sort Prop.
+
 Fixpoint NotFreeInTau (beta : TVar) (tau : Tau) : bool :=
   let n1 := (match beta with tvar n1 => n1 end) in
   match tau with 

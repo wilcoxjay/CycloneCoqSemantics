@@ -126,11 +126,11 @@ with R : H -> St -> H -> St -> Prop :=
 
  (* Split on 0 or 1. *)
  | R_dot_3_4_0:  forall (h : H) (v0 v1 : E),
-                    R h (e_s (dot (cpair v0 v1) (i_i 0)))
+                    R h (e_s (dot (cpair v0 v1) zero_pe))
                       h (e_s v0)
 
  | R_dot_3_4_1:  forall (h : H) (v0 v1 : E),
-                    R h (e_s (dot (cpair v0 v1) (i_i 1)))
+                    R h (e_s (dot (cpair v0 v1) one_pe))
                       h (e_s v1)
 
  | R_appl_3_5:   forall (h : H) (x : EVar) (tau tau' : Tau) (v : E) (s : St),
@@ -163,10 +163,10 @@ with R : H -> St -> H -> St -> Prop :=
                     R h (e_s e)        h' (e_s e') ->
                     R h (e_s (star e)) h' (e_s (star e'))
 
- | R_dot_3_10_2: forall (h h' : H) (e e' : E) (z : Z),
+ | R_dot_3_10_2: forall (h h' : H) (e e' : E) (ipe : IPE),
                     R h (e_s e) h' (e_s e') ->
-                    R h  (e_s (dot e  (i_i z)))  
-                      h' (e_s (dot e' (i_i z)))
+                    R h  (e_s (dot e  ipe))
+                      h' (e_s (dot e' ipe))
 
  | R_assign_3_10_3: forall (h h' : H) (e e' : E) (x : EVar) (p : P),
                     R h (e_s e) h' (e_s e') ->
@@ -212,9 +212,9 @@ with R : H -> St -> H -> St -> Prop :=
 
 with L : H -> St -> H -> St -> Prop :=
 
- | L_xpi_3_1: forall (h : H) (x : EVar) (p : P) (z : Z),
-                L h (e_s (dot (p_e x p) (i_i z)))
-                  h (e_s (p_e x (p ++ [(i_pe (i_i z))])))
+ | L_xpi_3_1: forall (h : H) (x : EVar) (p : P) (ipe : IPE),
+                L h (e_s (dot (p_e x p) ipe))
+                  h (e_s (p_e x (p ++ [i_pe ipe])))
 
  | L_staramp_3_2: forall (h : H) (x : EVar) (p : P),
                     L h (e_s (star (amp (p_e x p))))
@@ -224,9 +224,9 @@ with L : H -> St -> H -> St -> Prop :=
                  R h (e_s e)        h' (e_s e') ->
                  L h (e_s (star e)) h' (e_s (star e')) 
 
- | L_ei_3_4: forall (h h' : H) (e e': E) (z : Z),
+ | L_ei_3_4: forall (h h' : H) (e e': E) (ipe : IPE),
                L h (e_s e)                h' (e_s e') ->
-               L h (e_s (dot e (i_i z)))  h' (e_s (dot e' (i_i z))).
+               L h (e_s (dot e ipe))  h' (e_s (dot e' ipe)).
 
 Scheme R_ind_mutual := Induction for R Sort Prop
 with   S_ind_mutual := Induction for S Sort Prop

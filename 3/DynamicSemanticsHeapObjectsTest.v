@@ -23,14 +23,14 @@ Proof.
   eauto 10 with Chapter3.
 Qed.
 
-Example test_get_l: get (cpair vi0 vi1) [i_pe (i_i 0)] vi0. 
+Example test_get_l: get (cpair vi0 vi1) [i_pe zero_pe] vi0. 
 Proof.
   apply get_l;    
   eauto 10 with Chapter3.
 Qed.
 
 Example test_get_r: 
-  get (cpair vi0 vi1) [i_pe (i_i 1)] vi1.
+  get (cpair vi0 vi1) [i_pe one_pe] vi1.
 Proof.
   apply get_r; 
   eauto 10 with Chapter3.
@@ -56,7 +56,7 @@ Qed.
 
 Example test_set_l:                 
   set (cpair (i_e (i_i 0)) (i_e (i_i 1)))
-      ([i_pe (i_i 0)] ++ [])
+      ([i_pe zero_pe] ++ [])
       (i_e (i_i 2))
       (cpair (i_e (i_i 2)) (i_e (i_i 1))).
 Proof.
@@ -66,7 +66,7 @@ Qed.
 
 Example test_set_r:
   set (cpair (i_e (i_i 0)) (i_e (i_i 1)))
-      ([i_pe (i_i 1)] ++ [])
+      ([i_pe one_pe] ++ [])
       (i_e (i_i 2))
       (cpair (i_e (i_i 0)) (i_e (i_i 2))).
 Proof.

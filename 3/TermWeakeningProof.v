@@ -34,7 +34,8 @@ Proof.
   intros gettypederivation.
   functional induction (gettype u x p tau p'); crush.
   (* Warning: Collision between bound varibles of name x *)
-  (* Crush gets 25. *)
+  (* Crush gets 25/26 *)
+  
 Admitted.
 
 Lemma A_2_Term_Weakening_2_3_4 :
@@ -55,5 +56,5 @@ Proof.
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
               ltyp d (u ++ u') (g++g') e tau)); crush.
-  (* Crush get's 3. *)
+  (* Crush get's 3/26 *)
 Admitted.

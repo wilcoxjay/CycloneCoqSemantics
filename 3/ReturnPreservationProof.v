@@ -39,9 +39,135 @@ Fixpoint concreteTau (tau : Tau) : Prop :=
     | _ => False
 end.
 
-Print Tau_ind.
-Print ex_intro.
+Check AK_AK_K.
+Check K_B.
+Check getD [((tvar 0),B)] (tvar 0) = Some B.
+Check eq.
 
+Lemma eq7:
+  forall (n : nat),
+    n = n.
+Proof.
+  intros n.
+  reflexivity.
+Qed.
+
+Print eq7.
+
+Inductive getD' : Delta-> TVar -> Kappa -> Prop :=
+  | getD_top  : forall (d : Delta) (alpha : TVar) (k : Kappa),
+                 getD' (cons (alpha,k) d) alpha k
+  | getD_next : forall (d : Delta) (alpha beta : TVar) (k k': Kappa),
+                 alpha <> beta ->
+                 getD' d alpha k ->
+                 getD' (cons (beta,k') d) alpha k.
+
+
+Lemma fred:
+  forall (alpha : TVar),
+    getD' [(alpha,B)] alpha B.
+Proof.
+  intros alpha.
+  constructor.
+Qed.
+
+Set Printing All.
+Print fred.
+
+Check fred.
+
+(*
+Check 
+fun alpha : TVar => 
+  getD_top (@nil (prod TVar Kappa)) alpha B : forall alpha : TVar,
+       getD'
+         (@cons (prod TVar Kappa) (@pair TVar Kappa alpha B)
+            (@nil (prod TVar Kappa))) alpha B.
+
+Definition fredie (alpha : TVar) :=
+  forall alpha: TVar, 
+    @eq_refl (option Kappa) (@Some Kappa B)
+    : @eq (option Kappa)
+          (getD
+             (@cons (prod TVar Kappa) (@pair TVar Kappa alpha B)
+                    (@nil (prod TVar Kappa))) (tvar O)) 
+          (@Some Kappa B).
+Check fredie.
+*)
+
+(* TODO Will I need to recurse with delta.
+   What happens if I get back a B in some cases that I want an A?
+   Can I just build the context once with a B for all free type variables? 
+  *)
+
+Fixpoint KTau (d : Delta) (tau : Tau) : option (K d tau _) :=
+  match tau with
+    | cint              => Some (K_B_A d cint (K_int d))
+    | cross t0 t1       =>
+      match (KTau d t0), (KTau d t1) with
+        | Some p0, Some p1 => Some (K_cross d t0 t1 p0 p1)
+        | _, _ => None
+      end
+    | arrow t0 t1       =>
+      match (KTau d t0), (KTau d t1) with
+        | Some p0, Some p1 => Some (K_arrow d t0 t1 p0 p1)
+        | _, _ => None
+      end
+    | ptype t0          => 
+      match (KTau d t0) with
+        | Some p0 => Some (K_B_A d (ptype t0) (K_ptype d t0 p0))
+        | _       => None
+      end
+    (* Some (K_B d alpha (eq (getD d alpha) (Some B))) *)
+    | tv_t alpha          => None 
+
+    (* Shit I'm not going to be able to prove getD d alpha = None. *)
+    | utype alpha k tau   => 
+      match (KTau (d ++ [(alpha,k)]) tau) with
+        (* | Some p0 => Some (K_utype d alpha k tau p0) *)
+       | _ => None
+      end
+    | etype phi alpha k tau  => 
+      match (KTau (d ++ [(alpha,k)]) tau) with
+        (* | Some p0 => Some (K_etype d alpha k tau phi p0)  *)
+       | _ => None
+      end
+  end.
+
+Fixpoint AKTau (tau : Tau) (d : Delta) : option (AK d tau _) := 
+  match tau with
+      | cint              => Some (AK_AK_K d cint A (K_B_A d cint (K_int d)))
+      | cross t0 t1       => 
+        match (KTau d (cross t0 t1)) with 
+          | Some p0 => Some (AK_AK_K d (cross t0 t1) A p0)
+          | _ => None
+        end
+      | arrow t0 t1       => 
+        match (KTau d (arrow t0 t1)) with
+            | Some p0 => Some (AK_AK_K d (arrow t0 t1) A p0)
+            | _ => None
+        end
+      | ptype t0          => 
+        match (KTau d (ptype t0)) with
+          | Some p0 => Some (AK_AK_K d (ptype t0) A p0)
+          | _ => None
+        end
+      | tv_t alpha => None
+      (* Some (AK_AK_K (d ++ [(alpha,B)]) (tv_t alpha) B (K_B (d ++ [(alpha,B)]) alpha)) *)
+      | _ => None
+  end.
+
+Fixpoint BoxEm (taus : list TVar) : Delta :=
+  match taus with 
+    | [] => nil
+    | alpha :: taus' => (alpha,B) :: BoxEm taus'
+  end.
+
+Fixpoint AKTau' (tau : Tau) : option (AK _ tau _) := 
+  AKTau tau (BoxEm (FreeVariablesTau tau)).
+
+(* This is too hard to prove due to the existentials. 
+   I need a function to produce the right AK'ing. *)
 Lemma All_Types_Have_A_Kinding:
     forall (tau : Tau), 
       exists (d : Delta) (k : Kappa),
@@ -82,7 +208,7 @@ Proof.
     inversion IHtau2''.
     crush.
     apply K_cross.
-
+(*
 
 
    inversion IHtau1 with (d:=[]).
@@ -125,38 +251,6 @@ Proof.
 *)
 Admitted.
 
-Lemma All_Types_Have_A_Kinding :
-  forall (tau : Tau), 
-    exists (d: Delta) (k : Kappa),
-      AK d tau k.
-Proof.
-(*
-  intros tau.
-  induction tau.
-  Case "tv_ t t".
-  Focus 3.
-  Case "cross".
-  exists [].
-  assert (I: AK [] tau1 B).
-  assert (I: AK [] tau2 B).
-  constructor.
-  constructor.
-  (* Thesis bug? Is this a bug in the thesis? *)
-
-  apply AK_K_AK in H.
-  apply K_cross.
-
-  
-  assumption.
-
-  Case "cint".
-   exists [].
-   exists A.
-   constructor.
-   constructor.
-   constructor.
-*)  
-Admitted.
 
 Lemma A_8_Return_Preservation:
   forall (s : St),

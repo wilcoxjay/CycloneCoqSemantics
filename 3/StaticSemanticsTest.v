@@ -99,7 +99,7 @@ Proof.
 Qed.
 
 Example SL_3_3_test:
-  ltyp [] [] [(x,(cross cint cint))] (dot (p_e x []) (i_i 0)) cint.
+  ltyp [] [] [(x,(cross cint cint))] (dot (p_e x []) zero_pe) cint.
 Proof.
   apply SL_3_3 with (t1:=cint). 
   apply SL_3_1 with (tau':= (cross cint cint)); 
@@ -107,7 +107,7 @@ Proof.
 Qed.
 
 Example SL_3_4_test:
-  ltyp [] [] [(x,(cross cint cint))] (dot (p_e x []) (i_i 1)) cint.
+  ltyp [] [] [(x,(cross cint cint))] (dot (p_e x []) one_pe) cint.
 Proof.
 (* Again syntax direction. *)
   apply SL_3_4 with (t0:=cint);   eauto 10 with Chapter3.
@@ -174,7 +174,7 @@ Qed.
 Definition axaa  := etype aliases alpha A (cross (tv_t alpha) (tv_t alpha)).
 Definition paxaa := pack cint (cpair (i_e (i_i 0)) (i_e (i_i 1))) axaa.
 (* alpha is bound here to the witness type so we can pass it on inside. *)
-Definition oaxaa := open paxaa alpha x (e_s (p_e x [i_pe (i_i 0)])).
+Definition oaxaa := open paxaa alpha x (e_s (p_e x [i_pe zero_pe])).
 
 (* Bug 31, aliases where phi is wanted in styp_open_3_7. *)
 (* Bug 32, phi  where alieases is wanted in styp_open_3_8. *)
@@ -185,7 +185,7 @@ Example styp_open_test:
                    (cpair (i_e (i_i 0)) (i_e (i_i 1)))
                    (etype aliases alpha B 
                           (cross (tv_t alpha) (tv_t alpha))))
-             alpha x (e_s (p_e x [i_pe (i_i 0)]))).
+             alpha x (e_s (p_e x [i_pe zero_pe]))).
 Proof.
   apply styp_open_3_7
         with (p    := aliases)
@@ -208,7 +208,7 @@ Example styp_openstar_test:
                    (cpair (i_e (i_i 0)) (i_e (i_i 1)))
                    (etype aliases alpha B 
                           (cross (tv_t alpha) (tv_t alpha))))
-             alpha x (e_s (p_e x [i_pe (i_i 0)]))).
+             alpha x (e_s (p_e x [i_pe zero_pe]))).
 Proof.
   apply styp_openstar_3_8
         with (k    := B)
@@ -239,7 +239,7 @@ Proof.
 Qed.
       
 Example SR_3_3_test:
-  rtyp [] [] [] (dot (cpair (i_e (i_i 0)) (i_e (i_i 1))) (i_i Z0)) cint.
+  rtyp [] [] [] (dot (cpair (i_e (i_i 0)) (i_e (i_i 1))) zero_pe) cint.
 Proof.
   apply SR_3_3 with (t1:=cint);
   eauto 10 with Chapter3.
@@ -247,7 +247,7 @@ Qed.
 
 Example SR_3_4_test:
   rtyp [] [] ([] ++ [(x,(cross cint cint))])
-       (dot (p_e x []) (i_i 1)) cint.
+       (dot (p_e x []) one_pe) cint.
 Proof.
   apply SR_3_4 with (t0:= cint).
   eauto 10 with Chapter3.
@@ -400,7 +400,13 @@ Proof.
   (tau   := (cross cint cint))
   (alpha := alpha);
   eauto 10 with Chapter3.
-Qed.
+  constructor.
+  constructor.
+  constructor.
+  constructor.
+  constructor.
+   (* Bug, after get(v,[],v) fix. *)
+Admitted.
 
 (* Test prog. *)
 
