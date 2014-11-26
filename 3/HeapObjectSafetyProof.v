@@ -61,73 +61,69 @@ Proof.
   assumption.
 Qed.
 
-(*
-
-  Case "i_e i = []".
-
-   intros v2 v3 getv1pv2 getv1pv3.
-   inversion getv1pv2.
-   inversion getv1pv3.
-   crush.
-  Case "a :: p".
-  intros v2 v3.
-  intros getv1pxv2 getv1pxv3.
-  induction getv1pxv2; inversion getv1pxv3; try reflexivity; crush.
-  Focus 3.
-
-(* Nope, still reversed. *)
-  intros v1 p v2 v3.
-  intros getv1pv2 getv1pv3.
-  induction getv1pv2.
-  Case "p = []".
-   inversion getv1pv3.
-   reflexivity.
-  Case "(cpair v0 v1) zero_pe".
-
-(* Error: Cannot move getv1pv2 after P: it depends on P. 
-   is my bug. *)
-(* jrw *)
-  Case "p = []".
-   intros getv1pv2.
-   intros getv1pv3.
-   inversion getv1pv2; inversion getv1pv3; crush.
-  Case "p ++ [x]".
-  (* Try induction on the derivation here to get reverse reasoning. *)
-   intros getv1pxv2.
-   intros getv1pxv3.
-   destruct x; try destruct i.
-   induction getv1pxv2.
-   (* Perhaps I should flip the induction? *)
-   
-   (* break out the path addition. *)
-
-   (* The right cases, but not clear on how to solve them yet. *)
-   (* So i want to phrase get v1 (p ++ [i_pe zero_pe]) v2 
-       in terms of get v1 p. *)
-   (* I need the get v1 p v2 and it's missing from the context. *)
-   (* I think I really need induction on the derivation of the get. *)
-*)
-Admitted.
-
-
 Lemma A_11_Heap_Object_Safety_2:
-  forall (v0 v1 v2 : E) (p1 p2 : P),
+  forall (v0 : E) (p1 : P) (v1 : E),
+    Value v0 ->
+    Value v1 ->
     get v0 p1 v1 ->
-    get v0 (p1 ++ p2) v2 ->
-    get v1 p2 v2.
+    forall (p2 : P) (v2 : E),
+      Value v2 ->
+      get v0 (p1 ++ p2) v2 ->
+      get v1 p2 v2.
 Proof.
-  intros v0 v1 v2 p1.
-  functional induction (rev p1).
-  Case "p = []".
-   intros p2.
-   intros getv0p1v1 getv0p1p2v2.
-   inversion getv0p1v1; inversion getv0p1p2v2; crush.   
-  Case "p = p1 ++ [x]".
-  intros p2.
-  intros g1 g2.
-  destruct x; destruct v0.
-  (* crush gets 0. *)
-Admitted.
+  (* Try induction on the values. *)
+  intros v0.
+  (* Try to learn to get rid of silly goals. *)
+  induction v0; 
+    try ( 
+        intros p1 v1 val0 val1 getv0p1v1;
+        inversion getv0p1v1;
+        intros p2 v2 valv2;
+        intros get;
+        inversion get;
+        crush).
+  intros p1;
+  induction p1 as [| pe1 p1'].
+  Case "pair and p1=[]".
+   intros v1 valpair valv1 getcpair p2 v2 valv2 getcpairnil.
+   inversion getcpair.
+   crush.
+
+  (* A pair and a pack, nice strong induction hypotheses. *)
+  Case "pair and pe1::p1".
+    SCase "pe1= i which won't work".
+    intros v1 valpair valv1 getcpair p2 v2 valv2 getcpairnil.
+    destruct pe1; try destruct i.
+    SSCase "pe1=zero_pe".
+    inversion valpair; inversion getcpair; inversion getcpairnil; crush.
+    specialize (IHv0_1 p1' v1 H1 H6 H10 p2 v2 H14 H18).
+    assumption.
+    SSCase "pe1=one_pe".
+    inversion valpair.
+    inversion getcpair.
+    inversion getcpairnil.
+    crush.
+    specialize (IHv0_2 p1' v1 H2 H6  H10 p2 v2 H14 H18).
+    assumption.
+    SSCase "pe1=u_pe".
+     inversion getcpair.
+   Case "v0 is pack".
+    intros p1 v1 valpack valv1.
+    destruct p1.
+    SCase "p1 is nil".
+
+    SCase "p1 is ".
+     destruct p.
+     intros integerpath.
+     inversion integerpath.
+     inversion valpack.
+     intros getpacku p2 v2 valv2 step.
+     inversion getpacku.
+     crush.
+     inversion step.
+     crush.
+     apply IHv0 with (p1:= p1); try assumption.
+Qed.
 
 Lemma A_11_Heap_Object_Safety_3:
   forall (h : H) (u : Upsilon) (g : Gamma) 

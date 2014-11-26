@@ -160,8 +160,10 @@ Inductive Value : E -> Prop :=
        Value v1 ->
        Value (cpair v0 v1)
 
+(* Bug 40, forget a subvalue here. *)
  | PackIsAValue :
      forall (tau tau': Tau) (v : E),
+       Value v -> 
        Value (pack tau v tau').
 
 (* The abstract syntax of H values. *)

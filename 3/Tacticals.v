@@ -91,6 +91,10 @@ Ltac right_list_matcher :=
      | [ |- WFDG _ ?x           ]   
        => try (right_list_recurse_gamma x; constructor)
 
+     | [ |- K (?x ++ ?y) _ _ _   ]   => try constructor
+     | [ |- K ?x _ _ _           ]   
+       => try (right_list_recurse_gamma x; constructor)
+
      | [ |- refp _ (?x ++ ?y)   ]   => try constructor
      | [ |- refp _ ?x           ]   
        => try (right_list_recurse_upsilon x; constructor)

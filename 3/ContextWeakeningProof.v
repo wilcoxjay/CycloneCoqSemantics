@@ -39,10 +39,13 @@ Lemma A_1_Context_Weakening_1:
 Proof.
   intros d tau k Kder.
   induction Kder.
+
   (* crush gets zero. *)
 (*  +Case "tau = cint". *)
+(*
   intros d'.
   apply K_int.
+*)
   (* 
   +Case "tau = (tv_t alpha)".
   (* TODO context match issue, not uniquness of alpha in d. *)
@@ -75,7 +78,7 @@ Proof.
   intros u d x p WFUder tau getUder.
   induction WFUder.
   (* crush gets zero. *)
-  +Case "u nil".
+ +Case "u nil".
   compute in getUder.
   destruct x in getUder.
   inversion getUder.

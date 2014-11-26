@@ -1,6 +1,11 @@
  This is the definition of formal syntax for Dan Grossman's Thesis, 
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
+   TODO learn pose.
+
+   TODO kinding is wrong, either dan mean \tau for concrete type or 
+       there is an implementation or thesis bug.
+
    TODO Check that I have the tightest quantifiers in theorems if this
      works in Return Preservation.
 

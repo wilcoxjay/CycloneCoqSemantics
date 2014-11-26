@@ -75,6 +75,7 @@ Proof.
                 (rt : rtyp d u g e t) =>
               (WFC d u g /\  K d tau A))); crush.
   (* Crush gets 21/26 subgoals. *)
+(*
 
   Focus 4.
   destruct r.
@@ -108,7 +109,7 @@ Proof.
   assumption.
 
   (* goal: WFDG d0 g0 and H WFDG d0 (g0 + ...). So why an't I get wfdg d0 g0? *)
-  
+*)  
 
 Admitted.
 

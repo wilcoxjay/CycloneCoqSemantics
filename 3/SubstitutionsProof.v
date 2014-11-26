@@ -79,11 +79,11 @@ Proof.
   intros getder WFUder.
   induction WFUder.
   intros false.
-  inversion false.
-  (* jrw, how do I invalidate this match in the context?*)
-  Focus 2.
+  destruct x; discriminate. 
+  (* or destruct x; inversion false. *)
   (* apply A_4_Useless_Substitutions_1. *)
 Admitted.
+
 
 (* TODO do I have the ordering right? *)
 Lemma A_5_Commuting_Substitutions:
@@ -207,7 +207,7 @@ Proof.
   intros d u alpha x t1 t2 tau p p' k.
   intros AKder WFUder.
   (* jrw Warning: Collision between bound variables of name t *)
-  functional induction (gettype u x p t1 p'); crush.
+  functional induction (gettype u x p t1 p').
   (* crush gets 24/26. *)
 Admitted.    
 

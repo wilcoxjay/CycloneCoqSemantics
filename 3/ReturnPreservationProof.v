@@ -100,8 +100,8 @@ Check fredie.
    Can I just build the context once with a B for all free type variables? 
   *)
 
-Fixpoint KTau (d : Delta) (tau : Tau) : option (K d tau _) :=
-  match tau with
+Fixpoint KTau (d : Delta) (tau : Tau) : option (K d tau A).
+  refine match tau with
     | cint              => Some (K_B_A d cint (K_int d))
     | cross t0 t1       =>
       match (KTau d t0), (KTau d t1) with
@@ -119,7 +119,7 @@ Fixpoint KTau (d : Delta) (tau : Tau) : option (K d tau _) :=
         | _       => None
       end
     (* Some (K_B d alpha (eq (getD d alpha) (Some B))) *)
-    | tv_t alpha          => None 
+    | tv_t alpha          => _
 
     (* Shit I'm not going to be able to prove getD d alpha = None. *)
     | utype alpha k tau   => 
@@ -133,6 +133,18 @@ Fixpoint KTau (d : Delta) (tau : Tau) : option (K d tau _) :=
        | _ => None
       end
   end.
+  apply Some.
+  apply K_B_A.
+  
+  apply K_B.
+  Unset Printing All.
+  
+Lemma KTau_lemma : 
+  forall d tau,
+    (* TODO: "d covers free variables in tau (and they're boxed)" -> *)
+    K d tau A.
+Proof.
+  induction tau.
 
 Fixpoint AKTau (tau : Tau) (d : Delta) : option (AK d tau _) := 
   match tau with
