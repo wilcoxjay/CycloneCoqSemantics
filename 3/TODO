@@ -1,31 +1,23 @@
  This is the definition of formal syntax for Dan Grossman's Thesis, 
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
-   TODO learn pose.
+   TODO Check that I have the tightest quantifiers in theorems
+      as this was required in Return Preservation.
 
    TODO kinding is wrong, either dan mean \tau for concrete type or 
        there is an implementation or thesis bug.
 
-   TODO Check that I have the tightest quantifiers in theorems if this
-     works in Return Preservation.
+   TODO think about functions vs relations for get proofs.
 
    TODO No uniqueness in the context wf rules. 
 
    TODO Think about alpha conversion.
 
-   TODO Get the inductive cases for simultaneous induction worked out.
-    Have: term
-    Need: gettype (function induction may work)
-          typ*
-          S/R/L - 
-    Is not mutual:
-       gettype
-       WF*
+   TODO  https://github.com/wilcoxjay/tactics
+
+   TODO learn pose.
 
    TODO Should I add syntactic sugar?
-
-   TODO Should I break each proof/lemma off into it's own file for
-    efficiency? And the subsets then into their own files?
 
    TODO get dan to answer questions.
 
@@ -33,3 +25,4 @@
 
    TODO think about how I should actually prove things in Coq? What's
     for free. 
+

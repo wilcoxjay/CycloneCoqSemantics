@@ -25,37 +25,35 @@ Require Export CpdtTactics.
 (* Ask Dan if this is correct. 
    TODO Interesting that we have i here where only 0/1 really do. *)
 Lemma A_10_Path_Extension_1_A:
-  forall (v v' v0 v1 : E) (p : P) (n : nat),
+  forall (v v' v0 v1 : E) (p : P),
     Value v  ->
     Value v' ->
     get v p v' ->
-    n = length p ->
-    ((v' = (cpair v0 v1) ->
-      (get v (p ++ [i_pe zero_pe]) v0) /\ 
-      (get v (p ++ [i_pe one_pe]) v1)) \/
-     forall (i : Z) (p' : P) (v'' : E),
-      ~(get v (p ++ [i_pe (i_i i)] ++ p') v'')).
+    v' = (cpair v0 v1) ->
+    (get v (p ++ [i_pe zero_pe]) v0 /\ 
+     get v (p ++ [i_pe one_pe]) v1) \/
+    forall (p' : P) (v'' : E),
+      ~(get v (p ++ [i_pe one_pe] ++ p') v'').
 Proof.
-  intros v v' v0 v1 p n.
+  intros v v' v0 v1 p.
   intros valv valv' getvpv'.
-  induction n.
+  (* TODO induction n. not likely *)
 Admitted.
 
 Lemma A_10_Path_Extension_1_B:
   forall (v v' v0 : E) (tau tau' : Tau) (alpha : TVar) (k : Kappa)
-         (p : P) (n : nat),
+         (p : P),
     Value v  ->
     Value v' ->
     get v p v' ->
-    n = length p ->
-    ((v' = (pack tau' v0 (etype aliases alpha k tau)) ->
-      (get v (p ++ [u_pe]) v0)) \/
+    v' = (pack tau' v0 (etype aliases alpha k tau)) ->
+    get v (p ++ [u_pe]) v0 \/
      forall (p' : P) (v'' : E),
-      ~(get v (p ++ [u_pe] ++ p') v'')).
+      ~(get v (p ++ [u_pe] ++ p') v'').
 Proof.
-  intros v v' v0 v1 p n.
+  intros v v' v0 v1 p.
   intros valv valv' getvpv'.
-  induction n.
+  (* induction n. Not likely. *)
   (* crush gets 0. *)
 Admitted.
 

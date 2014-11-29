@@ -12,6 +12,7 @@ Require Import ZArith.
 Require Import Coq.Bool.Bool.
 
 Require Import FormalSyntax.
+Require Import Case.
 
 Fixpoint subst_Tau (t : Tau) (tau : Tau) (alpha : TVar) {struct t} : Tau :=
   match t with
@@ -74,8 +75,28 @@ Fixpoint subst_Gamma (g : Gamma) (tau : Tau) (alpha : TVar) : Gamma :=
      (x, (subst_Tau tau' tau alpha)) ::
            (subst_Gamma g' tau alpha)
 end.
-
 Functional Scheme subst_Gamma_ind := Induction for subst_Gamma Sort Prop.
+
+Lemma subst_Gamma_over_app:
+  forall (tau : Tau) (alpha : TVar) (x y : Gamma),
+    subst_Gamma (x ++ y) tau alpha = 
+    (subst_Gamma x tau alpha) ++ (subst_Gamma y tau alpha).
+Proof.
+  intros tau alpha x y.
+  induction x.
+  Case "x = []".
+   simpl.
+   reflexivity.
+  Case "x = a :: x".
+  destruct a.
+  unfold subst_Gamma.
+  fold subst_Gamma.
+  rewrite <- app_comm_cons.
+  unfold subst_Gamma.
+  fold subst_Gamma.
+  rewrite IHx.
+  reflexivity.
+Qed.
 
 Fixpoint NotFreeInTau (beta : TVar) (tau : Tau) : bool :=
   let n1 := (match beta with tvar n1 => n1 end) in

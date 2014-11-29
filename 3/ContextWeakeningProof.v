@@ -35,7 +35,8 @@ Require Export Case.
 Lemma A_1_Context_Weakening_1:
   forall (d : Delta) (tau : Tau) (k : Kappa),
     K d tau k ->
-    forall (d' : Delta), K (d ++ d') tau k.
+    forall (d' : Delta), 
+      K (d ++ d') tau k.
 Proof.
   intros d tau k Kder.
   induction Kder.
@@ -68,14 +69,13 @@ Admitted.
 (* TODO I'm going to have to get WFU u into the induction to keep the variable constraint
  from above. *)
 Lemma A_1_Context_Weakening_2:
-  forall (u : Upsilon) (d : Delta)
-         (x : EVar) (p : P),
+  forall (u : Upsilon),
     WFU u ->
-    forall (tau : Tau), 
+    forall (d : Delta) (x : EVar) (p : P) (tau : Tau), 
       getU u x p = Some tau ->
       K d tau A.
 Proof.
-  intros u d x p WFUder tau getUder.
+  intros u WFUder d x p tau getUder.
   induction WFUder.
   (* crush gets zero. *)
  +Case "u nil".

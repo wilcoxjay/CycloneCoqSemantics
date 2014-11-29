@@ -29,24 +29,29 @@ Lemma A_14_Term_Progress_1:
     ltyp [] u g e tau -> 
     (exists (x : EVar) (p : P), e = (p_e x p)) \/ 
     (exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e')).
-
 Proof.
   intros g u h e tau.
   intros htypder refpder.
   apply (typ_ind_mutual 
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
+              styp d u g t s ->
               (exists (x : EVar) (p : P), e = (p_e x p)) \/ 
               (exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e')))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
+              ltyp d u g  e tau' ->
               (exists (x : EVar) (p : P), e = (p_e x p)) \/ 
               (exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e')))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
+              rtyp d u g e t -> 
               (exists (x : EVar) (p : P), e = (p_e x p)) \/ 
               (exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e')))).
   (* crush goes up many goals here. *)
+  Focus 3.
+  
+
 Admitted.
 
 Lemma A_14_Term_Progress_2:
@@ -62,14 +67,17 @@ Proof.
   apply (typ_ind_mutual 
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
+              styp d u g t s ->
               (Value e \/
                exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
+              ltyp d u g  e tau' ->
               (Value e \/
                exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
+              rtyp d u g e t ->
               (Value e \/
                exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')))).
   (* crush goes up many goals here. *)
@@ -94,13 +102,16 @@ Proof.
   apply (typ_ind_mutual 
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
+              styp d u g t s ->
               (exists (v : E), Value v /\ (s = (e_s v) \/ s = retn v)) \/
               (exists (h' : H) (s' : St), S h s h' s'))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
+              ltyp d u g  e tau' ->
               (exists (h' : H) (s' : St), S h (e_s e) h' s'))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
+              rtyp d u g e t ->
               (exists (h' : H) (s' : St), S h (e_s e) h' s'))).
   (* crush goes up many goals here. *)
 Admitted.

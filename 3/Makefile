@@ -44,6 +44,7 @@ depends:
 	coqdep -I . *.v > coq.depends 
 
 TODOS:
+	grep admit *.v | grep -v Proof | wc -l
 	grep Admitted *.v | grep -v Proof | wc -l
 	grep Admitted *.v | grep Proof | wc -l
 	grep TODO TODO *.v | wc -l
@@ -61,6 +62,9 @@ ttpbis:
 	grep -e Lemma -e Theorem *Proof.v | grep -v Subset | wc -l
 	echo "Proven".
 	grep -e Qed *Proof.v | grep -v Subset | wc -l
+	echo "Cases missing".
+	grep admit *.v | grep Proof | wc -l
+
 
 dan: 
 	echo "Ask Dan's"

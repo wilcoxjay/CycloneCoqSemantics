@@ -26,14 +26,15 @@ Require Export ContextWeakeningProof.
 Require Export SubstitutionsProof.
 
 Lemma A_7_Typing_Well_Formedness_1 :
-  forall (d: Delta) (u : Upsilon) (x : EVar) (tau tau' : Tau) (p p' : P),
+  forall (u : Upsilon),
     WFU u ->
-    K d tau A ->
-    gettype u x p tau p' = Some tau' ->
-    K d tau' A.
+    forall (d: Delta) (tau : Tau),
+      K d tau A ->
+      forall (x : EVar) (tau' : Tau) (p p' : P),
+        gettype u x p tau p' = Some tau' ->
+        K d tau' A.
 Proof.
-  intros d u x tau tau' p p'.
-  intros WFUder Kder.
+  intros u WFUder d tau Kder x tau' p p'. 
   functional induction (gettype u x p tau p'); crush.   (* Wow, crush gets 23/26. *)
   inversion Kder.
   inversion H.
@@ -44,6 +45,7 @@ Proof.
   inversion Kder.
   inversion H.
   crush' true fail.
+  (* These two are useless. *)
   crush' [A_1_Context_Weakening_2] [e4].
   crush' [A_6_Substitution_1]  [e4].
   (* Down to one goal. *)
@@ -54,27 +56,29 @@ Proof.
   inversion e4.
   crush' [A_1_Context_Weakening_2] fail.
   crush' [A_6_Substitution_1]      fail.
-
 Admitted.
 
 Lemma A_7_Typing_Well_Formedness_2 :
-  forall (d: Delta) (g : Gamma) (u : Upsilon) (tau : Tau) (e : E),
-  ltyp d u g e tau ->
-  (WFC d u g /\ 
-   K d tau A).
+  forall (d: Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau),
+    ltyp d u g e tau ->
+    (WFC d u g /\ 
+     K d tau A).
 Proof.
-  intros d g u tau e.
+  intros d u g e tau.
   apply (typ_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
+              styp d u g t s ->
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
+              ltyp d u g  e tau' -> 
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
+              rtyp d u g e t -> 
               (WFC d u g /\  K d tau A))); crush.
-  (* Crush gets 21/26 subgoals. *)
+  (* Crush gets 21/27 subgoals. *)
 (*
 
   Focus 4.
@@ -123,12 +127,15 @@ Proof.
   apply (typ_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
+              styp d u g t s ->
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
+              ltyp d u g  e tau' -> 
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
+              rtyp d u g e t ->
               (WFC d u g /\  K d tau A))); crush.
   (* Wow crush gets 21/26. *)
 Admitted.
@@ -142,12 +149,15 @@ Proof.
   apply (typ_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
+              styp d u g t s ->
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
+              ltyp d u g  e tau' ->
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
+              rtyp d u g e t ->
               (WFC d u g /\  K d tau A))).
   (* crush gets 21/26. *)
   (* Am I losing information in these cases with Crush? *)
@@ -177,13 +187,16 @@ Proof.
   apply (typ_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
+                 styp d u g t s -> 
                   ret s ->
                   K d tau A)
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
+                 ltyp d u g  e tau' ->
                   K d tau A)
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
+                 rtyp d u g e t -> 
                   K d tau A)); crush.
   (* Crush gets 21/16 goals. *)
 Admitted.

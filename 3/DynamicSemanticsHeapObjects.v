@@ -13,8 +13,7 @@ Require Import Init.Datatypes.
 
 Require Export FormalSyntax.
 
-(* TODO can I make get and set assume Value v? then make then functions? *)
-
+(* TODO When I dish a value out, it's a value. *)
 Inductive get : E -> P -> E -> Prop := 
 (* Dan Bug, v' required. *)
 (* Bug X, forgot value v', no it's v.  *)

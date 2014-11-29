@@ -39,21 +39,6 @@ Fixpoint concreteTau (tau : Tau) : Prop :=
     | _ => False
 end.
 
-Check AK_AK_K.
-Check K_B.
-Check getD [((tvar 0),B)] (tvar 0) = Some B.
-Check eq.
-
-Lemma eq7:
-  forall (n : nat),
-    n = n.
-Proof.
-  intros n.
-  reflexivity.
-Qed.
-
-Print eq7.
-
 Inductive getD' : Delta-> TVar -> Kappa -> Prop :=
   | getD_top  : forall (d : Delta) (alpha : TVar) (k : Kappa),
                  getD' (cons (alpha,k) d) alpha k
@@ -62,46 +47,14 @@ Inductive getD' : Delta-> TVar -> Kappa -> Prop :=
                  getD' d alpha k ->
                  getD' (cons (beta,k') d) alpha k.
 
-
-Lemma fred:
-  forall (alpha : TVar),
-    getD' [(alpha,B)] alpha B.
-Proof.
-  intros alpha.
-  constructor.
-Qed.
-
-Set Printing All.
-Print fred.
-
-Check fred.
-
-(*
-Check 
-fun alpha : TVar => 
-  getD_top (@nil (prod TVar Kappa)) alpha B : forall alpha : TVar,
-       getD'
-         (@cons (prod TVar Kappa) (@pair TVar Kappa alpha B)
-            (@nil (prod TVar Kappa))) alpha B.
-
-Definition fredie (alpha : TVar) :=
-  forall alpha: TVar, 
-    @eq_refl (option Kappa) (@Some Kappa B)
-    : @eq (option Kappa)
-          (getD
-             (@cons (prod TVar Kappa) (@pair TVar Kappa alpha B)
-                    (@nil (prod TVar Kappa))) (tvar O)) 
-          (@Some Kappa B).
-Check fredie.
-*)
-
 (* TODO Will I need to recurse with delta.
    What happens if I get back a B in some cases that I want an A?
    Can I just build the context once with a B for all free type variables? 
   *)
 
-Fixpoint KTau (d : Delta) (tau : Tau) : option (K d tau A).
-  refine match tau with
+(* 
+Fixpoint KTau (d : Delta) (tau : Tau) : option (K d tau A) := 
+  match tau with
     | cint              => Some (K_B_A d cint (K_int d))
     | cross t0 t1       =>
       match (KTau d t0), (KTau d t1) with
@@ -133,19 +86,7 @@ Fixpoint KTau (d : Delta) (tau : Tau) : option (K d tau A).
        | _ => None
       end
   end.
-  apply Some.
-  apply K_B_A.
   
-  apply K_B.
-  Unset Printing All.
-  
-Lemma KTau_lemma : 
-  forall d tau,
-    (* TODO: "d covers free variables in tau (and they're boxed)" -> *)
-    K d tau A.
-Proof.
-  induction tau.
-
 Fixpoint AKTau (tau : Tau) (d : Delta) : option (AK d tau _) := 
   match tau with
       | cint              => Some (AK_AK_K d cint A (K_B_A d cint (K_int d)))
@@ -177,6 +118,8 @@ Fixpoint BoxEm (taus : list TVar) : Delta :=
 
 Fixpoint AKTau' (tau : Tau) : option (AK _ tau _) := 
   AKTau tau (BoxEm (FreeVariablesTau tau)).
+*)
+
 
 (* This is too hard to prove due to the existentials. 
    I need a function to produce the right AK'ing. *)

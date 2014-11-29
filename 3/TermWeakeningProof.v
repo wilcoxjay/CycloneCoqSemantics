@@ -49,12 +49,15 @@ Proof.
   apply (typ_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) =>
+              styp d u g t s -> 
               ltyp d (u ++ u') (g++g') e tau)
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (lt : ltyp d u g e t) =>
+              ltyp d u g e t -> 
               ltyp d (u ++ u') (g++g') e tau)
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
+              rtyp d u g e t ->
               ltyp d (u ++ u') (g++g') e tau)); crush.
   (* Crush get's 3/26 *)
 Admitted.

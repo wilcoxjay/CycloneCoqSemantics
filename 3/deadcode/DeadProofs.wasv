@@ -37,3 +37,95 @@ Proof.
   intros. 
   inversion H.
 Qed.
+
+
+Lemma A_4_Useless_Substitutions_1:
+
+(*
+  intros d tau' k.  
+  (* Good god induction is setting up the wrong goals? *)
+  (* No I don't need inversion on Kder. *)
+  apply (K_ind
+           (fun (d : Delta) (tau' : Tau) (k : Kappa) =>
+              forall(alpha : TVar),
+                getD d alpha = None ->
+                forall (tau : Tau),
+                  subst_Tau tau' tau alpha = tau')).
+  (* Crush leave 4/9 goals but it folds away too much.*)
+  intros d0 alpha getalpha.
+  Case "cint".
+   crush.
+  Case "alpha0".
+   intros d0 alpha0 getalpha0 alpha getalpha tau.
+   destruct d0.
+   SCase "d=[] false".
+    destruct alpha0.
+    destruct alpha.
+    inversion getalpha0.
+   SSCase "d has a member".
+    destruct alpha0.
+    destruct alpha.
+    apply getD_Some_None_Implies_Different_Variables with (n':= n0) in getalpha0.
+    unfold subst_Tau.
+    rewrite getalpha0.
+    reflexivity.
+    discriminate.
+    assumption.
+  Case "ptype alpha0".
+   intros d0 alpha getalpha alpha0 getalpha0 tau.
+   (* getalpha and getalpha0 -> alpha <> alpha0. *)
+   SCase "d=[] false".
+    destruct d0.
+    destruct alpha.
+    inversion getalpha.
+   SSCase "d has a member".
+    destruct alpha.
+    destruct alpha0.
+    apply getD_Some_None_Implies_Different_Variables with (n':=n0) in getalpha.
+    unfold subst_Tau.
+    rewrite getalpha.
+    reflexivity.
+    discriminate.
+    assumption.
+  Case "tau0".
+   crush.
+  Case "cross".
+   crush.
+  Case "arrow".
+   crush.
+  Case "ptype tau0".
+   crush.
+  Case "utype". (* Alpha conversion should fuck this up. *)
+   intros d0 alpha k0 tau.
+   intros Kder.
+   intros IH.
+   intros getd0alpha.
+   intros alpha0.
+   intros getd0alpha0.
+   intros tau0.
+   unfold subst_Tau.
+   fold subst_Tau.
+   destruct alpha.
+   destruct alpha0.
+   specialize (IH (tvar n0)).
+   admit. (* Alpha conversion admit ? *)
+   SCase "?".
+    intros d0 alpha k0 tau p getdalpha Kder.
+    intros alpha0.
+    intros alpha1 getdalpha1.
+    intros tau0.
+    destruct alpha.
+    destruct alpha1.
+    apply getD_None_None_Implies_Different_Variables
+     with (k:= k0) (n':= n0) in getdalpha.
+    specialize (alpha0 (tvar n0)).
+    Focus 2.
+    unfold subst_Tau.
+    fold subst_Tau.
+   
+   admit.
+
+
+  Case "etype".
+   admit.
+*)
