@@ -23,19 +23,28 @@ Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export Case.
 
-(* Alpha conversion is required? *)
-
+(* TODO how to prove these? *)
 Lemma getD_Some_None_Implies_Different_Variables:
-  forall (d : Delta) (n n' : nat) (k : Kappa),
-    d <> [] ->
-    getD d (tvar n ) = Some k ->
-    getD d (tvar n') = None ->
-    beq_nat n' n = false.
+  forall (d : Delta) (n : nat) (k : Kappa),
+      getD d (tvar n ) = Some k ->
+      forall (n' : nat),
+        getD d (tvar n') = None ->
+        beq_nat n' n = false.
 Proof.
+  intros d n k.
+  induction d.
+  Case "d = []".
+   discriminate.
+  Case "d = a :: d".
+   intros getdadnsome n'.
+   intros getdadn'none.
+   unfold getD in getdadnsome.
+   fold getD in getdadnsome.
 Admitted.
 
 Lemma getD_None_None_Implies_Different_Variables:
   forall (d : Delta) (n n' : nat) (k : Kappa),
+    (* TODO d <> nil *)
     getD d (tvar n ) = None ->
     getD (d ++ [(tvar n, k)]) (tvar n') = None ->
     beq_nat n' n = false.
@@ -74,7 +83,6 @@ Proof.
     unfold subst_Tau.
     rewrite H.
     reflexivity.
-    discriminate.
     assumption.
   Case "ptype alpha0".
    intros alpha0 getalpha0 tau.
@@ -88,7 +96,6 @@ Proof.
     unfold subst_Tau.
     rewrite H.
     reflexivity.
-    discriminate.
     assumption.
   Case "tau0".
    crush.
@@ -130,6 +137,7 @@ Proof.
    reflexivity.
 Qed.
 
+(* use subst_Gamma_over_app *)
 Lemma A_4_Useless_Substitutions_2:
   forall (d : Delta) (alpha : TVar),
     getD d alpha = None ->
@@ -140,7 +148,7 @@ Lemma A_4_Useless_Substitutions_2:
 Proof.
   intros d alpha getd g wfdgder.
   induction wfdgder. 
-  crush.
+  crush. (* the base case. *)
   Case "subst_Gamma (g ++ [(x, tau)]) tau0 alpha = g ++ [(x, tau)]".
    intros tau0.
    (* Linear logic bullshit, how many do I need? *)
@@ -148,43 +156,34 @@ Proof.
    inversion getd.
    apply IHwfdgder with (tau:=tau0) in getd.
    functional induction (subst_Gamma g tau0 alpha ).
-   SCase "g=[]".
-   rewrite app_nil_l.
-   apply IHwfdgder with (tau:=tau0) in H1.
-   unfold subst_Gamma.
-   assert (A: subst_Tau tau tau0 alpha = tau).
-   apply A_4_Useless_Substitutions_1 with (d:=d) (k:=A).
-   assumption.
-   assumption.
-   rewrite A.
-   reflexivity.
-   SCase "weird looking".
-   assert (A: subst_Gamma g' tau0 alpha = g').
-   admit. (* How do I inverse through the getd list ? *)
-   apply IHg0 in A.
-
-   admit.
-   inversion wfdgder; try assumption.
-   admit.
-   intros.
-   crush.
-   admit.
-   assumption.
-   assumption.
-Qed.
-
-(* This generates the rhs issue. 
-   induction g. (* Should this be functional induction ? *)
-   crush.
-   assert (A: subst_Tau tau tau0 alpha = tau).
-   apply A_4_Useless_Substitutions_1 with (d:=d) (k:=A).
-   assumption.
-   assumption.
-   rewrite A.
-   reflexivity.
-   SCase "subst_Gamma ((a :: g) ++ [(x, tau)]) tau0 alpha = (a :: g) ++ [(x, tau)]".
+    SCase "g=[]".
+     rewrite app_nil_l.
+     apply IHwfdgder with (tau:=tau0) in H1.
+     unfold subst_Gamma.
+     assert (A: subst_Tau tau tau0 alpha = tau).
+     apply A_4_Useless_Substitutions_1 with (d:=d) (k:=A).
+     assumption.
+     assumption.
+     rewrite A.
+     reflexivity.
+    SCase "weird looking, why am I here? ".
+     inversion wfdgder.
+(*
+     rewrite subst_Gamma_over_app with (x:= ((x0, tau') :: g')).
+*)    
+     admit. (* How do I inverse through the getd list ? *)
+(*
+     apply IHg0 in A.
+     admit.
+     inversion wfdgder; try assumption.
+     admit.
+     intros.
+     crush.
+     admit.
+     assumption.
+     assumption.
 *)
-
+Qed.
 
 Lemma A_4_Useless_Substitutions_3:
   forall (d : Delta) (alpha : TVar),
@@ -302,25 +301,22 @@ Proof.
   (* TODO is this right? 1 goal?*)
 Admitted.    
 
-Lemma A_6_Substitution_6:
-  forall (d : Delta) (tau : Tau) (k : Kappa),
-    AK d tau k -> 
-    forall (s : St),
+(* Thesis Bug, no AK is required. *)
+Lemma A_6_Substitution_6: 
+  forall (s : St),
       ret s ->
-      forall (alpha : TVar),
+      forall (alpha : TVar) (tau : Tau),
         ret (subst_St s tau alpha).
 Proof.
-  intros d tau k.
-  intros AKder. 
   intros s retder.
   induction retder.
   (* crush gets 0. *)
   (* I can do these by hand or build an Ltac to do them. *)
-  intros alpha.
+  intros alpha tau.
   destruct e; 
     try (try intros alpha; try compute; constructor).
   
-  Ltac foldunfold :=
+  Ltac foldunfold' :=
     try (intros alpha;
          unfold subst_St;
          fold subst_E;
@@ -329,13 +325,13 @@ Proof.
          crush).
 
   Case "if".
-   foldunfold.
+    foldunfold'.
 
   Case "seq s s' ret s.".
-   foldunfold.
+   foldunfold'.
 
   Case "seq s s' ret s'.".
-    intros alpha.
+    intros alpha tau.
     unfold subst_St.
     fold subst_E.
     fold subst_St.
@@ -343,22 +339,25 @@ Proof.
     crush.
 
   Case "letx".
-   foldunfold.
-
-Ltac foldunfold2 IH :=
-     try (intros alpha0;
-          unfold subst_St;
-          fold subst_E;
-          fold subst_St;
-          specialize (IH alpha0);
-          constructor;
-          assumption).
+   foldunfold'.
 
   Case "open".
-   foldunfold2 IHretder.
+   intros alpha0 tau0.
+   unfold subst_St.
+   fold subst_E.
+   fold subst_St.
+   specialize (IHretder alpha0 tau0).
+   constructor.
+   assumption.
 
   Case "openstar".
-   foldunfold2 IHretder.
+   intros alpha0 tau0.
+   unfold subst_St.
+   fold subst_E.
+   fold subst_St.
+   specialize (IHretder alpha0 tau0).
+   constructor.
+   assumption.
 Qed.
 
 
