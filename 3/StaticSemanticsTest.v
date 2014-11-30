@@ -118,7 +118,7 @@ Qed.
 Example styp_e_test:
   styp [] [] [] tau (e_s e).
 Proof.
-  apply styp_e_3_1 with (tau':= cint);
+  apply styp_e_3_1; (* with (tau':= cint); *)
   eauto 10 with Chapter3.
 Qed.
 
@@ -194,7 +194,7 @@ Proof.
              (tau' := (cross (tv_t alpha) (tv_t alpha)));
   eauto 10 with Chapter3.
   apply SR_3_12; eauto 10 with Chapter3.
-  apply styp_e_3_1 with (tau':= (tv_t alpha)).
+  apply styp_e_3_1. (* with (tau':= (tv_t alpha)). *)
   apply SR_3_1 with 
     (tau:= (tv_t alpha))
     (tau':=cross (tv_t alpha) (tv_t alpha)); 

@@ -49,8 +49,10 @@ Inductive ret : St -> Prop :=
 Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
 (* This is correct, return at end of program. *)
   | styp_e_3_1    : forall (d : Delta) (u : Upsilon) (g : Gamma) 
-                           (tau tau' : Tau) (e : E),      
-                      rtyp d u g e   tau' ->
+                           (tau : Tau) (e : E),      
+                      (* This just messes up the proofs. *)
+                      (* rtyp d u g e  tau' -> *)
+                      rtyp d u g e  tau ->
                       styp d u g tau (e_s e)
 
   | styp_return_3_2 : forall (d : Delta) (u : Upsilon) (g : Gamma)
@@ -76,12 +78,13 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
                           styp d u g tau s1 ->
                           styp d u g tau s2 ->
                           styp d u g tau (if_s e s1 s2)
-                               
+
+(* Bug 38 wrong tau' in styp. *)
   | styp_let_3_6    :  forall (d : Delta) (u : Upsilon) (g : Gamma)
                                (x : EVar)  (tau tau' : Tau) 
                                (s : St) (e : E),
                           getG g x = None ->
-                          styp d u (g ++ [(x,tau')]) tau' s ->
+                          styp d u (g ++ [(x,tau')]) tau s ->
                           rtyp d u g e    tau' ->
                           styp d u g tau  (letx x e s)
 

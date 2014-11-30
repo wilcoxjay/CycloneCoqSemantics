@@ -373,7 +373,6 @@ Lemma A_6_Substitution_7:
           Some (subst_Tau t2 tau alpha).
 Proof.
   intros d tau k AKder u WFUder x p p' t1 t2.
-  (* jrw Warning: Collision between bound variables of name t *)
   functional induction (gettype u x p t1 p'); crush. (* or is it on WFUder? *)
   (* crush gets 24/26. *)
 Admitted.    
@@ -385,7 +384,7 @@ Lemma A_6_Substitution_8_1_2_3:
     AK d tau k ->
     forall (alpha : TVar) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
             (d' : Delta),
-      ltyp (d ++ [(alpha,k)]) u g e tau' ->
+      ltyp d u g e tau' ->
       d = (d' ++ [(alpha,k)]) ->
       ltyp d u (subst_Gamma g tau alpha)
            (subst_E e tau alpha)
@@ -394,7 +393,7 @@ Proof.
   intros d tau k AKder.
   intros alpha u g e tau' d' ltypder.
 
-  (* TODO is this right? *)
+  (* TODO is this right? No variable binding issues. *)
   apply (typ_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
@@ -417,5 +416,6 @@ Proof.
               rtyp d u (subst_Gamma g tau alpha)
                    (subst_E e tau alpha)
                    (subst_Tau tau' tau alpha))).
+  Focus 27.
   (* crush gets zero. *)
 Admitted.    
