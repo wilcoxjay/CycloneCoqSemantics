@@ -54,11 +54,10 @@ Lemma A_13_Term_Preservation_1:
           refp h' u' /\
           ltyp [] u' g' e' tau.
 Proof.
-  intros s s' h h'.
-  apply (SLR_ind_mutual
+  intros s s' h h' Lder.
+  apply (L_ind_mutual
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (rstep: R h s h' s') =>
-                  R h s h' s' -> 
                   forall (e e' : E),
                     s  = (e_s e) ->
                     s' = (e_s e') ->
@@ -75,7 +74,6 @@ Proof.
 
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (sstep: S h s h' s') =>
-                  S h s h' s' ->
                   forall (e e' : E),
                     s  = (e_s e) ->
                     s' = (e_s e') ->
@@ -92,7 +90,6 @@ Proof.
 
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (lstep: L h s h' s') =>
-                  L h s h' s' ->
                   forall (e e' : E),
                     s  = (e_s e) ->
                     s' = (e_s e') ->
@@ -105,20 +102,106 @@ Proof.
                         extends_Upsilon  u u' ->
                         htyp u' g' h' g' /\
                         refp h' u' /\
-                        ltyp [] u' g' e' tau)); crush.
-  (* crush gives 27/42. *)
-  (* Generating too many unsolved goals, but I can work on that. *)
-  (* 
-  try (apply ex_intro with (x:=g);
-       apply ex_intro with (x:=u);
-       intros eG uG;
-       split; try assumption;
-       inversion H4;
-       try assumption).
- *)
+                        ltyp [] u' g' e' tau)).
+  (* crush gives 26/42. *)
+  Case "R_get_3_1".
+   intros.
+   apply ex_intro with (x:= g0).
+   apply ex_intro with (x:= u).
+   intros.
+   split.
+   assumption.
+   split.
+   assumption.
+   
+   crush.
+   admit.
+  Case "R_assign_3_2".
+   admit.
+  Case "R_initial_assign_3_2".
+   admit.
+  Case "R_star_amp_3_3".
+   admit.
+  Case "R_dot_3_4_0".
+   admit.
+  Case "R_dot_3_4_1".
+   admit.
+  Case "R_appl_3_5".
+   admit.
+  Case "R_call_3_6".
+   admit.
+  Case "R_inst_3_7".
+   admit.
+  Case "R_call_3_8".
+   admit.
+  Case "R_amp_3_9_1".
+   admit.
+  Case "R_assign_3_9_2".
+   admit.
+  Case "R_star_3_10_1".
+   admit.
+  Case "R_dot_3_10_2".
+   admit.
+  Case "R_assign_3_10_3".
+   admit.
+  Case "R_inst_3_10_4".
+   admit.
+  Case "R_pack_3_10_5".
+   admit.
+  Case "R_cpair_3_10_6".
+   admit.
+  Case "R_cpair_3_10_7".
+   admit.
+  Case "R_cpair_3_10_8".
+   admit.
+  Case "R_appl_3_10_9".
+   admit.
+  Case "R_appl_3_10_10".
+   admit.
+  Case "S_let_3_1".
+   crush.
+  Case "S_seq_3_2".
+   crush.
+  Case "S_return_3_3".
+   crush.
+  Case "S_if0_3_4".
+   crush.
+  Case "S_if_ne_0_3_5".
+   crush.
+  Case "S_while_3_6".
+   crush.
+  Case "S_open_3_7".
+   crush.
+  Case "S_openstar_3_8".
+   crush.
+  Case "S_exp_3_9_1".
+   crush.
+  Case "S_ret_3_9_2".
+   crush.
+  Case "S_if_3_9_3".
+   crush.
+  Case "S_letx_3_9_4".
+   crush.
+  Case "S_open_3_9_5".
+   crush.
+  Case "S_seq_3_10".
+   crush.
+  Case "S_openstar_3_11".
+   crush.
+  Case "L_xpi_3_1".
+   admit.
+  Case "L_staramp_3_2".
+   admit.
+  Case "L_star_3_3".
+   admit.
+  Case "L_ei_3_4".
+   admit.
+  Case "assumption, why do I get this?".
+   assumption.
+Qed.
 
+(* 
 
-  (* Need ltac, trying to apply simple solution generates too many. *)
   Case "R h0 (e_s (p_e x p)) h0 (e_s e')".
    apply ex_intro with (x:=g0).
    apply ex_intro with (x:=u).
@@ -220,6 +303,7 @@ Proof.
    admit.
 
 Admitted.
+*)
 
 Lemma A_13_Term_Preservation_2:
   forall (s s' : St) (h h' : H),
@@ -237,11 +321,10 @@ Lemma A_13_Term_Preservation_2:
          refp h' u' /\
          rtyp [] u' g' e' tau.
 Proof.
-  intros s s' h h'.
-  apply (SLR_ind_mutual
+  intros s s' h h' Rder.
+  apply (R_ind_mutual
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (step: R h s h' s') =>
-              R h s  h' s' ->
               forall (e e' : E),
                 s  = (e_s e) -> 
                 s' = (e_s e') ->
@@ -256,7 +339,6 @@ Proof.
                     rtyp [] u' g' e' tau)
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (step: S h s h' s') =>
-              S h s h' s' ->
               forall (e e' : E),
                 s  = (e_s e) -> 
                 s' = (e_s e') ->
@@ -271,7 +353,6 @@ Proof.
                     rtyp [] u' g' e' tau)
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (step: L h s h' s') =>
-              L h s h' s' -> 
               forall (e e' : E),
                 s  = (e_s e) -> 
                 s' = (e_s e') ->
@@ -283,11 +364,93 @@ Proof.
                     (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
                     htyp u' g' h' g' /\ 
                     refp h' u' /\
-                    rtyp [] u' g' e' tau)); crush.
-
+                    rtyp [] u' g' e' tau)).
   (* crush leaves 27/42. *)
-   
-Admitted.
+  Case "R_get_3_1".
+   admit.
+  Case "R_assign_3_2".
+   admit.
+  Case "R_initial_assign_3_2".
+   admit.
+  Case "R_star_amp_3_3".
+   admit.
+  Case "R_dot_3_4_0".
+   admit.
+  Case "R_dot_3_4_1".
+   admit.
+  Case "R_appl_3_5".
+   admit.
+  Case "R_call_3_6".
+   admit.
+  Case "R_inst_3_7".
+   admit.
+  Case "R_call_3_8".
+   admit.
+  Case "R_amp_3_9_1".
+   admit.
+  Case "R_assign_3_9_2".
+   admit.
+  Case "R_star_3_10_1".
+   admit.
+  Case "R_dot_3_10_2".
+   admit.
+  Case "R_assign_3_10_3".
+   admit.
+  Case "R_inst_3_10_4".
+   admit.
+  Case "R_pack_3_10_5".
+   admit.
+  Case "R_cpair_3_10_6".
+   admit.
+  Case "R_cpair_3_10_7".
+   admit.
+  Case "R_cpair_3_10_8".
+   admit.
+  Case "R_appl_3_10_9".
+   admit.
+  Case "R_appl_3_10_10".
+   admit.
+  Case "S_let_3_1".
+   admit.
+  Case "S_seq_3_2".
+   admit.
+  Case "S_return_3_3".
+   admit.
+  Case "S_if0_3_4".
+   admit.
+  Case "S_if_ne_0_3_5".
+   admit.
+  Case "S_while_3_6".
+   admit.
+  Case "S_open_3_7".
+   admit.
+  Case "S_openstar_3_8".
+   admit.
+  Case "S_exp_3_9_1".
+   admit.
+  Case "S_ret_3_9_2".
+   admit.
+  Case "S_if_3_9_3".
+   admit.
+  Case "S_letx_3_9_4".
+   admit.
+  Case "S_open_3_9_5".
+   admit.
+  Case "S_seq_3_10".
+   admit.
+  Case "S_openstar_3_11".
+   admit.
+  Case "L_xpi_3_1".
+   admit.
+  Case "L_staramp_3_2".
+   admit.
+  Case "L_star_3_3".
+   admit.
+  Case "L_ei_3_4".
+   admit.
+  Case "assumption, why do I get this?".
+   assumption.
+Qed.
 
 Lemma A_13_Term_Preservation_3:
   forall (s s': St)  (h h' : H),
@@ -302,11 +465,10 @@ Lemma A_13_Term_Preservation_3:
         refp h' u' /\
         styp [] u' g' tau s'.
 Proof.
-  intros s s' h h'.
-  apply (SLR_ind_mutual
+  intros s s' h h' Sder.
+  apply (S_ind_mutual
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (rstep: R h s h' s') =>
-              R h s h' s' ->
               forall (u : Upsilon) (g : Gamma) (tau : Tau),
                 htyp u g h g ->
                 refp h u -> 
@@ -318,7 +480,6 @@ Proof.
                   styp [] u' g' tau s')
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (sstep: S h s h' s') =>
-              S h s h' s' ->
               forall (u : Upsilon) (g : Gamma) (tau : Tau),
                 htyp u g h g ->
                 refp h u -> 
@@ -330,7 +491,6 @@ Proof.
                   styp [] u' g' tau s')
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (lstep: L h s h' s') =>
-              L h s h' s' -> 
               forall (u : Upsilon) (g : Gamma) (tau : Tau),
                 htyp u g h g ->
                 refp h u -> 
@@ -339,6 +499,90 @@ Proof.
                   (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
                   htyp u' g' h' g' /\ 
                   refp h' u' /\
-                  styp [] u' g' tau s')); crush.
+                  styp [] u' g' tau s')).
   (* crush leaves 41/42. *)
-Admitted.
+  Case "R_get_3_1".
+   admit.
+  Case "R_assign_3_2".
+   admit.
+  Case "R_initial_assign_3_2".
+   admit.
+  Case "R_star_amp_3_3".
+   admit.
+  Case "R_dot_3_4_0".
+   admit.
+  Case "R_dot_3_4_1".
+   admit.
+  Case "R_appl_3_5".
+   admit.
+  Case "R_call_3_6".
+   admit.
+  Case "R_inst_3_7".
+   admit.
+  Case "R_call_3_8".
+   admit.
+  Case "R_amp_3_9_1".
+   admit.
+  Case "R_assign_3_9_2".
+   admit.
+  Case "R_star_3_10_1".
+   admit.
+  Case "R_dot_3_10_2".
+   admit.
+  Case "R_assign_3_10_3".
+   admit.
+  Case "R_inst_3_10_4".
+   admit.
+  Case "R_pack_3_10_5".
+   admit.
+  Case "R_cpair_3_10_6".
+   admit.
+  Case "R_cpair_3_10_7".
+   admit.
+  Case "R_cpair_3_10_8".
+   admit.
+  Case "R_appl_3_10_9".
+   admit.
+  Case "R_appl_3_10_10".
+   admit.
+  Case "S_let_3_1".
+   admit.
+  Case "S_seq_3_2".
+   admit.
+  Case "S_return_3_3".
+   admit.
+  Case "S_if0_3_4".
+   admit.
+  Case "S_if_ne_0_3_5".
+   admit.
+  Case "S_while_3_6".
+   admit.
+  Case "S_open_3_7".
+   admit.
+  Case "S_openstar_3_8".
+   admit.
+  Case "S_exp_3_9_1".
+   admit.
+  Case "S_ret_3_9_2".
+   admit.
+  Case "S_if_3_9_3".
+   admit.
+  Case "S_letx_3_9_4".
+   admit.
+  Case "S_open_3_9_5".
+   admit.
+  Case "S_seq_3_10".
+   admit.
+  Case "S_openstar_3_11".
+   admit.
+  Case "L_xpi_3_1".
+   admit.
+  Case "L_staramp_3_2".
+   admit.
+  Case "L_star_3_3".
+   admit.
+  Case "L_ei_3_4".
+   admit.
+  Case "assumption, why do I get this?".
+   assumption.
+Qed.

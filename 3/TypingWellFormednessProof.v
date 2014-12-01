@@ -13,6 +13,8 @@ Require Import Init.Datatypes.
 Require Import Coq.Init.Logic.
 
 Require Export FormalSyntax.
+Require Export GetLemmas.
+Require Export ListLemmas.
 Require Export DynamicSemanticsTypeSubstitution.
 Require Export DynamicSemanticsHeapObjects.
 Require Export DynamicSemantics.
@@ -61,12 +63,89 @@ Proof.
    inversion Kder.
    inversion H.
    inversion e4.
+   rewrite <- H3 in *.
+   rewrite <- H4 in *.
+   move Kder after H7.
+   move IHo  after H7.
+   move e4   after H7.
+   move e3   after H4.
+   move H2   after H4.
+   move H5   before H7.
+   clear e4.
    apply A_1_Context_Weakening_2 with (u:=u) (x:=x) (p:=p).
    assumption.
-   apply A_6_Substitution_1 with (tau:=tau'0) in H5.
-   admit.
-   admit.
+   (* At this point I just need to know that tau' = tau'' and getU is a 
+      total function, but defined as a fixpoint. Even if I make a function of
+     it, it does not get inversion information.
+     How do I get this? *)
+   (* Really I'm stuck at inverting the gettype in H7. *)
+   apply getU_function_inversion with (tau':= tau') in e3.
+   inversion e3.
+   assumption.
 Qed.
+
+Lemma WFC_weakening:
+  forall (d : Delta) (u : Upsilon) (g : Gamma)
+         (x : EVar) (tau : Tau),
+    WFC d u (g ++ [(x, tau)]) ->
+    WFC d u g.
+Proof.
+  intros.
+  induction (rev g).
+  Case "g = nil".
+   inversion H.
+   inversion H0.
+   apply Nil_Not_App_Anything in H7.
+   inversion H7.
+   discriminate.
+   crush.
+   apply WFC_DUG.
+   apply app_equals in H5.
+   inversion H5.
+   rewrite H2 in H8.
+   assumption.
+   assumption.
+ Case "g has an append".
+   assumption.
+Qed.
+
+Lemma WFDG_weakening:
+  forall (d : Delta) (g : Gamma)
+         (x : EVar) (tau : Tau),
+    WFDG d (g ++ [(x, tau)]) ->
+    WFDG d g.
+Proof.
+  intros.
+  induction (rev g).
+  Case "g = nil".
+   inversion H.
+   inversion H0.
+   apply Nil_Not_App_Anything in H2.
+   inversion H2.
+   discriminate.
+   crush.
+   apply app_equals in H0.
+   inversion H0.
+   rewrite H2 in H3.
+   assumption.
+   assumption.
+Qed.
+
+(* TODO too weak of a set of assumptions but it will let me 
+   explore things. *)
+Lemma WFDG_gives_arrow_A :
+  forall (d : Delta) (u : Upsilon) (g : Gamma)
+         (t0 t1: Tau),
+    WFC d u g ->
+    K d (arrow t0 t1) A ->
+    K d t0 A.
+Proof.
+  intros.
+  inversion H.
+  inversion H1.
+  crush.
+Admitted.
+  
 
 Lemma A_7_Typing_Well_Formedness_2 :
   forall (d: Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau),
@@ -211,7 +290,17 @@ Proof.
   Case "SR_3_12".
    twf3.
   Case "SR_3_13".
+   intros.
+   split.
+   inversion H.
+   apply WFC_weakening in H0.
+   assumption.
+   apply K_arrow.
+   inversion H.
+   (* WFDG to K d0 tau0 A.*)
    admit.
+   inversion H.
+   assumption.
   Case "SR_3_14".
    intros.
    split.
@@ -342,6 +431,13 @@ Proof.
   Case "SR_3_12".
    twf3.
   Case "SR_3_13".
+   intros.
+   split.
+   inversion H.
+   apply WFC_weakening in H0.
+   assumption.
+   apply K_arrow.
+   admit.
    admit.
   Case "SR_3_14".
    intros.
@@ -372,7 +468,14 @@ Proof.
                 (rt : rtyp d u g e tau) =>
               WFC d u g)) with (t:=tau) (s:=s); crush.
   Case "SR_3_13".
-   admit.
+   intros.
+   split.
+   inversion H.
+   apply WFC_weakening in H.
+   apply WFDG_weakening in H0.
+   assumption.
+   inversion H.
+   assumption.
 Qed.
 
 Lemma A_7_Typing_Well_Formedness_5 :
@@ -457,7 +560,7 @@ Proof.
    assumption.
   Case "SR_3_5".
    intros.
-   (* Looks fucked up. *)
+   (* Looks broken. *)
    admit.
   Case "SR_3_6".
    intros.

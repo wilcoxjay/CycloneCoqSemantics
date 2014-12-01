@@ -180,9 +180,9 @@ Proof.
  eauto 10 with Chapter3.
 Qed.
 
-Example WFC_DGU_test:
+Example WFC_DUG_test:
   WFC [] [] [].
 Proof.
- apply WFC_DGU;
+ apply WFC_DUG;
  eauto 10 with Chapter3.
 Qed.

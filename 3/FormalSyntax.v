@@ -24,6 +24,8 @@ Export ListNotations.
 Require Import ZArith.
 Require Import Init.Datatypes.
 
+Require Export CpdtTactics.
+Require Export Case.
 (* The abstract syntax of kinds. *)
 
 Inductive Kappa : Type :=
@@ -123,15 +125,12 @@ with F : Type :=
  | ufun      : TVar -> Kappa -> F -> F        (* Univerally quantified polymorphic function definition.  *)
 .
 
-(* TODO I totally wonder if this is right. *)
 Scheme St_ind_mutual := Induction for St Sort Prop
 with    E_ind_mutual := Induction for E Sort Prop
 with    F_ind_mutual := Induction for F Sort Prop.
 Combined Scheme Term_ind_mutual from St_ind_mutual, E_ind_mutual, F_ind_mutual.
 
-(* Combined seems to be this. *)
-
-Fixpoint path_eq (p q : P) : bool := 
+Function path_eq (p q : P) : bool := 
   match p, q with
     | (i_pe zero_pe) :: p', (i_pe zero_pe) :: q' => path_eq p' q'
     | (i_pe one_pe)  :: p', (i_pe one_pe ) :: q' => path_eq p' q'
@@ -248,8 +247,8 @@ Definition UE        := prod E Tau.      (* This E is only xp *)
 Definition Upsilon   := list UE.
 
 (*? Double check with Dan about checking paths but I think it's correct. *)
-
-Fixpoint getU (u : Upsilon) (x: EVar) (p : P) : option Tau :=
+ 
+Function getU (u : Upsilon) (x: EVar) (p : P) : option Tau :=
   match x, u with 
     | (evar x'), (p_e (evar y') p', v) :: u'  =>
       if andb (beq_nat x' y') (path_eq p p')
@@ -258,4 +257,5 @@ Fixpoint getU (u : Upsilon) (x: EVar) (p : P) : option Tau :=
     | _, (cons bad worse)  => None   (* Should not happen. *)
     | _ , [] => None
   end.
+(* jrw why can't coqie invert? *)
 

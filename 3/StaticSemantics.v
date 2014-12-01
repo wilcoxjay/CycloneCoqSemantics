@@ -208,7 +208,8 @@ with      rtyp :  Delta -> Upsilon -> Gamma -> E   -> Tau -> Prop :=
                    rtyp d u g (pack tau' e (etype p alpha k tau)) 
                               (etype p alpha k tau)
 
-  | SR_3_13 : forall (d : Delta) (u : Upsilon) (g : Gamma) (tau tau': Tau) (s : St) (x : EVar),
+  | SR_3_13 : forall (d : Delta) (u : Upsilon) (g : Gamma) (tau tau': Tau) 
+                     (s : St) (x : EVar),
                    getG g x = None ->
                    styp d u (g ++ [(x,tau)]) tau' s ->
                    ret s ->

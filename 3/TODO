@@ -7,6 +7,14 @@
    TODO kinding is wrong, either dan mean \tau for concrete type or 
        there is an implementation or thesis bug.
 
+   TODO design partial functions for use.
+        a) as lists
+        b) different syntax for show
+        c) WFC, WFU, WFDG get uniqueness checks.
+        d) WFD has to be added with checks also.
+	e) What are the theorems I want?
+	f) How does this relate to the thesis?
+
    TODO think about functions vs relations for get proofs.
 
    TODO No uniqueness in the context wf rules. 

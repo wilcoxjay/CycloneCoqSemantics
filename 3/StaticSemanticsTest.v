@@ -195,7 +195,7 @@ Proof.
   eauto 10 with Chapter3.
   apply SR_3_12; eauto 10 with Chapter3.
   apply styp_e_3_1. (* with (tau':= (tv_t alpha)). *)
-  apply SR_3_1 with 
+  apply SR_3_1 with (* TODO Bug from a fix to a rule. *)
     (tau:= (tv_t alpha))
     (tau':=cross (tv_t alpha) (tv_t alpha)); 
   eauto 10 with Chapter3.

@@ -31,3 +31,52 @@ Lemma getU_weakening :
     getU u x p = Some tau.
 Proof.
 Admitted.  
+
+Lemma getU_function:
+  forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
+    getU u x p = Some tau ->
+    forall (tau' : Tau),
+      getU u x p = Some tau' ->
+      tau = tau'.
+Proof.
+  intros.
+  rewrite H in H0.
+  inversion H0.
+  reflexivity.
+Qed.
+
+(* Known true but Coq is not generating functional inversion. *)
+Lemma getU_function_inversion:
+  forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
+    getU u x p = Some tau ->
+    forall (tau' : Tau),
+      (getU u x p = Some tau' /\ tau = tau').
+Proof.
+  intros.
+  split.
+  functional induction (getU u x p); crush.
+  admit.
+  admit.
+Admitted.
+
+(* TODO not strictly true as d is a list. *)
+Lemma getD_weakening_some_left:
+(*  WFD d ->
+    WFD d ++ d' -> 
+*)
+  forall (d : Delta) (alpha : TVar) (k : Kappa),
+    getD d         alpha   = Some k ->
+    forall (d' : Delta),
+      getD (d ++ d') alpha   = Some k.
+Proof.
+Admitted.  
+
+Lemma getD_weakening_some_right:
+  forall (d : Delta) (alpha : TVar) (k : Kappa),
+    getD d         alpha   = None ->
+    forall (d' : Delta),
+      getD d'        alpha   = Some k ->
+      getD (d ++ d') alpha   = Some k.
+Proof.
+Admitted. 
+

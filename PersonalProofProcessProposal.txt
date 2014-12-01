@@ -1,0 +1,114 @@
+Dan,
+
+  I'm far enough along in the process that I'm going to put down
+on paper my thoughts about building a personal proof process. We
+can chat about it in December, no need to read this now.
+
+ I've added Darioush as James said he's interested in software
+ engineering.
+
+ Having used, lightly, Watts Humphries's personal software
+process, I know the value of it. The goal here is to design a
+process that is based upon his software process and use it to
+evaluate the similarities and differences of 'coding' proofs of a
+system versus 'coding' software. The goal is to reduce the time
+and errors in building proofs of programming languages or other
+systems and to allow us to estimate the time and classes of
+errors involved.
+
+ http://en.wikipedia.org/wiki/Personal_software_process
+
+ First, one can not really correctly optimize one's process
+without having previously learned a language and worked on a
+similar system. Your thesis provides a great opportunity for this
+as it has three similar models of Cyclone with similar proof
+styles for their type safety.
+
+ Thus I've broken out this experiment into three phases:
+  A) Learn Coq and the proof style by implementing and proving the model
+    in Chapter 3.
+  B) Run the initial process devised from experience in phase 1 to build
+   the model for Chapter 4.
+  C) Improve the process and run it on Chapter 5's model.
+
+ This has the added research benefits that a complete model could
+be constructed and the model from Chapter 5 can be used to build
+an improved threading model for Cyclone or Cyclone like
+languages. And of course, it should help us to learn how to
+estimate the time required to model a programming language.
+
+ Phase A
+
+    Although the PSP has been run in an iterative model, I've
+ started with a waterfall like sequential process. I've only been
+ recording bugs in the implementation of the model and it's
+ semantics, not in proofs or automation as they were fairly
+ unknown to me when I started.
+
+  The initial waterfall is:
+
+     A.1 Implement the formal language.
+     A.2 Implement the functional parts of the formal language.
+     A.3 Implement the relational parts of the formal language.
+     A.4 Implement the automation for the formal language
+     A.5 State the theorems
+     A.6 Set up induction for the theorems
+     A.7 Possibly subset pieces of the language for the proofs
+         and subset the proofs
+     A.8 Prove theorems as stated in the thesis
+     A.9 Reprove theorems in a style more natural to Coq.
+
+ Steps A.1-A.4 have had test cases built for each of the
+functions and relations and their automation.  A format for test
+cases and automation has been developed to test the work products
+for A.1-A.4 that can be used in Phas B.
+
+  A set of defects have been identified. The size of all of the
+work products will be measured in LOC, excluding comments. 
+
+  It's not clear that A.9 will be productive, but I'll certainly
+think about it.
+
+ Phase B
+
+    When Phase A is completed an initial defect pareto will be
+added and a script to check for each of the discovered types of
+defects will be written that the proofgrammer will use to inspect
+work before it is compiled into Coq. All test cases for each item
+will be written before the work product is compiled.
+     
+    Estimates of the size and an initial estimate of time will be
+SWAG'd based upon the number of items in the step. That is, the
+number of elements in the formal language, the number of judgements
+and their rules and the number of theorems and type (mutual induction
+versus simpler inductions) will be used to estimate the size, defects
+and time. The size and defects will have sufficient data from Phase A
+to produce a decent estimate, but as no time was recorded the estimated
+time to build work products will probably have a very large error.
+
+   I might possibly put in an integration testing phase between
+A.4 and A.5 in which the typing and execution of whole programs are
+tested. 
+
+  The estimates of defects and time will be compared with the actual
+defects found in coding, test and proof. The pareto of defects will
+be updated and a new inspection script will be generated for Phase C.
+Time and size estimation measures will be used to help estimate in
+Phase C.
+
+ Phase C
+
+  The lessons learned in Phase A and B will be applied to produce
+a new product that has at least all of the estimation, error and
+time tracking of Phase B. For example, it may be that we have
+learned enough about proving theorems in a Coq style that many of
+the lemmas in the thesis will be dropped.
+
+ The end result may be a software engineering style paper describing
+the final process and its estimation parameters. As well as lessons
+learned translating a paper formal semantics to a mechanical formal
+semantics.
+ 
+  Comments?
+
+ -Brian

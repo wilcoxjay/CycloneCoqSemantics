@@ -120,7 +120,7 @@ Inductive WFU : Upsilon -> Prop :=
                  WFU (u ++ [(p_e x p, tau)]).
 
 Inductive WFC : Delta -> Upsilon -> Gamma -> Prop :=
-  | WFC_DGU : forall (d : Delta) (g: Gamma) (u : Upsilon),
+  | WFC_DUG : forall (d : Delta) (g: Gamma) (u : Upsilon),
                 WFDG d g ->
                 WFU u ->
                 WFC d u g.
