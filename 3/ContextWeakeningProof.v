@@ -80,8 +80,7 @@ Proof.
    (* This is really provable by the commutivity of a well formed Delta. *)
    (* But it requires that get (d ++ d') alpha = None so it needs more.*)
    admit.
-
-
+   admit.
   Case "K d (etype p alpha k tau) A) =".
    intros.
    apply K_etype.

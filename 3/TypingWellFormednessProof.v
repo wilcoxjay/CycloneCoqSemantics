@@ -24,8 +24,11 @@ Require Export StaticSemantics.
 Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export Case.
+Require Export TacticNotations.
+
 Require Export ContextWeakeningProof.
 Require Export SubstitutionsProof.
+
 
 Lemma A_7_Typing_Well_Formedness_1 :
   forall (u : Upsilon),
@@ -102,7 +105,7 @@ Proof.
    apply WFC_DUG.
    apply app_equals in H5.
    inversion H5.
-   rewrite H2 in H8.
+   rewrite H2 in H9.
    assumption.
    assumption.
  Case "g has an append".
@@ -126,7 +129,7 @@ Proof.
    crush.
    apply app_equals in H0.
    inversion H0.
-   rewrite H2 in H3.
+   rewrite H3 in H4.
    assumption.
    assumption.
 Qed.
@@ -146,7 +149,6 @@ Proof.
   crush.
 Admitted.
   
-
 Lemma A_7_Typing_Well_Formedness_2 :
   forall (d: Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau),
     ltyp d u g e tau ->
@@ -154,7 +156,8 @@ Lemma A_7_Typing_Well_Formedness_2 :
      K d tau A).
 Proof.
   intros d u g e tau ltypder.
-  apply (ltyp_ind_mutual
+  ltyp_ind_mutual_cases
+   (apply (ltyp_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (s : St)
                 (st : styp d u g tau s) => 
               (WFC d u g /\  K d tau A))
@@ -163,7 +166,8 @@ Proof.
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau)
                 (rt : rtyp d u g e tau) =>
-              (WFC d u g /\  K d tau A))) with (e:=e).
+              (WFC d u g /\  K d tau A))) with (e:=e))
+  Case.
  
   (* Crush gets 21/27 subgoals. *)
   (* But let's look at some cases, these two are just induction hypothesis really.*)
@@ -306,8 +310,8 @@ Proof.
    split.
    assumption.
    apply K_utype.
-   inversion H.
    assumption.
+   inversion H.
    assumption.
   Case "?".
    assumption.
@@ -320,7 +324,8 @@ Lemma A_7_Typing_Well_Formedness_3 :
      K d tau A).
 Proof.
   intros d g u tau e rtypder.
-  apply (rtyp_ind_mutual
+  rtyp_ind_mutual_cases
+   (apply (rtyp_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (s : St)
                 (st : styp d u g tau s) => 
               (WFC d u g /\  K d tau A))
@@ -329,10 +334,12 @@ Proof.
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau)
                 (rt : rtyp d u g e tau) =>
-              (WFC d u g /\  K d tau A))) with (e:=e).
+              (WFC d u g /\  K d tau A))) with (e:=e))
+   Case.
   (* Wow crush gets 21/26. *)
 
-  Case "styp_e_3_1".
+    
+Case "styp_e_3_1".
    twf0. (* This has been done by changing the return statement to be deterministally typed. *)
   Case "styp_return_3_2".
    twf0.
@@ -444,8 +451,8 @@ Proof.
    split.
    assumption.
    apply K_utype.
-   inversion H.
    assumption.
+   inversion H.
    assumption.
   Case "?".
    assumption.
@@ -457,16 +464,18 @@ Lemma A_7_Typing_Well_Formedness_4 :
     WFC d u g.
 Proof.
   intros d g u tau s stypder.
-  apply (styp_ind_mutual
-           (fun (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (s : St)
-                (st : styp d u g tau s) => 
-              WFC d u g)
-           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau)
-                (lt : ltyp d u g e tau) =>
-              WFC d u g)
-           (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau)
-                (rt : rtyp d u g e tau) =>
-              WFC d u g)) with (t:=tau) (s:=s); crush.
+  (styp_ind_mutual_cases
+    (apply (styp_ind_mutual
+              (fun (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (s : St)
+                   (st : styp d u g tau s) => 
+                 WFC d u g)
+              (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau)
+                   (lt : ltyp d u g e tau) =>
+                 WFC d u g)
+              (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau)
+                   (rt : rtyp d u g e tau) =>
+                 WFC d u g)) with (t:=tau) (s:=s))
+    Case); crush.
   Case "SR_3_13".
    intros.
    split.
@@ -485,7 +494,7 @@ Lemma A_7_Typing_Well_Formedness_5 :
     K d tau A.
 Proof.
   intros d g u tau e stypder.
-  (* Todo, do I need the ret in the l and r cases? *)
+  (* TODO, do I need the ret in the l and r cases? *)
   apply (styp_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (s : St)
                 (st : styp d u g tau s) => 

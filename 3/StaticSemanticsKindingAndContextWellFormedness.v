@@ -53,8 +53,8 @@ Inductive K : Delta -> Tau -> Kappa -> Prop :=
                     K d (ptype tau) B
 
  | K_utype  : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau),
-                   K (d ++ [(alpha, k)]) tau A ->
                    getD d alpha = None -> 
+                   K (d ++ [(alpha, k)]) tau A ->
                    K d (utype alpha k tau) A
 
  | K_etype  : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau) (p : Phi),
@@ -108,6 +108,7 @@ Inductive WFDG : Delta -> Gamma -> Prop :=
   | WFDG_d_nil : forall (d: Delta),
                      WFDG d nil
   | WFDG_xt      : forall (d: Delta) (g: Gamma) (x : EVar) (tau : Tau),
+                     getG g x = None -> 
                      K d tau A ->
                      WFDG d g ->
                      WFDG d (g ++ [(x,tau)]).
@@ -115,6 +116,7 @@ Inductive WFDG : Delta -> Gamma -> Prop :=
 Inductive WFU : Upsilon -> Prop :=
   | WFU_nil : WFU nil
   | WFU_A   : forall (u : Upsilon) (tau : Tau) (p : P) (x : EVar),
+                 getU u x p = None ->
                  WFU  u ->
                  K nil tau A ->
                  WFU (u ++ [(p_e x p, tau)]).

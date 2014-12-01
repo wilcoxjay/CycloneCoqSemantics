@@ -228,11 +228,11 @@ with   rtyp_ind_mutual := Induction for rtyp Sort Prop.
 Combined Scheme typ_ind_mutual from
           styp_ind_mutual, ltyp_ind_mutual, rtyp_ind_mutual.
 
-(* Bug 42 *)
+ (* Bug 42 *)
 Inductive htyp: Upsilon -> Gamma -> H -> Gamma -> Prop :=
-  | htyp_empty : forall (u : Upsilon) (g: Gamma),
-                      htyp u g [] []
-  | htyp_xv    : forall (u : Upsilon) (g g': Gamma) (h h': H) (x : EVar) (v : E) (tau : Tau),
+   | htyp_empty : forall (u : Upsilon) (g: Gamma),
+                       htyp u g [] []
+   | htyp_xv    : forall (u : Upsilon) (g g': Gamma) (h h': H) (x : EVar) (v : E) (tau : Tau),
                       getH h x = Some v ->
                       Value v ->
                       deleteH h x = h' ->

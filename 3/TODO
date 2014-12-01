@@ -12,7 +12,7 @@
         b) different syntax for show
         c) WFC, WFU, WFDG get uniqueness checks.
         d) WFD has to be added with checks also.
-	e) What are the theorems I want?
+	e) What are the lemmas I want?
 	f) How does this relate to the thesis?
 
    TODO think about functions vs relations for get proofs.

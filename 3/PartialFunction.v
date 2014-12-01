@@ -13,7 +13,10 @@ Require Import Init.Datatypes.
 
 Definition pfun (A : Type) (B : Type) := list (A * B).
 
-Function plusl (A : Type) (B : Type) (x : A*B) (p : pfun A B) : pfun A B := x :: p.
+(* TODO I could make this a relation and then check at each add that I am
+  not overwriting the domain. *)
+Function plusl (A : Type) (B : Type) (x : A*B) (p : pfun A B) : pfun A B := 
+  x :: p.
 Function plusr (A : Type) (B : Type) (p : pfun A B) (x : A * B) : pfun A B := 
   p ++ [x].
 Function union (A : Type) (B : Type) 
@@ -41,8 +44,8 @@ Function notindom (A : Type) (B : Type) (a : A) (p : pfun A B) : Prop :=
   end.
 
 Inductive WFpfun : Type -> Type -> pfun Type Type  -> Prop :=
-  | WFpfun_nil   : WFpfun  |[]
-  | WFpfun_plus : forall (a : A * B) (p : pfun A B),
+  | WFpfun_nil   : WFpfun _ _ |[]
+  | WFpfun_plus : forall  (A : Type) (B : Type) (a : A * B) (p : pfun A B),
                     WFpfun (a |+ p).
   
 

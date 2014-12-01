@@ -158,7 +158,7 @@ Proof.
    functional induction (subst_Gamma g tau0 alpha ).
     SCase "g=[]".
      rewrite app_nil_l.
-     apply IHwfdgder with (tau:=tau0) in H1.
+     apply IHwfdgder with (tau:=tau0) in H2.
      unfold subst_Gamma.
      assert (A: subst_Tau tau tau0 alpha = tau).
      apply A_4_Useless_Substitutions_1 with (d:=d) (k:=A).
