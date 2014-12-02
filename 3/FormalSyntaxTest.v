@@ -224,7 +224,7 @@ Proof.
 Qed.
 
 Example getUxBadPath : 
-  getU ((p_e x p0, tau) :: nil) x [] = None.
+  getU (((x, p0), tau) :: nil) x [] = None.
 Proof.
   reflexivity.
 Qed.
@@ -236,7 +236,7 @@ Proof.
 Qed.
 
 Example getUx : 
-  getU ((p_e x p0, tau) :: nil) x p0 = Some tau.
+  getU ((( x, p0), tau) :: nil) x p0 = Some tau.
 Proof.
   compute.
   reflexivity.
@@ -244,7 +244,7 @@ Qed.
 
 (* Bug 6 in defintion x <>y \/ [] = nil. *)
 Example getUyx : 
-  getU [((p_e y nil),tau) ; ((p_e x nil),tau')] x [] = Some tau'.
+  getU [((y,nil),tau) ; ((x,nil),tau')] x [] = Some tau'.
 Proof.
   reflexivity.
 Qed.

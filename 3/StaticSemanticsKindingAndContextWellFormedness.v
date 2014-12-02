@@ -119,10 +119,22 @@ Inductive WFU : Upsilon -> Prop :=
                  getU u x p = None ->
                  WFU  u ->
                  K nil tau A ->
-                 WFU (u ++ [(p_e x p, tau)]).
+                 WFU (u ++ [((x,p), tau)]).
+
+(* Not in the thesis, do I really need it ? 
+   Do I put in in WFC ? or derive it when needed from K judgement? 
+   Does it have to check the kinding also? *)
+
+Inductive WFD : Delta -> Prop :=
+  | WFD_nil    : WFD nil
+  | WFU_xtau   : forall (d : Delta) (alpha : TVar) (k : Kappa),
+                 getD d alpha = None ->
+                 WFD  d ->
+                 WFD (d ++ [(alpha, k)]).
 
 Inductive WFC : Delta -> Upsilon -> Gamma -> Prop :=
   | WFC_DUG : forall (d : Delta) (g: Gamma) (u : Upsilon),
                 WFDG d g ->
                 WFU u ->
                 WFC d u g.
+

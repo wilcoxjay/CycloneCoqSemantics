@@ -7,13 +7,11 @@
    TODO kinding is wrong, either dan mean \tau for concrete type or 
        there is an implementation or thesis bug.
 
-   TODO design partial functions for use.
-        a) as lists
-        b) different syntax for show
-        c) WFC, WFU, WFDG get uniqueness checks.
-        d) WFD has to be added with checks also.
-	e) What are the lemmas I want?
-	f) How does this relate to the thesis?
+   TODO 
+        a) Added the checks I missed from the rules to make
+           \Delta, \Gamma, \Upsilon have not collisions. - Done
+	b) Add WFD as it is not checked anywhere, just ensured in its construction.
+	c) What lemmas do I want ? The proofs will really tell.
 
    TODO think about functions vs relations for get proofs.
 

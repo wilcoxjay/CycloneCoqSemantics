@@ -69,7 +69,7 @@ Ltac right_list_recurse_delta m :=
   try discriminate.
  
 Ltac right_list_recurse_upsilon m :=
-  rewrite app_removelast_last with (l:= m) (d:=((p_e (evar 1000) []),cint));
+  rewrite app_removelast_last with (l:= m) (d:= ( ((evar 1000), []), cint));
   try simpl removelast;
   try simpl last;
   try discriminate.

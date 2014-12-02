@@ -42,8 +42,7 @@ Proof.
   intros u WFUder d tau Kder x tau' p p'. 
   functional induction (gettype u x p tau p'); crush.   (* Wow, crush gets 23/26. *)
   Case "p ++ zero_pe".
-   induction p'0.      (* Ask Dan, is this what you mean ? *)
-   (* Wow inversion on Kder seems to be looping. *)
+   induction p'0.   
    inversion Kder.
    SCase "K d (cross t0 t1) B".
     inversion H.

@@ -228,7 +228,7 @@ with   rtyp_ind_mutual := Induction for rtyp Sort Prop.
 Combined Scheme typ_ind_mutual from
           styp_ind_mutual, ltyp_ind_mutual, rtyp_ind_mutual.
 
- (* Bug 42 *)
+ (* Bug 42, getH *)
 Inductive htyp: Upsilon -> Gamma -> H -> Gamma -> Prop :=
    | htyp_empty : forall (u : Upsilon) (g: Gamma),
                        htyp u g [] []
@@ -240,8 +240,7 @@ Inductive htyp: Upsilon -> Gamma -> H -> Gamma -> Prop :=
                       rtyp nil u g v tau ->
                       htyp u g h (g' ++ [(x, tau)]).
 
-(* TODO this is really a universally quantified test over all of the pathing assignments. *)
-(* Bug 43 *)
+(* Bug 43, getH *)
 Inductive refp  : H -> Upsilon -> Prop :=
   | refp_empty  : forall (h : H),
                        refp h nil
@@ -249,7 +248,7 @@ Inductive refp  : H -> Upsilon -> Prop :=
                       getH h x = Some v' -> 
                       get v' p (pack tau' v (etype aliases alpha k tau)) ->
                       refp h u ->
-                      refp h (u ++ [((p_e x p),tau')]).
+                      refp h (u ++ [((x, p),tau')]).
 
 Inductive prog  : H -> St -> Prop := 
   | program  : forall (h : H) (u : Upsilon) (g : Gamma) (tau : Tau) (s : St),

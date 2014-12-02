@@ -174,7 +174,7 @@ Proof.
 Qed.
 
 Example WFU_A_test:
-  WFU [(p_e x nil, tau)].
+  WFU [((x, nil), tau)].
 Proof.
   (* apply WFU_A; *)
  eauto 10 with Chapter3.

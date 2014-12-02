@@ -24,7 +24,6 @@ clean:
 	rm -f *.vo
 	rm -f *~ 
 	rm -f *.glob
-	rm -f TAGS
 
 tar:
 	tar zcvf backup.tar.gz *.v Makefile

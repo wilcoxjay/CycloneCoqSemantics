@@ -14,85 +14,102 @@ Require Import Init.Datatypes.
 Require Import FormalSyntax.
 Require Import StaticSemanticsKindingAndContextWellFormedness.
 
+
+Inductive getU' : Upsilon -> EVar -> P -> Tau -> Prop :=
+  | getU_top  : forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
+                 getU' (cons ((x,p),tau) u) x p tau
+  | getU_next : forall (u : Upsilon) (x y: EVar) (p p': P) (tau tau': Tau),
+                 x <> y \/ p <> p'->
+                 getU' u x p tau -> 
+                 getU' (cons ((y,p'),tau') u) x p tau.
+
 Lemma getU_nil_none:
-  forall  (x : EVar) (p : P),
-    getU [] x p = None.
+  forall  (x : EVar) (p : P) (tau : Tau),
+     ~(getU' [] x p tau).
 Proof.
-  intros x p.
+  intros x p tau.
   compute.
-  destruct x.
-  reflexivity.
+  intros.
+  inversion H.
 Qed.
 
-Lemma getU_weakening :
+(* TODO jrw these properties don't hold on nil. *)
+Lemma getU'_weakening :
   forall (u : Upsilon) (x x': EVar) (p p': P) (tau tau': Tau),
-    getU (u ++ [((x',p'),tau')]) x p = Some tau ->
+    getU' (u ++ [((x', p'),tau')]) x p tau ->
     x <> x' ->
     p <> p' ->
-    getU u x p = Some tau.
+    getU' u x p tau.
 Proof.
+  intros.
+  induction u.
+  Case "u = []".
+   assert (A: ~ getU' [] x p tau).
+   apply getU_nil_none.
+   compute in A.
+   admit. (* How do I show this contradiction? *)
+  Case "u = a :: u".
+   destruct a.
+   destruct p0.
+   eapply getU_next.
 Admitted.  
 
-Lemma getU_function:
+Lemma getU_partial_function:
   forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
     WFU u ->
-    getU u x p = Some tau ->
+    getU' u x p tau ->
     forall (tau' : Tau),
-      getU u x p = Some tau' ->
+      getU' u x p tau' ->
       tau = tau'.
 Proof.
   intros.
-  rewrite H0 in H1.
+  induction u.
+  inversion H0.
+  destruct a.
+  inversion H0.
   inversion H1.
-  reflexivity.
+  crush.
+  admit.
+  admit.
 Qed.
 
-(* TODO Known true but Coq is not generating functional inversion for getU. *)
-(* Which makes this totally hard to work with. Can't discriminate, can't
- really compute. FUBAR. *)
 Lemma getU_function_inversion:
   forall (u : Upsilon),
     WFU u ->
     forall  (x : EVar) (p : P) (tau : Tau),
-      getU u x p = Some tau ->
+      getU' u x p tau ->
       forall (tau' : Tau),
-        (getU u x p = Some tau' /\ tau = tau').
+        (getU' u x p tau' /\ tau = tau').
 Proof.
   intros u WFUder.
-  induction u.
+  induction (rev u).
   intros.
-  assert (A: getU [] x p = None).
-  rewrite H.
-
-(*
-  apply getU_nil_none in H.
-
-  intros.
-  inversion H.
   split.
-
-
-  functional induction (getU u x p).
-  admit.
-  admit.
+  inversion H.
+  inversion H.
+  intros.
+  inversion WFUder.
   crush.
-  admit.
-*)
-Admitted.
+
+Qed.
 
 (* TODO not strictly true as d is a list. *)
 Lemma getD_weakening_some_left:
   forall (d : Delta) (alpha : TVar) (k : Kappa),
+    WFD d ->
      getD d         alpha   = Some k ->
     forall (d' : Delta),
+      WFD (d ++ d') -> 
       getD (d ++ d') alpha   = Some k.
 Proof.
 Admitted.  
 
 Lemma getD_weakening_some_right:
   forall (d : Delta) (alpha : TVar) (k : Kappa),
+    WFD d ->
     getD d         alpha   = None ->
     forall (d' : Delta),
+      WFD (d ++ d') ->
       getD d'        alpha   = Some k ->
       getD (d ++ d') alpha   = Some k.
 Proof.

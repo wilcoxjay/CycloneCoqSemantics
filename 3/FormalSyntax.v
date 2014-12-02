@@ -55,7 +55,7 @@ Inductive Tau : Type :=
  | utype  : TVar -> Kappa -> Tau -> Tau              (* Universal   type. *)
  | etype  : Phi -> TVar -> Kappa -> Tau -> Tau.      (* Existential type. *)
 
-Fixpoint removeTVar (alpha : TVar) (tvars : list TVar) : list TVar :=
+Function removeTVar (alpha : TVar) (tvars : list TVar) : list TVar :=
   match alpha, tvars with 
    | _, [] => []
    | tvar n, (tvar n') :: tvars' =>
@@ -64,8 +64,7 @@ Fixpoint removeTVar (alpha : TVar) (tvars : list TVar) : list TVar :=
      else (tvar n) :: (removeTVar alpha tvars')
   end.
 
-
-Fixpoint FreeVariablesTau (tau : Tau) : list TVar :=
+Function FreeVariablesTau (tau : Tau) : list TVar :=
   match tau with 
    | tv_t alpha   => [alpha]
    | cint         => []
@@ -130,12 +129,13 @@ with    E_ind_mutual := Induction for E Sort Prop
 with    F_ind_mutual := Induction for F Sort Prop.
 Combined Scheme Term_ind_mutual from St_ind_mutual, E_ind_mutual, F_ind_mutual.
 
+(* jrw why can't coqie invert? *)
 Function path_eq (p q : P) : bool := 
   match p, q with
+    | [], [] => true
     | (i_pe zero_pe) :: p', (i_pe zero_pe) :: q' => path_eq p' q'
     | (i_pe one_pe)  :: p', (i_pe one_pe ) :: q' => path_eq p' q'
-    | u_pe :: p', u_pe :: q'  => true
-    | [], [] => true
+    | u_pe :: p', u_pe :: q'  => path_eq p' q' (* Bug 39, failed to recurse. *)
     | _  , _ => false
   end.
 
@@ -172,7 +172,7 @@ Definition H  : Type := list HE.
 
 (* Bug 2, 3 *)
 
-Fixpoint getH (h : H) (x : EVar) : option E :=
+Function getH (h : H) (x : EVar) : option E :=
     match x, h with 
     | evar x', (evar y',v) :: h' =>
       if beq_nat x' y'
@@ -181,7 +181,7 @@ Fixpoint getH (h : H) (x : EVar) : option E :=
     | _ , nil => None
   end.
 
-Fixpoint setH (h : H) (x : EVar) (e : E) : H :=
+Function setH (h : H) (x : EVar) (e : E) : H :=
   match x, h with
     | evar x', (evar y',v) :: h' =>
       if beq_nat x' y'
@@ -190,7 +190,7 @@ Fixpoint setH (h : H) (x : EVar) (e : E) : H :=
     | (evar x'), _ => [(x,e)]
  end.
 
-Fixpoint deleteH (h : H) (x : EVar) : H :=
+Function deleteH (h : H) (x : EVar) : H :=
     match x, h with
     | evar x', (evar y',v) :: h' =>
       if beq_nat x' y'
@@ -204,7 +204,7 @@ Fixpoint deleteH (h : H) (x : EVar) : H :=
 Definition DE : Type := prod TVar Kappa.
 Definition Delta     := list DE.
 
-Fixpoint getD (d : Delta) (alpha : TVar) : option Kappa :=
+Function getD (d : Delta) (alpha : TVar) : option Kappa :=
   match alpha, d with 
     | tvar a', (tvar b', k) :: d' =>
       if beq_nat a' b' 
@@ -213,7 +213,7 @@ Fixpoint getD (d : Delta) (alpha : TVar) : option Kappa :=
     | _ , nil => None
   end.
 
-Fixpoint setD (d : Delta) (alpha : TVar) (k : Kappa) : Delta :=
+Function setD (d : Delta) (alpha : TVar) (k : Kappa) : Delta :=
   match alpha, d with 
     | tvar a', (tvar b', k') :: d' =>
       if beq_nat a' b' 
@@ -222,7 +222,7 @@ Fixpoint setD (d : Delta) (alpha : TVar) (k : Kappa) : Delta :=
     | _ , nil => [(alpha,k)]
   end.
 
-Fixpoint deleteD (d : Delta) (alpha : TVar) : Delta :=
+Function deleteD (d : Delta) (alpha : TVar) : Delta :=
     match alpha, d with
     | tvar x', (tvar y',v) :: h' =>
       if beq_nat x' y'
@@ -234,7 +234,7 @@ Fixpoint deleteD (d : Delta) (alpha : TVar) : Delta :=
 Definition GE : Type := prod EVar Tau.
 Definition Gamma     := list GE.
 
-Fixpoint getG (g : Gamma) (x: EVar) : option Tau :=
+Function getG (g : Gamma) (x: EVar) : option Tau :=
   match x, g with 
     | evar x', (evar y', t) :: g' =>
       if beq_nat x' y' 
@@ -243,19 +243,17 @@ Fixpoint getG (g : Gamma) (x: EVar) : option Tau :=
     | _ , [] => None
   end.
 
-Definition UE        := prod E Tau.      (* This E is only xp *)
+(* The thesis uses a statement here, (p_e x p), but it certainly makes the
+  proofs unnecessarily hard. So I'll use a pair. *)
+Definition UE        := prod (prod EVar P) Tau.
 Definition Upsilon   := list UE.
-
-(*? Double check with Dan about checking paths but I think it's correct. *)
  
 Function getU (u : Upsilon) (x: EVar) (p : P) : option Tau :=
   match x, u with 
-    | (evar x'), (p_e (evar y') p', v) :: u'  =>
+    | (evar x'), (((evar y'), p'), v) :: u'  =>
       if andb (beq_nat x' y') (path_eq p p')
       then Some v
       else getU u' x p
-    | _, (cons bad worse)  => None   (* Should not happen. *)
-    | _ , [] => None
+    | _,  _ => None 
   end.
 (* jrw why can't coqie invert? *)
-

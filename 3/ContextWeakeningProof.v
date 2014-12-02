@@ -94,7 +94,7 @@ Qed.
 
 Lemma get_lemma_extension_neq:
   forall (u : Upsilon) (x x' : nat) (p p': P) (t1 t2 t3: Tau),
-    getU (u ++ [(p_e (evar x') p', t1)]) (evar x) p = Some t2 ->
+    getU (u ++ [(((evar x'), p'), t1)]) (evar x) p = Some t2 ->
     x <> x' -> 
     getU u (evar x) p = Some t3.
 Proof.

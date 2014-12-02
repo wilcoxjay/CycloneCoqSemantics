@@ -23,7 +23,8 @@ Proof.
   reflexivity.
 Qed.
 
-Definition u := ((p_e x nil), cint) :: [].
+Definition pnil : P := [].
+Definition u := (((x,pnil)), cint) :: [].
 
 Example gettype_etype_test_failed:
   getU u x [] = Some cint.
