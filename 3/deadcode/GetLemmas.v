@@ -16,7 +16,7 @@ Require Import StaticSemanticsKindingAndContextWellFormedness.
 
 Lemma getU_nil_none:
   forall  (x : EVar) (p : P),
-    getU [] x p = None.
+    getU [] x p tau.
 Proof.
   intros x p.
   compute.

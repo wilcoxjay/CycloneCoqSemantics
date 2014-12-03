@@ -173,11 +173,11 @@ Proof.
  apply WFU_nil.
 Qed.
 
+Definition pnil : P := [].
 Example WFU_A_test:
-  WFU [((x, nil), tau)].
+  WFU [((x, pnil), tau)].
 Proof.
-  (* apply WFU_A; *)
- eauto 10 with Chapter3.
+  constructor; eauto 10 with Chapter3.
 Qed.
 
 Example WFC_DUG_test:

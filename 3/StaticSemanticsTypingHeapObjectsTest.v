@@ -18,37 +18,43 @@ Require Export Tacticals.
 Require Export TestUtilities.
 
 Example gettype_empty_test2:
-  gettype [] x [] tau [] = Some tau.
+  gettype [] x [] tau [] tau.
 Proof.
-  reflexivity.
+  eauto 10 with Chapter3.
 Qed.
 
 Definition pnil : P := [].
 Definition u := (((x,pnil)), cint) :: [].
 
 Example gettype_etype_test_failed:
-  getU u x [] = Some cint.
+  getU u x [] cint.
 Proof.
  eauto 10 with Chapter3.
 Qed.
 
-Example gettype_etype_test2:
-  gettype u x [] (etype aliases alpha k cint) [u_pe] = Some cint.
+Example getu_for_etype:
+ getU [((x, pnil), cint)] x pnil cint.
 Proof.
-  reflexivity.
+  eauto 10 with Chapter3.
+Qed.
+
+Example gettype_etype_test2:
+  gettype [((x, pnil), cint)] x pnil (etype aliases alpha k cint) [u_pe] cint.
+Proof.
+  eauto 10 with Chapter3.
 Qed.
 
 Definition t0 := cint.
 Definition t1 := cint.
 
 Example gettype_left_test2:
-  gettype [] x [] (cross t0 t1) [i_pe zero_pe] = Some tau.
+  gettype [] x [] (cross t0 t1) [i_pe zero_pe] cint.
 Proof.   
-  reflexivity.
+  constructor; eauto 10 with Chapter3.
 Qed.
 
 Example gettype_right_test2:
-  gettype [] x [] (cross t0 t1) [i_pe one_pe] = Some tau.
+  gettype [] x [] (cross cint cint) [i_pe one_pe] cint.
 Proof.
-  reflexivity.
+  eauto 10 with Chapter3.
 Qed.

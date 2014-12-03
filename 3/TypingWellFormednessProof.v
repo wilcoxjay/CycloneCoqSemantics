@@ -13,7 +13,7 @@ Require Import Init.Datatypes.
 Require Import Coq.Init.Logic.
 
 Require Export FormalSyntax.
-Require Export GetLemmas.
+Require Export GetLemmasRelation.
 Require Export ListLemmas.
 Require Export DynamicSemanticsTypeSubstitution.
 Require Export DynamicSemanticsHeapObjects.
@@ -36,12 +36,13 @@ Lemma A_7_Typing_Well_Formedness_1 :
     forall (d: Delta) (tau : Tau),
       K d tau A ->
       forall (x : EVar) (tau' : Tau) (p p' : P),
-        gettype u x p tau p' = Some tau' ->
+        gettype u x p tau p' tau' ->
         K d tau' A.
 Proof.
-  intros u WFUder d tau Kder x tau' p p'. 
-  functional induction (gettype u x p tau p'); crush.   (* Wow, crush gets 23/26. *)
-  Case "p ++ zero_pe".
+  intros u WFUder d tau Kder x tau' p p' gettypeder.
+  admit. (* TODO broken proof due to move from functional to relational. *)
+(*
+  Case "gettype u x p tau [] tau".
    induction p'0.   
    inversion Kder.
    SCase "K d (cross t0 t1) B".
@@ -55,7 +56,7 @@ Proof.
     apply IHo in H2.
     assumption.
     assumption.
-  Case "p ++ one_pe".
+  Case "gettype u x p (cross t0 t1) (i_pe zero_pe :: p') tau".
    inversion Kder.
    inversion H.
    apply IHo in H3.
@@ -84,24 +85,28 @@ Proof.
    apply getU_function_inversion with (tau':= tau') in e3.
    inversion e3.
    assumption.
+*)
 Qed.
 
+(* Totally broken by the changes. *)
 Lemma WFC_weakening:
   forall (d : Delta) (u : Upsilon) (g : Gamma)
          (x : EVar) (tau : Tau),
-    WFC d u (g ++ [(x, tau)]) ->
+    WFC d u ([(x, tau)] ++ g) ->
     WFC d u g.
 Proof.
   intros.
-  induction (rev g).
+  induction g. (* Was (rev g) *)
   Case "g = nil".
    inversion H.
    inversion H0.
+(*
    apply Nil_Not_App_Anything in H7.
    inversion H7.
    discriminate.
    crush.
    apply WFC_DUG.
+   inversion H0.
    apply app_equals in H5.
    inversion H5.
    rewrite H2 in H9.
@@ -109,19 +114,21 @@ Proof.
    assumption.
  Case "g has an append".
    assumption.
-Qed.
+*)
+Admitted.
 
 Lemma WFDG_weakening:
   forall (d : Delta) (g : Gamma)
          (x : EVar) (tau : Tau),
-    WFDG d (g ++ [(x, tau)]) ->
+    WFDG d ([(x, tau)] ++ g) ->
     WFDG d g.
 Proof.
   intros.
-  induction (rev g).
+  induction g. (* was rev g *)
   Case "g = nil".
    inversion H.
    inversion H0.
+(*
    apply Nil_Not_App_Anything in H2.
    inversion H2.
    discriminate.
@@ -131,7 +138,8 @@ Proof.
    rewrite H3 in H4.
    assumption.
    assumption.
-Qed.
+*)
+Admitted.
 
 (* TODO too weak of a set of assumptions but it will let me 
    explore things. *)
@@ -312,7 +320,7 @@ Proof.
    assumption.
    inversion H.
    assumption.
-  Case "?".
+  Case "base".
    assumption.
 Qed.
 
@@ -453,7 +461,7 @@ Case "styp_e_3_1".
    assumption.
    inversion H.
    assumption.
-  Case "?".
+  Case "base".
    assumption.
 Qed.
 
@@ -603,6 +611,6 @@ Proof.
    apply K_utype.
    assumption.
    assumption.
-  Case "?".
+  Case "base".
    crush.
 Qed.

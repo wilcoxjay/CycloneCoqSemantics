@@ -14,18 +14,9 @@ Require Import Init.Datatypes.
 Require Import FormalSyntax.
 Require Import StaticSemanticsKindingAndContextWellFormedness.
 
-
-Inductive getU' : Upsilon -> EVar -> P -> Tau -> Prop :=
-  | getU_top  : forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
-                 getU' (cons ((x,p),tau) u) x p tau
-  | getU_next : forall (u : Upsilon) (x y: EVar) (p p': P) (tau tau': Tau),
-                 x <> y \/ p <> p'->
-                 getU' u x p tau -> 
-                 getU' (cons ((y,p'),tau') u) x p tau.
-
 Lemma getU_nil_none:
   forall  (x : EVar) (p : P) (tau : Tau),
-     ~(getU' [] x p tau).
+     ~(getU [] x p tau).
 Proof.
   intros x p tau.
   compute.
@@ -34,17 +25,17 @@ Proof.
 Qed.
 
 (* TODO jrw these properties don't hold on nil. *)
-Lemma getU'_weakening :
+Lemma getU_weakening :
   forall (u : Upsilon) (x x': EVar) (p p': P) (tau tau': Tau),
-    getU' (u ++ [((x', p'),tau')]) x p tau ->
+    getU (u ++ [((x', p'),tau')]) x p tau ->
     x <> x' ->
     p <> p' ->
-    getU' u x p tau.
+    getU u x p tau.
 Proof.
   intros.
   induction u.
   Case "u = []".
-   assert (A: ~ getU' [] x p tau).
+   assert (A: ~ getU [] x p tau).
    apply getU_nil_none.
    compute in A.
    admit. (* How do I show this contradiction? *)
@@ -57,29 +48,30 @@ Admitted.
 Lemma getU_partial_function:
   forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
     WFU u ->
-    getU' u x p tau ->
+    getU u x p tau ->
     forall (tau' : Tau),
-      getU' u x p tau' ->
+      getU u x p tau' ->
       tau = tau'.
 Proof.
   intros.
   induction u.
-  inversion H0.
-  destruct a.
-  inversion H0.
-  inversion H1.
-  crush.
-  admit.
-  admit.
-Qed.
+  Case "u = []".
+   inversion H0.
+  Case "a :: u".
+   destruct a.
+   destruct p0.
+   inversion H.   
+   apply IHu in H7.
+   assumption.
+Admitted.
 
 Lemma getU_function_inversion:
   forall (u : Upsilon),
     WFU u ->
     forall  (x : EVar) (p : P) (tau : Tau),
-      getU' u x p tau ->
+      getU u x p tau ->
       forall (tau' : Tau),
-        (getU' u x p tau' /\ tau = tau').
+        (getU u x p tau' /\ tau = tau').
 Proof.
   intros u WFUder.
   induction (rev u).
@@ -90,8 +82,7 @@ Proof.
   intros.
   inversion WFUder.
   crush.
-
-Qed.
+Admitted.
 
 (* TODO not strictly true as d is a list. *)
 Lemma getD_weakening_some_left:
@@ -114,4 +105,42 @@ Lemma getD_weakening_some_right:
       getD (d ++ d') alpha   = Some k.
 Proof.
 Admitted. 
+
+
+
+(* TODO how to prove these? *)
+Lemma getD_Some_None_Implies_Different_Variables:
+  forall (d : Delta) (n : nat) (k : Kappa),
+      getD d (tvar n ) = Some k ->
+      forall (n' : nat),
+        getD d (tvar n') = None ->
+        beq_nat n' n = false.
+Proof.
+  intros d n k.
+  induction d.
+  Case "d = []".
+   discriminate.
+  Case "d = a :: d".
+   intros getdadnsome n'.
+   intros getdadn'none.
+   unfold getD in getdadnsome.
+   fold getD in getdadnsome.
+Admitted.
+
+Lemma getD_None_None_Implies_Different_Variables:
+  forall (d : Delta) (n n' : nat) (k : Kappa),
+    (* TODO d <> nil *)
+    getD d (tvar n ) = None ->
+    getD (d ++ [(tvar n, k)]) (tvar n') = None ->
+    beq_nat n' n = false.
+Proof.
+Admitted.
+
+Lemma add_alpha_to_Delta_get_beta_None_still_None :
+  forall (d : Delta) (n n0 : nat) (k : Kappa),
+    n <> n0 ->
+    getD d (tvar n0) = None ->
+    getD (d ++ [(tvar n, k)]) (tvar n0) = None.
+Proof.
+Admitted.                       
 

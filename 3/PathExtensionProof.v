@@ -60,28 +60,26 @@ Admitted.
 Lemma A_10_Path_Extension_2_A:
   forall (u : Upsilon) (x : EVar) (p p' : P) (tau tau' t0 t1 : Tau)
          (n : nat),
-    gettype u x p tau p' = Some tau' ->
+    gettype u x p tau p' tau' ->
     tau' = (cross t0 t1) ->
-    n = length p' ->
-    (gettype u x p tau (p' ++ [i_pe zero_pe]) = Some t0  /\
-     gettype u x p tau (p' ++ [i_pe one_pe]) = Some t1).
+    (gettype u x p tau (p' ++ [i_pe zero_pe]) t0  /\
+     gettype u x p tau (p' ++ [i_pe one_pe])  t1).
 Proof.
   intros.
-  induction n.
+  induction p.
   (* Wierd, crush gives subgoals. *)
 Admitted.
 
 Lemma A_10_Path_Extension_2_B:
   forall (u : Upsilon) (alpha : TVar) (x : EVar) (p p' : P) 
          (tau tau' t0 uxp: Tau) (k : Kappa) (n : nat),
-    gettype u x p tau p' = Some tau' ->
+    gettype u x p tau p' tau' ->
     tau' = (etype nowitnesschange alpha k t0) ->
-    getU u x p = Some uxp->
-    n = length p' ->
-    gettype u x p tau (p' ++ [u_pe]) = Some (subst_Tau uxp uxp alpha).
+    getU u x p uxp ->
+    gettype u x p tau (p' ++ [u_pe]) (subst_Tau uxp uxp alpha).
 Proof.
   intros.
-  induction n. 
+  induction p. 
   (* crush gets 0. *)
 Admitted.
 

@@ -54,12 +54,12 @@ Inductive K : Delta -> Tau -> Kappa -> Prop :=
 
  | K_utype  : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau),
                    getD d alpha = None -> 
-                   K (d ++ [(alpha, k)]) tau A ->
+                   K ([(alpha, k)] ++ d) tau A ->
                    K d (utype alpha k tau) A
 
  | K_etype  : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau) (p : Phi),
                    getD d alpha = None -> 
-                   K (d ++ [(alpha, k)]) tau A ->
+                   K ([(alpha, k)] ++ d) tau A ->
                    K d (etype p alpha k tau) A.
 
 Inductive AK : Delta -> Tau -> Kappa -> Prop :=
@@ -96,12 +96,12 @@ Inductive ASGN : Delta -> Tau -> Prop :=
 
   | ASGN_utype : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau),
                    getD d alpha = None ->
-                   ASGN (d ++ [(alpha, k)]) tau ->
+                   ASGN ([(alpha, k)] ++ d) tau ->
                    ASGN d (utype alpha k tau)
 
   | ASGN_etype : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau),
                    getD d alpha = None ->
-                   ASGN (d ++ [(alpha, k)]) tau ->
+                   ASGN ([(alpha, k)] ++ d) tau ->
                    ASGN d (etype nowitnesschange alpha k tau).
 
 Inductive WFDG : Delta -> Gamma -> Prop :=
@@ -111,17 +111,17 @@ Inductive WFDG : Delta -> Gamma -> Prop :=
                      getG g x = None -> 
                      K d tau A ->
                      WFDG d g ->
-                     WFDG d (g ++ [(x,tau)]).
+                     WFDG d ([(x,tau)] ++ g).
 
 Inductive WFU : Upsilon -> Prop :=
   | WFU_nil : WFU nil
   | WFU_A   : forall (u : Upsilon) (tau : Tau) (p : P) (x : EVar),
-                 getU u x p = None ->
+                 NotInDomU u x p ->
                  WFU  u ->
                  K nil tau A ->
-                 WFU (u ++ [((x,p), tau)]).
+                 WFU ([((x,p), tau)] ++ u).
 
-(* Not in the thesis, do I really need it ? 
+(* TODO Not in the thesis, do I really need it ? 
    Do I put in in WFC ? or derive it when needed from K judgement? 
    Does it have to check the kinding also? *)
 
@@ -130,7 +130,7 @@ Inductive WFD : Delta -> Prop :=
   | WFU_xtau   : forall (d : Delta) (alpha : TVar) (k : Kappa),
                  getD d alpha = None ->
                  WFD  d ->
-                 WFD (d ++ [(alpha, k)]).
+                 WFD ([(alpha, k)] ++ d).
 
 Inductive WFC : Delta -> Upsilon -> Gamma -> Prop :=
   | WFC_DUG : forall (d : Delta) (g: Gamma) (u : Upsilon),

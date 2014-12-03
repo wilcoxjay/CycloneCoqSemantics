@@ -22,42 +22,8 @@ Require Export StaticSemantics.
 Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export Case.
-
-(* TODO how to prove these? *)
-Lemma getD_Some_None_Implies_Different_Variables:
-  forall (d : Delta) (n : nat) (k : Kappa),
-      getD d (tvar n ) = Some k ->
-      forall (n' : nat),
-        getD d (tvar n') = None ->
-        beq_nat n' n = false.
-Proof.
-  intros d n k.
-  induction d.
-  Case "d = []".
-   discriminate.
-  Case "d = a :: d".
-   intros getdadnsome n'.
-   intros getdadn'none.
-   unfold getD in getdadnsome.
-   fold getD in getdadnsome.
-Admitted.
-
-Lemma getD_None_None_Implies_Different_Variables:
-  forall (d : Delta) (n n' : nat) (k : Kappa),
-    (* TODO d <> nil *)
-    getD d (tvar n ) = None ->
-    getD (d ++ [(tvar n, k)]) (tvar n') = None ->
-    beq_nat n' n = false.
-Proof.
-Admitted.
-
-Lemma add_alpha_to_Delta_get_beta_None_still_None :
-  forall (d : Delta) (n n0 : nat) (k : Kappa),
-    n <> n0 ->
-    getD d (tvar n0) = None ->
-    getD (d ++ [(tvar n, k)]) (tvar n0) = None.
-Proof.
-Admitted.                       
+Require Export TacticNotations.
+Require Export GetLemmasRelation.
 
 Lemma A_4_Useless_Substitutions_1:
   forall (d : Delta) (tau' : Tau) (k : Kappa),
@@ -68,10 +34,10 @@ Lemma A_4_Useless_Substitutions_1:
         subst_Tau tau' tau alpha = tau'.
 Proof.
   intros d tau' k Kder.
-  induction Kder.
-  Case "cint".
+  K_ind_cases(induction Kder) Case.
+  Case "K d cint B".
    crush.
-  Case "alpha0".
+  Case "K d (tv_t alpha) B".
    intros alpha0 getalpha0 tau. 
    destruct alpha0.
    destruct alpha.
@@ -84,7 +50,7 @@ Proof.
     rewrite H.
     reflexivity.
     assumption.
-  Case "ptype alpha0".
+  Case "K d (ptype (tv_t alpha)) B".
    intros alpha0 getalpha0 tau.
    destruct alpha.
    destruct alpha0.
@@ -97,45 +63,31 @@ Proof.
     rewrite H.
     reflexivity.
     assumption.
-  Case "tau0".
+  Case "K d tau A".
    crush.
-  Case "cross".
+  Case "K d (cross t0 t1) A".
    crush.
-  Case "arrow".
+  Case "K d (arrow t0 t1) A".
    crush.
-  Case "ptype tau0".
+  Case "K d (ptype tau) B".
    crush.
-  Case "utype". (* Alpha conversion should fuck this up. *)
+(* TODO Alpha conversion should fuck this up. *)
+  Case "K d (utype alpha k tau) A".
    intros alpha0 getdalpha0 tau0.
    destruct alpha.
    destruct alpha0.
    unfold subst_Tau.
    fold subst_Tau.
    specialize (IHKder (tvar n0)). (* n or n0? *)
-   assert (A: getD (d ++ [(tvar n, k)]) (tvar n0) = None).
+   assert (A: getD ([(tvar n, k)] ++ d) (tvar n0) = None).
    assert (AB: n <> n0).
    admit. (* Alpha binding admit. *)
    SCase "add_alpha_to_Delta_get_beta_None_still_None".
-    apply add_alpha_to_Delta_get_beta_None_still_None; assumption.
-   apply IHKder with (tau0:= tau0) in A.
-   rewrite A.
-   reflexivity.
-  Case "etype".
-   intros alpha0 getdalpha0 tau0.
-   destruct alpha.
-   destruct alpha0.
-   unfold subst_Tau.
-   fold subst_Tau.
-   specialize (IHKder (tvar n0)). (* n or n0? *)
-   assert (A: getD (d ++ [(tvar n, k)]) (tvar n0) = None).
-   assert (AB: n <> n0).
-   admit. (* Alpha binding admit. *)
-   SCase "add_alpha_to_Delta_get_beta_None_still_None".
-    apply add_alpha_to_Delta_get_beta_None_still_None; assumption.
-   apply IHKder with (tau0:= tau0) in A.
-   rewrite A.
-   reflexivity.
-Qed.
+    admit.
+    intros.
+    admit.
+   Case "K d (etype p alpha k tau) A)".
+Admitted.
 
 (* use subst_Gamma_over_app *)
 Lemma A_4_Useless_Substitutions_2:
@@ -156,6 +108,7 @@ Proof.
    inversion getd.
    apply IHwfdgder with (tau:=tau0) in getd.
    functional induction (subst_Gamma g tau0 alpha ).
+(*
     SCase "g=[]".
      rewrite app_nil_l.
      apply IHwfdgder with (tau:=tau0) in H2.
@@ -183,7 +136,8 @@ Proof.
      assumption.
      assumption.
 *)
-Qed.
+*)
+Admitted.
 
 Lemma A_4_Useless_Substitutions_3:
   forall (d : Delta) (alpha : TVar),
@@ -191,12 +145,12 @@ Lemma A_4_Useless_Substitutions_3:
     forall (u : Upsilon),
       WFU u ->
       forall (x : EVar) (p : P) (tau': Tau),
-        getU u x p = Some tau' ->
+        getU u x p tau' ->
         forall (tau : Tau),
           subst_Tau tau' tau alpha = tau'.
 Proof.
   intros d alpha getd u wfuder.
-  induction wfuder.
+  WFU_ind_cases (induction wfuder) Case.
   (* apply A_4_Useless_Substitutions_1. *)
 Admitted.
 
@@ -211,22 +165,14 @@ Lemma A_5_Commuting_Substitutions:
                  beta).
 Proof.
   intros beta t2 notfreeder alpha t0.
-  induction t0.
+  (Tau_ind_cases (induction t0) Case); crush.
   (* crush leaves 1/7. *)
   (* Need a working tautology on variable equality. *)
-  Case "tv t alpha versus beta".
-
+  Case "(tv_t t)".
   admit.
-  Case "Other are crushable".
-  crush.
-  crush.
-  crush.
-  crush.
-  crush.
-  crush.
 Qed.
 
-(* TODO are these induction on AKder or Kder?  I think the If der not the
+(* TODO Dan, are these induction on AKder or Kder?  I think the If der not the
   suppose der. *)
 Lemma A_6_Substitution_1:
   forall (d : Delta)  (tau : Tau) (k: Kappa),
@@ -238,7 +184,7 @@ Proof.
   intros d tau k.
   intros AKder alpha tau' k' Kder.
   (* induction AKder; destruct tau'. (* TODO is this right? *) *)
-  induction tau'.
+  Tau_ind_cases (induction tau') Case.
   (* Crush gets 0. *)
 Admitted.    
 
@@ -251,7 +197,7 @@ Lemma A_6_Substitution_2:
 Proof.
   intros d alpha tau tau' k k'.
   intros AKder AKder2.
-  induction AKder2.
+  AK_ind_cases (induction AKder2) Case.
   (* crush gets 0. *)
 Admitted.    
 
@@ -266,7 +212,7 @@ Proof.
   intros AKder.
   intros alpha tau'.
   intros asgnder.
-  induction asgnder.
+  ASGN_ind_cases (induction asgnder) Case.
   (* crush gets 0. *)
 Admitted.    
 
@@ -281,7 +227,7 @@ Proof.
   intros AKder.
   intros alpha g.
   intros WFDGder.
-  induction WFDGder.
+  WFDG_ind_cases (induction WFDGder) Case.
   (* crush gets 0. *)
 Admitted.    
 
@@ -296,9 +242,7 @@ Proof.
   intros AKder.
   intros u alpha g.
   intros WFCder.
-  induction WFCder; crush.
-(* crush gets 0. *)
-  (* TODO is this right? 1 goal?*)
+  (* Corrollary to the previous lemma. *)
 Admitted.    
 
 (* Thesis Bug, no AK is required. *)
@@ -324,13 +268,13 @@ Proof.
          constructor;
          crush).
 
-  Case "if".
+  Case "ret (if_s e s1 s2)".
     foldunfold'.
 
-  Case "seq s s' ret s.".
+  Case "ret (seq s s') 1".
    foldunfold'.
 
-  Case "seq s s' ret s'.".
+  Case "ret (seq s s') 2".
     intros alpha tau.
     unfold subst_St.
     fold subst_E.
@@ -338,10 +282,10 @@ Proof.
     apply ret_seq_2. (* Constructor takes the first rule, not all cases. *)
     crush.
 
-  Case "letx".
+  Case "ret (letx x e s)".
    foldunfold'.
 
-  Case "open".
+  Case "ret (open e alpha x s)".
    intros alpha0 tau0.
    unfold subst_St.
    fold subst_E.
@@ -350,7 +294,7 @@ Proof.
    constructor.
    assumption.
 
-  Case "openstar".
+  Case "ret (openstar e alpha x s))".
    intros alpha0 tau0.
    unfold subst_St.
    fold subst_E.
@@ -367,14 +311,13 @@ Lemma A_6_Substitution_7:
     forall (u : Upsilon),
       WFU u ->
       forall (x : EVar) (p p': P) (t1 t2: Tau),
-        gettype u x p t1 p' = Some t2 ->
+        gettype u x p t1 p' t2 ->
         forall (alpha : TVar),
-          gettype u x p (subst_Tau t1 tau alpha) p' = 
-          Some (subst_Tau t2 tau alpha).
+          gettype u x p (subst_Tau t1 tau alpha) p' (subst_Tau t2 tau alpha).
 Proof.
   intros d tau k AKder u WFUder x p p' t1 t2.
-  functional induction (gettype u x p t1 p'); crush. (* or is it on WFUder? *)
-  (* crush gets 24/26. *)
+  intros gettypder.
+  gettype_ind_cases (induction gettypder) Case.
 Admitted.    
 
 (* Dan, is that last ltyp supposed to be an styp? *)
@@ -393,29 +336,25 @@ Proof.
   intros d tau k AKder.
   intros alpha u g e tau' d' ltypder.
 
-  (* TODO is this right? No variable binding issues. *)
-  apply (typ_ind_mutual
+  ltyp_ind_cases 
+    (apply (ltyp_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
-              styp d u g t s -> 
               d = (d' ++ [(alpha,k)]) ->
               styp d u (subst_Gamma g tau alpha)
                    (subst_Tau tau' tau alpha)
                    (subst_St s tau alpha))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
-              ltyp d u g  e tau' -> 
               d = (d' ++ [(alpha,k)]) ->
               ltyp d u (subst_Gamma g tau alpha)
                    (subst_E e tau alpha)
                    (subst_Tau tau' tau alpha))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
-              rtyp d u g e t -> 
               d = (d' ++ [(alpha,k)]) ->
               rtyp d u (subst_Gamma g tau alpha)
                    (subst_E e tau alpha)
-                   (subst_Tau tau' tau alpha))).
-  Focus 27.
-  (* crush gets zero. *)
+                   (subst_Tau tau' tau alpha)))) Case; crush.
+  (* crush gets one. *)
 Admitted.    

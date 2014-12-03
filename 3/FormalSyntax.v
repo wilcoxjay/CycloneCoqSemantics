@@ -248,12 +248,20 @@ Function getG (g : Gamma) (x: EVar) : option Tau :=
 Definition UE        := prod (prod EVar P) Tau.
 Definition Upsilon   := list UE.
  
-Function getU (u : Upsilon) (x: EVar) (p : P) : option Tau :=
+Inductive getU : Upsilon -> EVar -> P -> Tau -> Prop :=
+  | getU_top  : forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
+                 getU (cons ((x,p),tau) u) x p tau
+  | getU_next : forall (u : Upsilon) (x y: EVar) (p p': P) (tau tau': Tau),
+                 x <> y \/ p <> p'->
+                 getU u x p tau -> 
+                 getU (cons ((y,p'),tau') u) x p tau.
+
+(* TODO warning on inversion, do I need a relation here also? *)
+Function NotInDomU (u : Upsilon) (x : EVar) (p : P) : Prop :=
   match x, u with 
-    | (evar x'), (((evar y'), p'), v) :: u'  =>
-      if andb (beq_nat x' y') (path_eq p p')
-      then Some v
-      else getU u' x p
-    | _,  _ => None 
-  end.
-(* jrw why can't coqie invert? *)
+    | _, [] => True
+    | evar n, ((((evar n'),p'),_) :: u') =>
+       if andb (beq_nat n n') (path_eq p p')
+       then True
+       else NotInDomU u' x p
+   end.

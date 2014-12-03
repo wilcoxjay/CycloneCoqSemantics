@@ -218,16 +218,22 @@ Proof.
 Qed.
 
 Example getUnil :
-   getU [] x [] = None.
+  forall (tau : Tau),
+    ~getU [] x [] tau.
 Proof.
-  reflexivity.
+  intros.
+  compute.
+  intros.
+  inversion H.
 Qed.
 
+(* TODO 
 Example getUxBadPath : 
-  getU (((x, p0), tau) :: nil) x [] = None.
+  getU (((x, p0), tau) :: nil) x [] tau.
 Proof.
-  reflexivity.
+  constructor.
 Qed.
+*)
 
 Example path_eq:
   path_eq [] [] = true.
@@ -236,16 +242,19 @@ Proof.
 Qed.
 
 Example getUx : 
-  getU ((( x, p0), tau) :: nil) x p0 = Some tau.
+  getU ((( x, p0), tau) :: nil) x p0 tau.
 Proof.
   compute.
-  reflexivity.
+  constructor.
 Qed.
 
 (* Bug 6 in defintion x <>y \/ [] = nil. *)
 Example getUyx : 
-  getU [((y,nil),tau) ; ((x,nil),tau')] x [] = Some tau'.
+  getU [((y,nil),tau) ; ((x,nil),tau')] x [] tau'.
 Proof.
-  reflexivity.
+  constructor.
+  left.
+  discriminate.
+  constructor.
 Qed.
 

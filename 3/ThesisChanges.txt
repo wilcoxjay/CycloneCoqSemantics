@@ -1,0 +1,7 @@
+
+1) SS_3_1 has the same Tau.
+2) Added R_initial_assign_3_2 to allow for initial assignment in the heap.
+3) Reversed the order of all accesses into contexts to make induction
+proofs simpler.
+4) Typo in context Delta definition.
+

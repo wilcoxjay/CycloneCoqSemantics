@@ -21,6 +21,7 @@ Require Export StaticSemanticsKindingAndContextWellFormedness.
 Require Export StaticSemantics.
 Require Export TypeSafety.
 Require Export CpdtTactics.
+Require Export TacticNotations.
 
 Lemma A_3_Heap_Weakening_1:
   forall (u u' : Upsilon) (g g' g'': Gamma) (h : H),
@@ -30,8 +31,8 @@ Proof.
   intros u u' g g' g'' h.
   intros WFCder.
   induction WFCder.
-  (* Collision. *)
-  (* Crush get's 0. *)
+  Case "WFC [] (u ++ u') (g ++ g')".
+  (* Crush get's 0 as there is only 1 case. *)
 Admitted.
 
 Lemma A_3_Heap_Weakening_2:
@@ -43,5 +44,8 @@ Proof.
   intros refpder.
   induction refpder.
   (* Crush gets 0. *)
-  Focus 2.
+  Case "refp (h ++ h') []".
+   admit.
+  Case "refp (h ++ h') ([(x, p, tau')] ++ u)".
+   admit.
 Admitted.

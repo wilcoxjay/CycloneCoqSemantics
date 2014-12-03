@@ -84,7 +84,7 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
                                (x : EVar)  (tau tau' : Tau) 
                                (s : St) (e : E),
                           getG g x = None ->
-                          styp d u (g ++ [(x,tau')]) tau s ->
+                          styp d u ([(x,tau')] ++ g) tau s ->
                           rtyp d u g e    tau' ->
                           styp d u g tau  (letx x e s)
 
@@ -100,7 +100,7 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
                           getG g x = None ->
                           K d tau A      ->
                           rtyp d u g e (etype p alpha k tau') ->
-                          styp (d ++ [(alpha,k)]) u (g ++ [(x,tau')])
+                          styp ([(alpha,k)] ++ d) u ([(x,tau')] ++ g)
                                tau s ->
                           styp d u g tau (open e alpha x s)
 
@@ -109,9 +109,9 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
                                (k : Kappa) (tau tau' : Tau)
                                (s : St) (e : E),
                           rtyp d u g e (etype aliases alpha k tau') -> 
-                          styp (d ++ [(alpha,k)])
+                          styp ([(alpha,k)] ++ d)
                                u 
-                               (g ++ [(x,tau')])
+                               ([(x,tau')] ++ g)
                                tau s ->
                           getD d alpha = None ->
                           getG g x = None ->
@@ -123,7 +123,7 @@ with      ltyp :   Delta -> Upsilon -> Gamma -> E -> Tau -> Prop :=
   | SL_3_1     : forall (d : Delta) (g : Gamma) (u : Upsilon) 
                            (x : EVar) (p : P) (tau tau': Tau),
                       getG g x = Some tau' ->
-                      gettype u x nil tau' p = Some tau ->
+                      gettype u x nil tau' p tau ->
                       WFC d u g->
                       K d tau' A -> 
                       ltyp d u g (p_e x p) tau
@@ -146,7 +146,7 @@ with      rtyp :  Delta -> Upsilon -> Gamma -> E   -> Tau -> Prop :=
   | SR_3_1  : forall (d : Delta) (g : Gamma) (u : Upsilon) 
                         (x  : EVar) (p : P) (tau tau': Tau),
                    getG g x = Some tau' -> 
-                   gettype u x nil tau' p = Some tau ->
+                   gettype u x nil tau' p tau ->
                    K d tau' A ->
                    WFC d u g ->
                    rtyp d u g (p_e x p) tau
@@ -211,7 +211,7 @@ with      rtyp :  Delta -> Upsilon -> Gamma -> E   -> Tau -> Prop :=
   | SR_3_13 : forall (d : Delta) (u : Upsilon) (g : Gamma) (tau tau': Tau) 
                      (s : St) (x : EVar),
                    getG g x = None ->
-                   styp d u (g ++ [(x,tau)]) tau' s ->
+                   styp d u ([(x,tau)] ++ g) tau' s ->
                    ret s ->
                    rtyp d u g (f_e (dfun tau x tau' s)) (arrow tau tau')
 
@@ -219,7 +219,7 @@ with      rtyp :  Delta -> Upsilon -> Gamma -> E   -> Tau -> Prop :=
                         (tau : Tau) (alpha : TVar) (k : Kappa),
                    getD d alpha = None ->
                    WFC  d u g ->
-                   rtyp (d ++ [(alpha,k)]) u g (f_e f) tau ->
+                   rtyp ([(alpha,k)] ++ d) u g (f_e f) tau ->
                    rtyp d u g (f_e (ufun alpha k f)) (utype alpha k tau).
 
 Scheme styp_ind_mutual := Induction for styp Sort Prop
@@ -238,7 +238,7 @@ Inductive htyp: Upsilon -> Gamma -> H -> Gamma -> Prop :=
                       deleteH h x = h' ->
                       htyp u g h' g' ->
                       rtyp nil u g v tau ->
-                      htyp u g h (g' ++ [(x, tau)]).
+                      htyp u g h ([(x, tau)] ++ g').
 
 (* Bug 43, getH *)
 Inductive refp  : H -> Upsilon -> Prop :=
@@ -248,7 +248,7 @@ Inductive refp  : H -> Upsilon -> Prop :=
                       getH h x = Some v' -> 
                       get v' p (pack tau' v (etype aliases alpha k tau)) ->
                       refp h u ->
-                      refp h (u ++ [((x, p),tau')]).
+                      refp h ([((x, p),tau')] ++ u).
 
 Inductive prog  : H -> St -> Prop := 
   | program  : forall (h : H) (u : Upsilon) (g : Gamma) (tau : Tau) (s : St),

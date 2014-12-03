@@ -1,29 +1,30 @@
 -include coq.depends
 all: TAGS src tactic test proof TODOS
 
-SRCFILES=FormalSyntax.vo GetLemmas.vo ListLemmas.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TacticNotations.vo TypeSafety.vo
+SRCFILES=FormalSyntax.vo GetLemmasRelation.vo ListLemmas.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TacticNotations.vo TypeSafety.vo
 
 TESTFILES=TestUtilities.vo FormalSyntaxTest.vo DynamicSemanticsHeapObjectsTest.vo DynamicSemanticsTypeSubstitutionTest.vo DynamicSemanticsTest.vo StaticSemanticsTest.vo StaticSemanticsKindingAndContextWellFormednessTest.vo StaticSemanticsTypingHeapObjectsTest.vo MutualRecursionProof.vo KindingTest.vo
 
-PROOFFILES=TypeSafetyProof.vo EmptySubset.vo IntSubset.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
+PROOFFILES=TypeSafetyProof.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
 
 TACTICFILES=CpdtTactics.vo Case.vo
 
 %.vo: %.v 
 	coqc $<
 
-src:  depends $(SRCFILES)
+src:  TAGS depends $(SRCFILES)
 
-tactic: src $(TACTICFILES)
+tactic: TAGS src $(TACTICFILES)
 
-test: depends src $(TESTFILES)
+test: TAGS depends src $(TESTFILES)
 
-proof: depends src $(PROOFFILES)
+proof: TAGS depends src $(PROOFFILES)
 
 clean:
 	rm -f *.vo
 	rm -f *~ 
 	rm -f *.glob
+	rm -f TAGS
 
 tar:
 	tar zcvf backup.tar.gz *.v Makefile

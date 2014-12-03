@@ -22,6 +22,8 @@ Require Export StaticSemantics.
 Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export Case.
+Require Export Tacticals.
+Require Export TacticNotations.
 Require Export PathExtensionProof.
 
 (* Bug, Miswrote theorem. I like the forall quantified version although
@@ -139,7 +141,7 @@ Lemma A_11_Heap_Object_Safety_3:
     getH h x = Some vhx ->
     get vhx p1 v1 ->
     rtyp [] u g v1 t1 ->
-    gettype u x p1 t1 p2 = Some t2 ->
+    gettype u x p1 t1 p2 t2 ->
     (exists (v2 : E),
        get vhx (p1 ++ p2) v2 /\ 
        rtyp [] u g v2 t2) /\
@@ -155,7 +157,7 @@ Proof.
   (* Try induction v1, p. 
   induction v1; induction p2. 24 uncrushable goals. *)
   (* Try functional induction on get type, 12/24.*)
-  functional induction (gettype u x p1 t1 p2);
+  gettype_ind_cases (induction gettypeder) Case;
     try inversion gettypeder;   (* 12/24 *)
     try (rewrite app_nil_r;
          apply ex_intro with (x:=v1);
