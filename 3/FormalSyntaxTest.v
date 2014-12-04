@@ -41,15 +41,13 @@ Check while (i_e (i_i Z0)) (retn (i_e (i_i Z0))) : St.
 Check letx  (evar 0) (i_e (i_i Z0)) (retn (p_e (evar 0) [])) : St.
 Check open (i_e (i_i Z0)) (tvar 0) (evar 0) (retn (p_e (evar 0) [])) : St.
 Check openstar (i_e (i_i Z0)) (tvar 0) (evar 0) (retn (p_e (evar 0) [])) : St.
-(* Not really getting much here. *)
-
 
 Example NumValue : Value (i_e (i_i Z0)).
 Proof.
   apply IIsAValue.
 Qed.
 
-(* 1 bug found, no amp in source. *)
+(* Bug 1, no amp in source. *)
 Example AmpValue : 
   Value (amp (p_e (evar 0) [(i_pe one_pe)])).
 Proof.

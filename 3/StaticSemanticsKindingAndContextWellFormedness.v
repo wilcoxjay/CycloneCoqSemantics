@@ -13,6 +13,15 @@ Require Import Init.Datatypes.
 
 Require Export FormalSyntax.
 
+(* TODO Not in the thesis. I need it and in K when the context is formed. *)
+      
+Inductive WFD : Delta -> Prop :=
+  | WFD_nil    : WFD nil
+  | WFD_xtau   : forall (d : Delta) (alpha : TVar) (k : Kappa),
+                 getD d alpha = None ->
+                 WFD  d ->
+                 WFD ([(alpha, k)] ++ d).
+
 Inductive K : Delta -> Tau -> Kappa -> Prop :=
 
  | K_int   : forall (d : Delta),
@@ -53,11 +62,13 @@ Inductive K : Delta -> Tau -> Kappa -> Prop :=
                     K d (ptype tau) B
 
  | K_utype  : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau),
+                   WFD ([(alpha, k)] ++ d) ->
                    getD d alpha = None -> 
                    K ([(alpha, k)] ++ d) tau A ->
                    K d (utype alpha k tau) A
 
  | K_etype  : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau) (p : Phi),
+                   WFD ([(alpha, k)] ++ d) ->
                    getD d alpha = None -> 
                    K ([(alpha, k)] ++ d) tau A ->
                    K d (etype p alpha k tau) A.
@@ -104,6 +115,14 @@ Inductive ASGN : Delta -> Tau -> Prop :=
                    ASGN ([(alpha, k)] ++ d) tau ->
                    ASGN d (etype nowitnesschange alpha k tau).
 
+Inductive WFU : Upsilon -> Prop :=
+  | WFU_nil : WFU nil
+  | WFU_A   : forall (u : Upsilon) (tau : Tau) (p : P) (x : EVar),
+                 NotInDomU u x p ->
+                 WFU  u ->
+                 K nil tau A ->
+                 WFU ([((x,p), tau)] ++ u).
+
 Inductive WFDG : Delta -> Gamma -> Prop :=
   | WFDG_d_nil : forall (d: Delta),
                      WFDG d nil
@@ -113,28 +132,11 @@ Inductive WFDG : Delta -> Gamma -> Prop :=
                      WFDG d g ->
                      WFDG d ([(x,tau)] ++ g).
 
-Inductive WFU : Upsilon -> Prop :=
-  | WFU_nil : WFU nil
-  | WFU_A   : forall (u : Upsilon) (tau : Tau) (p : P) (x : EVar),
-                 NotInDomU u x p ->
-                 WFU  u ->
-                 K nil tau A ->
-                 WFU ([((x,p), tau)] ++ u).
-
-(* TODO Not in the thesis, do I really need it ? 
-   Do I put in in WFC ? or derive it when needed from K judgement? 
-   Does it have to check the kinding also? *)
-
-Inductive WFD : Delta -> Prop :=
-  | WFD_nil    : WFD nil
-  | WFU_xtau   : forall (d : Delta) (alpha : TVar) (k : Kappa),
-                 getD d alpha = None ->
-                 WFD  d ->
-                 WFD ([(alpha, k)] ++ d).
-
+(* Thesis change, we really need to know that kinding contexts are unique,
+   so we're adding it here. Another option is to add it inside WFDG. *)
 Inductive WFC : Delta -> Upsilon -> Gamma -> Prop :=
   | WFC_DUG : forall (d : Delta) (g: Gamma) (u : Upsilon),
+                WFD d -> 
                 WFDG d g ->
                 WFU u ->
                 WFC d u g.
-

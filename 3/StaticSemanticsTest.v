@@ -41,42 +41,42 @@ Example ret_if_test:
   ret (if_s e (retn (i_e (i_i 0))) (retn (i_e (i_i 0)))).
 Proof.
   apply ret_if;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example ret_seq_1_test:
  ret (seq (retn (i_e (i_i 0))) (e_s (i_e (i_i 0)))).
 Proof.
   apply ret_seq_1;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example ret_seq_2_test:
   ret (seq (e_s (i_e (i_i 0))) (retn (i_e (i_i 0)))).
 Proof.
   apply ret_seq_2;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example ret_let_test:
   ret (letx x e (retn (i_e (i_i 0)))).
 Proof.
   apply ret_let;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example ret_open_test:
   ret (open e alpha x (retn (i_e (i_i 0)))).
 Proof.
   apply ret_open.
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example ret_openstar_test:
   ret (openstar e alpha x (retn (i_e (i_i 0)))).
 Proof.
   apply ret_openstar.
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 (* Test ltyp. *)
@@ -85,7 +85,10 @@ Qed.
 Example SL_3_1_test:
   ltyp [] [] ([] ++ [(x,cint)]) (p_e x []) cint.
 Proof.
-  apply SL_3_1 with (tau':=cint);
+  apply SL_3_1 with (tau':=cint).
+  admit.
+  eauto 20 with Chapter3.
+  admit.
   eauto 20 with Chapter3.
 Qed.
 
@@ -103,14 +106,14 @@ Example SL_3_3_test:
 Proof.
   apply SL_3_3 with (t1:=cint). 
   apply SL_3_1 with (tau':= (cross cint cint)); 
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example SL_3_4_test:
   ltyp [] [] [(x,(cross cint cint))] (dot (p_e x []) one_pe) cint.
 Proof.
 (* Again syntax direction. *)
-  apply SL_3_4 with (t0:=cint);   eauto 10 with Chapter3.
+  apply SL_3_4 with (t0:=cint);   eauto 20 with Chapter3.
 Qed.
 
 (* Test styp *)
@@ -119,7 +122,7 @@ Example styp_e_test:
   styp [] [] [] tau (e_s e).
 Proof.
   apply styp_e_3_1; (* with (tau':= cint); *)
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 (* Bug 25 bad constructor naming in SL. *)
@@ -127,47 +130,47 @@ Example styp_return_test:
   styp [] [] [] tau (retn e).
 Proof.
   apply styp_return_3_2;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example styp_seq_test:
   styp [] [] [] tau (seq s1 s2).
 Proof.
   apply styp_seq_3_3;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example styp_while_test:
   styp [] [] [] tau (while e s).
 Proof.
   apply styp_while_3_4;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example styp_if_test:
   styp [] [] [] tau (if_s e s1 s2).
 Proof.
   apply styp_if_3_5; 
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
    
 Example styp_let_test:
   styp [] [] [] tau  (letx x e s).
 Proof.
   apply styp_let_3_6 with (tau':= cint);
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example K_B_test:
   K [(alpha,B)] (tv_t alpha) B.
 Proof.
-  apply K_B; eauto 10 with Chapter3.
+  apply K_B; eauto 20 with Chapter3.
 Qed.
 
 Example K_B_test2:
   K ([] ++ [(alpha,B)]) (tv_t alpha) B.
 Proof.
-  apply K_B; eauto 10 with Chapter3.
+  apply K_B; eauto 20 with Chapter3.
 Qed.
 
 (* Let's make some polymorphic pairs. *)
@@ -192,10 +195,10 @@ Proof.
              (k    := B)
              (tau  := cint)
              (tau' := (cross (tv_t alpha) (tv_t alpha)));
-  eauto 10 with Chapter3.
-  apply SR_3_12; eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
+  apply SR_3_12; eauto 20 with Chapter3.
   apply styp_e_3_1. (* with (tau':= (tv_t alpha)). *)
-  eapply SR_3_1;   eauto 10 with Chapter3.
+  eapply SR_3_1;   eauto 20 with Chapter3.
   admit. (* TODO Definite bug in test case or rules. *)
 Qed.
 
@@ -212,12 +215,12 @@ Proof.
         with (k    := B)
              (tau  := cint)
              (tau' := (cross (tv_t alpha) (tv_t alpha)));
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
   (* TODO lack of syntax direction. *)
-  apply SR_3_12; eauto 10 with Chapter3.
+  apply SR_3_12; eauto 20 with Chapter3.
   admit. (* TODO *)
 (*  apply styp_e_3_1 with (tau':= (tv_t alpha)).
-  eapply SR_3_1;   eauto 10 with Chapter3. *)
+  eapply SR_3_1;   eauto 20 with Chapter3. *)
 Qed.
 
 (* Test rtyp. *)
@@ -227,7 +230,7 @@ Example SR_3_1_test:
   rtyp [] [] ([] ++ [(x,tau)]) (p_e x []) tau.
 Proof.
   apply SR_3_1 with (tau':= tau); 
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example SR_3_2_test:
@@ -241,7 +244,7 @@ Example SR_3_3_test:
   rtyp [] [] [] (dot (cpair (i_e (i_i 0)) (i_e (i_i 1))) zero_pe) cint.
 Proof.
   apply SR_3_3 with (t1:=cint);
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example SR_3_4_test:
@@ -249,14 +252,14 @@ Example SR_3_4_test:
        (dot (p_e x []) one_pe) cint.
 Proof.
   apply SR_3_4 with (t0:= cint).
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example SR_3_5_test:
   rtyp [] [] [] (i_e (i_i 0)) cint.
 Proof.
   apply SR_3_5.
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 (* Bug 27, star instead of amp. *)
@@ -265,14 +268,14 @@ Example SR_3_6_test:
        (amp (p_e x [])) (ptype (cross cint cint)).
 Proof.
   apply SR_3_6.
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example SR_3_7_test:
   rtyp [] [] [] (cpair (i_e (i_i 0)) (i_e (i_i 1))) (cross cint cint).
 Proof.
   apply SR_3_7;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example SR_3_8_test:
@@ -280,7 +283,7 @@ Example SR_3_8_test:
        (assign (p_e x []) (i_e (i_i 0))) cint.
 Proof.
   apply SR_3_8;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 (* Bug 29, again can't type (ret (e_s (p_e ...))) *)
@@ -292,7 +295,7 @@ Example SR_3_9_test:
              (i_e (i_i 0)))
        cint.
 Proof.
-  apply SR_3_9 with (tau':= cint);   eauto 10 with Chapter3.
+  apply SR_3_9 with (tau':= cint);   eauto 20 with Chapter3.
 Qed.
 
 Example SR_3_10_test:
@@ -301,7 +304,7 @@ Example SR_3_10_test:
        cint.
 Proof.
   apply SR_3_10;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 (* TODO totally bogus e in here. *)
@@ -325,7 +328,7 @@ Example SR_3_12_test:
        (etype aliases alpha B (cross (tv_t alpha) (tv_t alpha))).
 Proof.
   apply SR_3_12;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example SR_3_13_test:
@@ -334,7 +337,7 @@ Example SR_3_13_test:
        (arrow cint cint).
 Proof.
   apply SR_3_13;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Definition pid := (dfun (tv_t alpha) x (tv_t alpha) (retn (p_e x []))).
@@ -346,8 +349,8 @@ Example SR_3_14_test:
        (f_e (ufun alpha B (dfun (tv_t alpha) x (tv_t alpha) (retn (p_e x [])))))
        (utype alpha B (arrow (tv_t alpha) (tv_t alpha))).
 Proof.
-  apply SR_3_14;
-  eauto 10 with Chapter3.
+  apply SR_3_14; eauto 20 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 (* Test htyp. *)
@@ -360,16 +363,16 @@ Example htyp_empty_test:
   htyp [] [] [] [].
 Proof.
   apply htyp_empty;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example htyp_xv_test:
   htyp [] [] [(x,v)] [(x, tau)].
 Proof.
   (* loss of syntax direction here but we don't mind really as eauto is working. *)
-  (* eauto 10 with Chapter3. *)
+  (* eauto 20 with Chapter3. *)
   eapply htyp_xv with (g':= nil);
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 (* Test refp. *)
@@ -393,7 +396,7 @@ Example refp_pack_test:
        ([((x, [u_pe]), (cross cint cint))] ++ []).
 Proof.
   constructor.
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
   apply refp_pack with 
   (k     := A) 
   (v     := (cpair (i_e (i_i 0)) (i_e (i_i 0))))
@@ -402,7 +405,7 @@ Proof.
                  (etype aliases alpha A (cross cint cint)))
   (tau   := (cross cint cint))
   (alpha := alpha);
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
   constructor.
   constructor.
   constructor.
@@ -418,5 +421,5 @@ Example program_test:
   prog [] (retn (i_e (i_i 0))).
 Proof.
   apply program with (u:=nil) (g:=nil) (tau:=cint);
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.

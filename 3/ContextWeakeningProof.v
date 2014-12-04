@@ -25,23 +25,18 @@ Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export Case.
 Require Export TacticNotations.
+Require Export GetLemmasRelation.
+Require Export AlphaConversion.
 
-(* Implementation/Thesis bug, I can't add a type variable in to a kinding context if it
- is already there. This is not checked in K_B and K_Star_A. 
- Perhaps there is prose defining this?)
- ASGN, K and AK all suffer from this.
- Also there really is no WFD judgement that should be doing that and should
-  be part of any addition to a delta. So WFDG d [] should be used. 
-*)
-
-(* TODO this relies upon sketchy lemmas. *)
 Lemma A_1_Context_Weakening_1:
   forall (d : Delta) (tau : Tau) (k : Kappa),
+    WFD d -> 
     K d tau k ->
     forall (d' : Delta), 
+      WFD (d ++ d') -> 
       K (d ++ d') tau k.
 Proof.
-  intros d tau k Kder.
+  intros d tau k WFDder Kder.
   K_ind_cases (induction Kder) Case.
   Case "K d cint B".
    intros.
@@ -49,48 +44,82 @@ Proof.
   Case "K d (tv_t alpha) B".
    intros.
    apply K_B.
-   apply getD_weakening_some_left.
-   admit. (* WFD *)
+   apply getD_Some_Weakening.
    assumption.
-   admit. (* WFD *)
+   assumption.
   Case "K d (ptype (tv_t alpha)) B".
    intros.
    constructor.
-   apply getD_weakening_some_left.
-   admit. (* WFD *)
+   apply getD_Some_Weakening.
    assumption.
-   admit. (* WFD *)   
+   assumption.
   Case "K d tau A".
    intros.
    constructor.
    apply IHKder.
+   assumption.
+   assumption.
   Case "K d (cross t0 t1) A".
    intros.
    apply K_cross.
    apply IHKder1.
+   assumption.
+   assumption.
    apply IHKder2.
-  Case "K d (arrow t0 t1) A".
+   assumption.
+   assumption.
+Case "K d (arrow t0 t1) A".
    intros.
    apply K_arrow.
    apply IHKder1.
+   assumption.
+   assumption.
    apply IHKder2.
+   assumption.
+   assumption.
   Case "K d (ptype tau) B".
    intros.
    apply K_ptype.
    apply IHKder.
+   assumption.
+   assumption.
   Case "K d (utype alpha k tau) A".
    intros.
-   apply K_utype.
-   (* Canon high west rye manhattan with carpano antiqua. *)
-   (* This is really provable by the commutivity of a well formed Delta. *)
-   (* But it requires that get (d ++ d') alpha = None so it needs more.*)
-   admit.
-   admit.
+   apply K_utype. 
+   constructor.
+   apply alpha_conversion_punt_getD with (k:=k).
+   assumption.
+   assumption.
+   assumption.
+   apply alpha_conversion_punt_getD with (k:=k).
+   assumption.
+   assumption.
+   apply IHKder with (d':= d') in H. 
+   assumption.
+   constructor.
+   apply alpha_conversion_punt_getD with (k:=k).
+   assumption.
+   assumption.
+   assumption.
+
   Case "K d (etype p alpha k tau) A)".
    intros.
    apply K_etype.
-   admit.
-   admit.
+   constructor.
+   apply alpha_conversion_punt_getD with (k:=k).
+   assumption.
+   assumption.
+   assumption.
+   apply alpha_conversion_punt_getD with (k:=k).
+   assumption.
+   assumption.
+   apply IHKder with (d':= d') in H. 
+   assumption.
+   constructor.
+   apply alpha_conversion_punt_getD with (k:=k).
+   assumption.
+   assumption.
+   assumption.
 Qed.
 
 (* Ask Dan Implementation bug, is there really an implicit statement

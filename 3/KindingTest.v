@@ -33,7 +33,7 @@ Example alpha_star_B :
     K [(tvar 0, A)] (ptype (tv_t (tvar 0))) B.
 Proof.
   apply K_star_A. 
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 (* Which invalidates the return progress theorem unless it's type is

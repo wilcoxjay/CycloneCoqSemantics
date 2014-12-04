@@ -178,7 +178,7 @@ Lemma A_6_Substitution_1:
   forall (d : Delta)  (tau : Tau) (k: Kappa),
     AK d tau k -> 
     forall (alpha : TVar) (tau' : Tau) (k' : Kappa),
-      K (d ++ [(alpha,k)]) tau' k' ->
+      K ([(alpha,k)] ++ d) tau' k' ->
       K d (subst_Tau tau' tau alpha) k'.
 Proof.
   intros d tau k.
@@ -192,7 +192,7 @@ Lemma A_6_Substitution_2:
   forall (d : Delta)  (tau : Tau) (k : Kappa),
     AK d tau k -> 
     forall (alpha : TVar) (tau' : Tau) (k' : Kappa), 
-      AK (d ++ [(alpha,k)]) tau' k' ->
+      AK ([(alpha,k)] ++ d) tau' k' ->
       AK d (subst_Tau tau' tau alpha) k'.
 Proof.
   intros d alpha tau tau' k k'.
@@ -205,7 +205,7 @@ Lemma A_6_Substitution_3:
   forall (d : Delta) (tau : Tau) (k : Kappa),
     AK d tau k -> 
     forall (alpha : TVar) (tau' : Tau),
-      ASGN (d ++ [(alpha, k)]) tau' ->
+      ASGN ([(alpha, k)] ++ d) tau' ->
       ASGN d (subst_Tau tau' tau alpha).
 Proof.
   intros d tau k.
@@ -220,7 +220,7 @@ Lemma A_6_Substitution_4:
   forall (d : Delta) (tau : Tau) (k : Kappa),
     AK d tau k -> 
     forall (alpha : TVar)  (g : Gamma),
-      WFDG (d ++ [(alpha,k)]) g ->
+      WFDG ([(alpha,k)] ++ d) g ->
       WFDG d (subst_Gamma g tau alpha).
 Proof.
   intros d tau k.
@@ -235,7 +235,7 @@ Lemma A_6_Substitution_5:
   forall (d : Delta) (tau : Tau) (k : Kappa),
     AK d tau k -> 
     forall (u : Upsilon) (alpha : TVar) (g : Gamma),
-      WFC (d ++ [(alpha,k)]) u g ->
+      WFC ( [(alpha,k)] ++ d) u g ->
       WFC d u (subst_Gamma g tau alpha).
 Proof.
   intros d tau k.
@@ -328,7 +328,7 @@ Lemma A_6_Substitution_8_1_2_3:
     forall (alpha : TVar) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
             (d' : Delta),
       ltyp d u g e tau' ->
-      d = (d' ++ [(alpha,k)]) ->
+      d = ([(alpha,k)] ++ d') ->
       ltyp d u (subst_Gamma g tau alpha)
            (subst_E e tau alpha)
            (subst_Tau tau' tau alpha).
@@ -340,19 +340,19 @@ Proof.
     (apply (ltyp_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (t : Tau) (s : St)
                 (st : styp d u g t s) => 
-              d = (d' ++ [(alpha,k)]) ->
+              d = ([(alpha,k)] ++ d') ->
               styp d u (subst_Gamma g tau alpha)
                    (subst_Tau tau' tau alpha)
                    (subst_St s tau alpha))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
-              d = (d' ++ [(alpha,k)]) ->
+              d = ([(alpha,k)] ++ d') ->
               ltyp d u (subst_Gamma g tau alpha)
                    (subst_E e tau alpha)
                    (subst_Tau tau' tau alpha))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
-              d = (d' ++ [(alpha,k)]) ->
+              d = ([(alpha,k)] ++ d') ->
               rtyp d u (subst_Gamma g tau alpha)
                    (subst_E e tau alpha)
                    (subst_Tau tau' tau alpha)))) Case; crush.

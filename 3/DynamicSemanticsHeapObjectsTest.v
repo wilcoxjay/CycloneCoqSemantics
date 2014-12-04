@@ -20,20 +20,20 @@ Require Export Tacticals.
 Example test_get_pdot : get vi0 [] vi0.
 Proof.
   apply get_pdot;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example test_get_l: get (cpair vi0 vi1) [i_pe zero_pe] vi0. 
 Proof.
   apply get_l;    
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example test_get_r: 
   get (cpair vi0 vi1) [i_pe one_pe] vi1.
 Proof.
   apply get_r; 
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example test_get_pack: 
@@ -45,13 +45,13 @@ Example test_get_pack:
       (i_e (i_i 0)).
 Proof.
   apply get_pack; 
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example test_set_ip: set vi0 [] vi1 vi1.
 Proof.
   apply set_ip; 
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example test_set_l:                 
@@ -61,7 +61,7 @@ Example test_set_l:
       (cpair (i_e (i_i 2)) (i_e (i_i 1))).
 Proof.
   apply set_l;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example test_set_r:
@@ -71,7 +71,7 @@ Example test_set_r:
       (cpair (i_e (i_i 0)) (i_e (i_i 2))).
 Proof.
   apply set_r;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example test_set_pack: 
@@ -79,6 +79,6 @@ Example test_set_pack:
       (u_pe :: p0) v (pack tau' v' (etype q alpha k tau)).
 Proof.
   apply set_pack;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 

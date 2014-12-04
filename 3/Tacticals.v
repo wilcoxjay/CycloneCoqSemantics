@@ -41,6 +41,7 @@ Hint Constructors ASGN      : Chapter3.
 Hint Constructors WFDG      : Chapter3.
 Hint Constructors WFU       : Chapter3.
 Hint Constructors WFC       : Chapter3.
+Hint Constructors WFD       : Chapter3.
 Hint Extern 4 => discriminate : Chapter3. (* For ifs. *)
 
 (* Getting eauto to evaluate functions requires some of this. *)
@@ -94,6 +95,11 @@ Ltac list_splitter :=
      | [ |- WFDG _ (?x ++ ?y)   ]   => try constructor
      | [ |- WFDG _ ?x           ]   
        => try (left_list_recurse_gamma x; constructor)
+
+
+     | [ |- WFD (?x ++ ?y)   ]   => try constructor
+     | [ |- WFD ?x           ]   
+       => try (left_list_recurse_delta x; constructor)
 
      | [ |- K (?x ++ ?y) _ _ _   ]   => try constructor
      | [ |- K ?x _ _ _           ]   

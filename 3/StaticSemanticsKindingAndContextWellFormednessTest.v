@@ -31,57 +31,55 @@ Example K_B_test:
   K [(alpha, B)] (tv_t alpha) B.
 Proof.
   (* TODO tacticals? but it needs context adjustment. *)
-  apply K_B; eauto 10 with Chapter3.
+  apply K_B; eauto 20 with Chapter3.
 Qed.
 
 Example K_star_A_test:
   K  [(alpha, A)] (ptype (tv_t alpha)) B.
 Proof.
   eapply K_star_A;
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example K_B_A_test:
   K [] tau A.
 Proof.
  apply K_B_A.
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 Example K_cross_test:
   K [] (cross t0 t1) A.
 Proof.
  apply K_cross;
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 Example K_arrow_test:
  K [] (arrow t0 t1) A.
 Proof.
  apply K_arrow;
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 Example K_ptype_test:
   K [] (ptype tau) B.
 Proof.
  apply K_ptype.
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 Example K_utype_test:
   K [] (utype alpha k tau) A.
 Proof.
  apply K_utype;
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 Example K_etype_test:
   K [] (etype nowitnesschange alpha k tau) A.
 Proof.
- apply K_etype.
- eauto 10 with Chapter3.
- eauto 10 with Chapter3.
+ apply K_etype;  eauto 20 with Chapter3.
 Qed.
 
 (* Test AK *)
@@ -90,7 +88,7 @@ Example AK_K_AK_test:
   AK [] tau k.
 Proof.
  apply AK_AK_K.
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 Example AK_A_test:
@@ -112,7 +110,7 @@ Example ASGN_B_test:
   ASGN [(alpha, B)] (tv_t alpha).
 Proof.
   apply ASGN_B.
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 Example ASGN_ptype_test:
@@ -125,28 +123,28 @@ Example ASGN_cross_test:
   ASGN [] (cross t0 t1).
 Proof.
  apply ASGN_cross;
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 Example ASGN_arrow_test:
   ASGN [] (arrow t0 t1).
 Proof.
  apply ASGN_arrow;
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 Example ASGN_utype_test:
   ASGN [] (utype alpha k tau).
 Proof.
  apply ASGN_utype;
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 Example ASGN_etype_test:
   ASGN [] (etype nowitnesschange alpha k tau).
 Proof.
  apply ASGN_etype;
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
 
 (* Test WFDG *)
@@ -162,7 +160,7 @@ Example WFD_Delta_nil_test:
   WFDG [] [(x,tau)].
 Proof.
   (* apply WFDG_xt;  *)
-  eauto 10 with Chapter3.
+  eauto 20 with Chapter3.
 Qed.
 
 (* Test WFU. *)
@@ -177,12 +175,12 @@ Definition pnil : P := [].
 Example WFU_A_test:
   WFU [((x, pnil), tau)].
 Proof.
-  constructor; eauto 10 with Chapter3.
+  constructor; eauto 20 with Chapter3.
 Qed.
 
 Example WFC_DUG_test:
   WFC [] [] [].
 Proof.
  apply WFC_DUG;
- eauto 10 with Chapter3.
+ eauto 20 with Chapter3.
 Qed.
