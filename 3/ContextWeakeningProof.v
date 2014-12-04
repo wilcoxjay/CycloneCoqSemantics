@@ -122,10 +122,6 @@ Case "K d (arrow t0 t1) A".
    assumption.
 Qed.
 
-(* Ask Dan Implementation bug, is there really an implicit statement
-    that there are no duplicates in an Upsilon that I have missed? *)
-(* TODO *)
-
 Lemma get_lemma_extension_neq:
   forall (u : Upsilon) (x x' : nat) (p p': P) (t1 t2 t3: Tau),
     getU (u ++ [(((evar x'), p'), t1)]) (evar x) p t2 ->
