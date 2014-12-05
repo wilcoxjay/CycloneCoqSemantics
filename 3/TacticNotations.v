@@ -131,6 +131,7 @@ Tactic Notation "gettype_ind_cases" tactic(first) ident(c) :=
 | Case_aux c "gettype u x p (etype aliases alpha k tau') (u_pe :: p') tau)"
 ].
 
+(*
 Tactic Notation "ltyp_ind_cases" tactic(first) ident(c) :=
  first;
 [ 
@@ -162,6 +163,7 @@ Tactic Notation "ltyp_ind_cases" tactic(first) ident(c) :=
 | Case_aux c "rtyp d u g (f_e (ufun alpha k f24)) (utype alpha k tau) (SR_3_14 d u g f24 tau alpha k e w r))"
 | Case_aux c "base"
 ].
+*)
 
 Tactic Notation "Tau_ind_cases" tactic(first) ident(c) :=
  first;

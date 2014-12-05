@@ -27,3 +27,37 @@ Proof.
   assumption.
   assumption.
 Qed.
+
+Lemma getD_Some_None_Implies_Different_Variables:
+  forall (alpha : TVar) (d : Delta) (n : nat) (k : Kappa),
+      getD d (tvar n ) = Some k ->
+      forall (n' : nat),
+        getD d (tvar n') = None ->
+        beq_nat n' n = false.
+Proof.
+  intros alpha d n k getDder.
+  induction (cons (alpha,k) d); crush.
+  (* TODO It's true but how to show it? *)
+Admitted.
+
+(* Does this need to be strengthened with WFU u ? *)
+Lemma getU_Some_Weakening:
+  forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
+    getU u x p tau ->
+    forall (u' : Upsilon),
+      getU (u ++ u') x p tau.
+Proof.
+  intros u x p tau getUder.
+  induction u.
+  Case "[]".
+   inversion getUder.
+  Case "a :: u".
+   intros u'.
+   destruct a.
+   destruct p0.
+   inversion getUder.
+   constructor.
+   constructor.
+   assumption.
+   crush.
+Qed.
