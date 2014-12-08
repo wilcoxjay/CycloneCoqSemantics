@@ -27,6 +27,7 @@ Require Export Case.
 Require Export TacticNotations.
 Require Export GetLemmasRelation.
 Require Export AlphaConversion.
+Require Export WeakeningLemmas.
 
 Lemma A_1_Context_Weakening_1:
   forall (d : Delta) (tau : Tau) (k : Kappa),
@@ -122,14 +123,6 @@ Case "K d (arrow t0 t1) A".
    assumption.
 Qed.
 
-Lemma get_lemma_extension_neq:
-  forall (u : Upsilon) (x x' : nat) (p p': P) (t1 t2 t3: Tau),
-    getU (u ++ [(((evar x'), p'), t1)]) (evar x) p t2 ->
-    x <> x' -> 
-    getU u (evar x) p t3.
-Proof.
-Admitted.
-
 Lemma A_1_Context_Weakening_2:
   forall (u : Upsilon),
     WFU u ->
@@ -153,8 +146,8 @@ Proof.
    omega.
    inversion A.
    apply get_lemma_extension_neq 
-    with (x':=n0) (p:=p0) (p':=p) (t1:= tau) (t2:= tau0) (t3:=tau0).
-   admit.
+    with (x':=n0) (p:=p0) (p':=p) (t1:= tau) (t2:= tau0) (t3:=tau0). 
+   admit. (* Alpha Conversion. *)
    assumption.
-   admit.
+   admit. (* ? *)
 Qed.

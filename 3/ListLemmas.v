@@ -25,3 +25,9 @@ Lemma app_equals:
     g = g' /\ x = y.
 Proof.
 Admitted.
+
+Lemma cons_is_append_singleton:
+ forall (A : Type) (x : A) (l : list A),
+   x :: l = [x] ++ l.
+Proof.
+Admitted.

@@ -231,6 +231,29 @@ Function deleteD (d : Delta) (alpha : TVar) : Delta :=
     | _, [] => []
  end.
 
+Function DeleteKinding (alpha : TVar) (d : Delta) : Delta :=
+  match alpha, d with 
+   | _, [] => [] 
+   | (tvar n), (tvar n', k) :: d' => 
+     if beq_nat n n' 
+     then DeleteKinding alpha d'
+     else (tvar n', k) :: DeleteKinding alpha d'             
+  end.
+
+Function KindTVarsAtB (tau : Tau) : Delta :=
+  match tau with
+   | tv_t t            => [(t, B)]
+   | cint              => []
+   | cross t0 t1       => KindTVarsAtB t0 ++ KindTVarsAtB t1
+   | arrow t0 t1       => KindTVarsAtB t0 ++ KindTVarsAtB t1
+   | ptype t           => KindTVarsAtB t 
+   | utype   alpha k t => DeleteKinding alpha (KindTVarsAtB t)
+   | etype p alpha k t => DeleteKinding alpha (KindTVarsAtB t)
+  end.
+
+Function DisjointKinding (d d' : Delta) : bool := 
+ false.  
+
 Definition GE : Type := prod EVar Tau.
 Definition Gamma     := list GE.
 
@@ -242,6 +265,8 @@ Function getG (g : Gamma) (x: EVar) : option Tau :=
       else getG g' x
     | _ , [] => None
   end.
+
+
 
 (* The thesis uses a statement here, (p_e x p), but it certainly makes the
   proofs unnecessarily hard. So I'll use a pair. *)

@@ -64,13 +64,13 @@ Proof.
                     forall (u : Upsilon) (g : Gamma) (tau : Tau),
                       htyp u g h g ->
                       refp h u -> 
-                      ltyp [] u g e tau -> 
+                      rtyp [] u g e tau -> 
                       exists (g' : Gamma) (u' : Upsilon),
                         extends_Gamma  g g' -> 
                         extends_Upsilon  u u' -> 
                         htyp u' g' h' g' /\
                         refp h' u' /\
-                        ltyp [] u' g' e' tau)
+                        rtyp [] u' g' e' tau)
 
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (sstep: S h s h' s') =>
@@ -80,13 +80,13 @@ Proof.
                     forall (u : Upsilon) (g : Gamma) (tau : Tau),
                       htyp u g h g ->
                       refp h u -> 
-                      ltyp [] u g e tau -> 
+                      styp [] u g tau s -> 
                       exists (g' : Gamma) (u' : Upsilon),
                         extends_Gamma  g g' ->
                         extends_Upsilon  u u' -> 
                         htyp u' g' h' g' /\
                         refp h' u' /\
-                        ltyp [] u' g' e' tau)
+                        styp [] u' g' tau s')
 
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (lstep: L h s h' s') =>
@@ -345,12 +345,12 @@ Proof.
                 forall (u : Upsilon) (g : Gamma) (tau : Tau),
                   htyp u g h g ->
                   refp h u -> 
-                  rtyp [] u g e tau ->
+                  styp [] u g tau e ->
                   exists (g' : Gamma) (u' : Upsilon),
                     (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
                     htyp u' g' h' g' /\ 
                     refp h' u' /\
-                    rtyp [] u' g' e' tau)
+                    styp [] u' g' tau' e)
            (fun (h : H) (s : St) (h' : H) (s' : St) 
                 (step: L h s h' s') =>
               forall (e e' : E),
@@ -359,12 +359,12 @@ Proof.
                 forall (u : Upsilon) (g : Gamma) (tau : Tau),
                   htyp u g h g ->
                   refp h u -> 
-                  rtyp [] u g e tau ->
+                  ltyp [] u g e tau ->
                   exists (g' : Gamma) (u' : Upsilon),
                     (extends_Gamma  g g' /\ extends_Upsilon  u u') -> 
                     htyp u' g' h' g' /\ 
                     refp h' u' /\
-                    rtyp [] u' g' e' tau)).
+                    ltyp [] u' g' e' tau)).
   (* crush leaves 27/42. *)
   Case "R_get_3_1".
    admit.

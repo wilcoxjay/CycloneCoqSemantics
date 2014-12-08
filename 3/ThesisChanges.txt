@@ -4,4 +4,6 @@
 3) Reversed the order of all accesses into contexts to make induction
 proofs simpler.
 4) Typo in context Delta definition.
-
+5) Strengthened context weakening with WF*. 
+6) Strengthened term weakening with WF*. 
+8) WFDG needs a rule to check an addition of a \Delta entry.

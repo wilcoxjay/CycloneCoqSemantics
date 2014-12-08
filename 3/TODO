@@ -1,25 +1,12 @@
  This is the definition of formal syntax for Dan Grossman's Thesis, 
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
-   TODO think about functions vs relations for get proofs, getU at least needs these.
-
    TODO bugs in the test code for pack.
-
-   TODO learn the proof general options.
-
-   TODO Check that I have the tightest quantifiers in theorems
-      as this was required in Return Preservation.
 
    TODO kinding is wrong, either dan mean \tau for concrete type or 
        there is an implementation or thesis bug.
 
-   TODO 
-        a) Added the checks I missed from the rules to make
-           \Delta, \Gamma, \Upsilon have not collisions. - Done
-	b) Add WFD as it is not checked anywhere, just ensured in its construction.
-	c) What lemmas do I want ? The proofs will really tell.
-
-
+   TODO standard names for lemmas.
 
    TODO Think about alpha conversion.
 

@@ -14,6 +14,58 @@ Require Import Init.Datatypes.
 Require Import FormalSyntax.
 Require Import StaticSemanticsKindingAndContextWellFormedness.
 
+Lemma getD_None_Strengthening: 
+  forall (d d' : Delta) (alpha : TVar),
+    getD (d ++ d') alpha = None ->
+    getD d alpha = None.
+Proof.
+ intros.
+ induction d.
+ Case "d = []".
+  simpl.
+  destruct alpha.
+  reflexivity.
+ Case "a :: d".
+  destruct a.
+  unfold getD.
+  destruct alpha.
+  fold getD.
+  destruct t.
+  unfold getD in H.
+  simpl in H.
+  fold getD in H.
+  destruct (beq_nat n n0).
+  inversion H.
+  apply IHd in H.
+  assumption.
+Qed.
+
+Lemma getG_None_Strengthening: 
+  forall (g g' : Gamma) (x : EVar),
+    getG (g ++ g') x = None ->
+    getG g x = None.
+Proof.
+ intros.
+ induction g.
+ Case "g = []".
+  simpl.
+  destruct x.
+  reflexivity.
+ Case "a :: g".
+  destruct a.
+  unfold getG.
+  destruct x.
+  fold getG.
+  destruct e.
+  unfold getG in H.
+  simpl in H.
+  fold getG in H.
+  destruct (beq_nat n n0).
+  inversion H.
+  apply IHg in H.
+  assumption.
+Qed.
+
 Lemma getD_Some_Weakening:
  forall (alpha : TVar) (k : Kappa) (d d' : Delta),
    WFD (d ++ d') ->
@@ -28,6 +80,16 @@ Proof.
   assumption.
 Qed.
 
+(* TODO strengthen this with WFCDG or build a WFG? *)
+Lemma getG_Some_Weakening:
+ forall (x: EVar) (tau : Tau) (g g' : Gamma),
+   getG g x = Some tau ->
+   getG (g ++ g') x = Some tau.
+Proof.
+  intros x tau g g' getGder.
+  functional induction (getG g x); crush.
+Qed.
+
 Lemma getD_Some_None_Implies_Different_Variables:
   forall (alpha : TVar) (d : Delta) (n : nat) (k : Kappa),
       getD d (tvar n ) = Some k ->
@@ -40,24 +102,3 @@ Proof.
   (* TODO It's true but how to show it? *)
 Admitted.
 
-(* Does this need to be strengthened with WFU u ? *)
-Lemma getU_Some_Weakening:
-  forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
-    getU u x p tau ->
-    forall (u' : Upsilon),
-      getU (u ++ u') x p tau.
-Proof.
-  intros u x p tau getUder.
-  induction u.
-  Case "[]".
-   inversion getUder.
-  Case "a :: u".
-   intros u'.
-   destruct a.
-   destruct p0.
-   inversion getUder.
-   constructor.
-   constructor.
-   assumption.
-   crush.
-Qed.

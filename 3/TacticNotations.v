@@ -8,7 +8,19 @@
 *)
 
 Require Export Case.
+Require Export FormalSyntax.
 
+Tactic Notation "Tau_ind_cases" tactic(first) ident(c) :=
+  first;
+[
+ Case_aux c "(tv_t t)"
+| Case_aux c "cint "
+| Case_aux c "(cross t t0)"
+| Case_aux c "(arrow t t0)"
+| Case_aux c "(ptype t)"
+| Case_aux c "(utype t k t0)"
+| Case_aux c "(etype p t k t0)"
+].
 
 Tactic Notation "ltyp_ind_mutual_cases" tactic(first) ident(c) :=
   first;
@@ -41,6 +53,23 @@ Tactic Notation "ltyp_ind_mutual_cases" tactic(first) ident(c) :=
  | Case_aux c "SR_3_14"
  | Case_aux c "base"].
  
+Tactic Notation "rtyp_ind_cases" tactic(first) ident(c) :=
+  first;
+[
+  Case_aux c "rtyp d u g (p_e x p) tau"
+| Case_aux c "d u g (dot e zero_pe) t0"
+| Case_aux c "d u g (dot e one_pe) t1"
+| Case_aux c "d u g (i_e (i_i z)) cint"
+| Case_aux c "d u g (amp e) (ptype tau)"
+| Case_aux c "d u g (cpair e0 e1) (cross t0 t1)"
+| Case_aux c "d u g (assign e1 e2) tau"
+| Case_aux c "d u g (appl e1 e2) tau"
+| Case_aux c "d u g (call s) tau"
+| Case_aux c "d u g (inst e tau) (subst_Tau tau' tau alpha)"
+| Case_aux c "d u g (pack tau' e (etype p alpha k tau)) (etype p alpha k tau)"
+| Case_aux c "d u g (f_e (dfun tau x tau' s)) (arrow tau tau')"
+| Case_aux c "d u g (f_e (ufun alpha k f12)) (utype alpha k tau)"
+].
 
 Tactic Notation "rtyp_ind_mutual_cases" tactic(first) ident(c) :=
   first;
@@ -71,6 +100,20 @@ Tactic Notation "rtyp_ind_mutual_cases" tactic(first) ident(c) :=
  | Case_aux c "SR_3_13"
  | Case_aux c "SR_3_14"
  | Case_aux c "base" ].
+
+Tactic Notation "styp_ind_cases" tactic(first) ident(c) :=
+  first;
+[ 
+  Case_aux c "styp d u g tau (e_s e))"
+| Case_aux c "styp d u g tau (retn e))"
+| Case_aux c "styp d u g tau (seq s1 s2))"
+| Case_aux c "styp d u g tau (while e s))"
+| Case_aux c "styp d u g tau (if_s e s1 s2))"
+| Case_aux c "styp d u g tau (letx x e s))"
+| Case_aux c "styp d u g tau (open e alpha x s))"
+| Case_aux c "styp d u g tau (openstar e alpha x s))"
+].
+
 
 Tactic Notation "styp_ind_mutual_cases" tactic(first) ident(c) :=
   first;
@@ -129,6 +172,15 @@ Tactic Notation "gettype_ind_cases" tactic(first) ident(c) :=
 | Case_aux c "gettype u x p (cross t0 t1) (i_pe zero_pe :: p') tau"
 | Case_aux c "gettype u x p (cross t0 t1) (i_pe one_pe :: p') tau"
 | Case_aux c "gettype u x p (etype aliases alpha k tau') (u_pe :: p') tau)"
+].
+
+Tactic Notation "ltyp_ind_cases" tactic(first) ident(c) :=
+ first;
+[ 
+ Case_aux c "ltyp d u g (p_e x p) tau"
+| Case_aux c "ltyp d u g (star e) tau"
+| Case_aux c "ltyp d u g (dot e zero_pe) t0"
+| Case_aux c "ltyp d u g (dot e one_pe) t1"
 ].
 
 (*
@@ -208,4 +260,3 @@ Tactic Notation "ret_ind_cases" tactic(first) ident(c) :=
 | Case_aux c "ret (open e alpha x s)"
 | Case_aux c "ret (openstar e alpha x s))"
 ].
-

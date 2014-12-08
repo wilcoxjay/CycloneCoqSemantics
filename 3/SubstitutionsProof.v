@@ -227,7 +227,8 @@ Proof.
   intros AKder.
   intros alpha g.
   intros WFDGder.
-  WFDG_ind_cases (induction WFDGder) Case.
+  WFDG_ind_cases (induction WFDGder) Case. 
+  (* This could be a bad induction setup, problems with WFDG_ind. *)
   (* crush gets 0. *)
 Admitted.    
 

@@ -69,18 +69,18 @@ Proof.
                 (st : styp d u g t s) => 
               styp d u g t s ->
               (Value e \/
-               exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')))
+               exists (h' : H) (e' : E),  S h (e_s e) h' (e_s e')))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
               ltyp d u g  e tau' ->
               (Value e \/
-               exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')))
+               exists (h' : H) (e' : E),  L h (e_s e) h' (e_s e')))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
               rtyp d u g e t ->
               (Value e \/
                exists (h' : H) (e' : E),  R h (e_s e) h' (e_s e')))).
-  (* crush goes up many goals here. *)
+  
 Admitted.
 
 (* TODO can't get this formulated right due to the statement that only
@@ -108,10 +108,10 @@ Proof.
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau' : Tau) 
                 (lt : ltyp d u g  e tau') =>
               ltyp d u g  e tau' ->
-              (exists (h' : H) (s' : St), S h (e_s e) h' s'))
+              (exists (h' : H) (s' : St), L h (e_s e) h' s'))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (t : Tau) 
                 (rt : rtyp d u g e t) =>
               rtyp d u g e t ->
-              (exists (h' : H) (s' : St), S h (e_s e) h' s'))).
+              (exists (h' : H) (s' : St), R h (e_s e) h' s'))).
   (* crush goes up many goals here. *)
 Admitted.

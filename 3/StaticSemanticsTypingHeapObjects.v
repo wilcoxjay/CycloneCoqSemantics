@@ -13,6 +13,7 @@ Require Import Init.Datatypes.
 
 Require Export FormalSyntax.
 Require Export DynamicSemanticsTypeSubstitution.
+Require Export StaticSemanticsKindingAndContextWellFormedness.
 
 (*
 Fixpoint gettype (u : Upsilon) (x : EVar) (p : P) (tau : Tau) (p' : P) : option Tau :=
@@ -64,3 +65,5 @@ Inductive gettype : Upsilon -> EVar -> P -> Tau -> P -> Tau -> Prop :=
         getU u x p tau'' ->
         gettype u x (p ++ [u_pe]) (subst_Tau tau' tau'' alpha) p' tau ->
         gettype u x p (etype aliases alpha k tau') (u_pe :: p') tau.
+
+

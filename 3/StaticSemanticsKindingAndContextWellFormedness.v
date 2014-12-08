@@ -123,6 +123,13 @@ Inductive WFU : Upsilon -> Prop :=
                  K nil tau A ->
                  WFU ([((x,p), tau)] ++ u).
 
+Lemma WFU_weakening:
+  forall (u u' : Upsilon),
+   WFU (u ++ u') ->
+   WFU u.
+Proof.
+Admitted.
+
 Inductive WFDG : Delta -> Gamma -> Prop :=
   | WFDG_d_nil : forall (d: Delta),
                      WFDG d nil
@@ -130,7 +137,12 @@ Inductive WFDG : Delta -> Gamma -> Prop :=
                      getG g x = None -> 
                      K d tau A ->
                      WFDG d g ->
-                     WFDG d ([(x,tau)] ++ g).
+                     WFDG d ([(x,tau)] ++ g)
+(* Proposed Thesis bug, I have to be able to extend WFDG with a new type variable. *)                          
+  | WFDG_alphak   : forall (d: Delta) (g: Gamma) (alpha : TVar) (k : Kappa),
+                     getD d alpha = None -> 
+                     WFDG d g ->
+                     WFDG ([(alpha,k)] ++ d) g.
 
 (* Thesis change, we really need to know that kinding contexts are unique,
    so we're adding it here. Another option is to add it inside WFDG. *)
