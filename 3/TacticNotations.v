@@ -10,16 +10,33 @@
 Require Export Case.
 Require Export FormalSyntax.
 
+(* This marks all spots of alpha conversion. *)
+Tactic Notation "AdmitAlphaConversion" :=
+  admit.
+
 Tactic Notation "Tau_ind_cases" tactic(first) ident(c) :=
   first;
 [
  Case_aux c "(tv_t t)"
-| Case_aux c "cint "
+| Case_aux c "cint"
 | Case_aux c "(cross t t0)"
 | Case_aux c "(arrow t t0)"
 | Case_aux c "(ptype t)"
 | Case_aux c "(utype t k t0)"
 | Case_aux c "(etype p t k t0)"
+].
+
+Tactic Notation "Tau_ind_cases_from_apply" tactic(first) ident(c) :=
+  first;
+[
+ Case_aux c "(tv_t t)"
+| Case_aux c "cint"
+| Case_aux c "(cross t t0)"
+| Case_aux c "(arrow t t0)"
+| Case_aux c "(ptype t)"
+| Case_aux c "(utype t k t0)"
+| Case_aux c "(etype p t k t0)"
+| Case_aux c "base"
 ].
 
 Tactic Notation "ltyp_ind_mutual_cases" tactic(first) ident(c) :=
@@ -55,20 +72,20 @@ Tactic Notation "ltyp_ind_mutual_cases" tactic(first) ident(c) :=
  
 Tactic Notation "rtyp_ind_cases" tactic(first) ident(c) :=
   first;
-[
-  Case_aux c "rtyp d u g (p_e x p) tau"
-| Case_aux c "d u g (dot e zero_pe) t0"
-| Case_aux c "d u g (dot e one_pe) t1"
-| Case_aux c "d u g (i_e (i_i z)) cint"
-| Case_aux c "d u g (amp e) (ptype tau)"
-| Case_aux c "d u g (cpair e0 e1) (cross t0 t1)"
-| Case_aux c "d u g (assign e1 e2) tau"
-| Case_aux c "d u g (appl e1 e2) tau"
-| Case_aux c "d u g (call s) tau"
-| Case_aux c "d u g (inst e tau) (subst_Tau tau' tau alpha)"
-| Case_aux c "d u g (pack tau' e (etype p alpha k tau)) (etype p alpha k tau)"
-| Case_aux c "d u g (f_e (dfun tau x tau' s)) (arrow tau tau')"
-| Case_aux c "d u g (f_e (ufun alpha k f12)) (utype alpha k tau)"
+[ Case_aux c "rtyp d u g (p_e x p) tau"
+| Case_aux c "rtyp d u g (star e) tau"
+| Case_aux c "rtyp d u g (dot e zero_pe) t0"
+| Case_aux c "rtyp d u g (dot e one_pe) t1"
+| Case_aux c "rtyp d u g (i_e (i_i z)) cint"
+| Case_aux c "rtyp  d u g (amp e) (ptyp tau)"
+| Case_aux c "rtyp d u g (cpair e0 e1) (cross t0 t1)"
+| Case_aux c "rtyp d u g (assign e1 e2) tau"
+| Case_aux c "rtyp d u g (appl e1 e2) tau"
+| Case_aux c "rtyp d u g (call s) tau"
+| Case_aux c "rtyp d u g (inst e tau) (subst_Tau tau' tau alpha)"
+| Case_aux c "rtyp  d u g (pack tau' e (etype p alpha k tau)) (etyp p alpha k tau)"
+| Case_aux c "rtyp d u g (f_e (dfun tau x tau' s)) (arrow tau tau')"
+| Case_aux c "rtyp  d u g (f_e (ufun alpha k f12)) (utyp alpha k tau))"
 ].
 
 Tactic Notation "rtyp_ind_mutual_cases" tactic(first) ident(c) :=

@@ -240,19 +240,55 @@ Function DeleteKinding (alpha : TVar) (d : Delta) : Delta :=
      else (tvar n', k) :: DeleteKinding alpha d'             
   end.
 
-Function KindTVarsAtB (tau : Tau) : Delta :=
+Function KindTVarsAtA (tau : Tau) : Delta :=
   match tau with
-   | tv_t t            => [(t, B)]
+   | tv_t t            => [(t, A)]
    | cint              => []
-   | cross t0 t1       => KindTVarsAtB t0 ++ KindTVarsAtB t1
-   | arrow t0 t1       => KindTVarsAtB t0 ++ KindTVarsAtB t1
-   | ptype t           => KindTVarsAtB t 
-   | utype   alpha k t => DeleteKinding alpha (KindTVarsAtB t)
-   | etype p alpha k t => DeleteKinding alpha (KindTVarsAtB t)
+   | cross t0 t1       => KindTVarsAtA t0 ++ KindTVarsAtA t1
+   | arrow t0 t1       => KindTVarsAtA t0 ++ KindTVarsAtA t1
+   | ptype t           => KindTVarsAtA t 
+   | utype   alpha k t => DeleteKinding alpha (KindTVarsAtA t)
+   | etype p alpha k t => DeleteKinding alpha (KindTVarsAtA t)
   end.
 
-Function DisjointKinding (d d' : Delta) : bool := 
- false.  
+Function InDomD (alpha : TVar) (d : Delta) : bool :=
+  match alpha, d with
+   | _, [] => true
+   | tvar n, ((tvar n'), _) :: d' =>
+     if beq_nat n n' 
+     then false 
+     else InDomD alpha d'
+ end.
+
+Function KindingUnion (d d' : Delta) : Delta :=
+  match d with 
+   | (alpha,k) :: d0 => 
+     if InDomD alpha d' 
+     then KindingUnion d0 d'
+     else (alpha, k) :: KindingUnion d0 d'
+   | [] => []
+  end.
+
+Function KindUnkindedTVarsAtB (tau : Tau) (d : Delta) : Delta :=
+  match tau with
+   | tv_t t            => 
+     if InDomD t d then [] else [(t, B)]
+   | cint              => []
+   | cross t0 t1       => KindingUnion (KindUnkindedTVarsAtB t0 d) 
+                                       (KindUnkindedTVarsAtB t1 d)
+   | arrow t0 t1       => KindingUnion (KindUnkindedTVarsAtB t0 d) 
+                                       (KindUnkindedTVarsAtB t1 d)
+   | ptype t           => KindUnkindedTVarsAtB t d
+   | utype   alpha k t => DeleteKinding alpha (KindUnkindedTVarsAtB t d)
+   | etype p alpha k t => DeleteKinding alpha (KindUnkindedTVarsAtB t d)
+  end.
+
+Function DisjointKinding (d d' : Delta) : bool :=
+  match d with
+   | (alpha,k) :: d0 => 
+     if InDomD alpha d' then false else DisjointKinding d0 d
+   | [] => true
+  end.
 
 Definition GE : Type := prod EVar Tau.
 Definition Gamma     := list GE.

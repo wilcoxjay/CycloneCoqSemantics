@@ -54,54 +54,6 @@ Proof.
    assumption.
 Qed.
 
-(* This is closer to true now. However what about collisions? *)
-(* Definitely going to need some lemmas to reason about this here. *)
-Lemma get_a_klue:
-  forall (d : Delta) (u : Upsilon) (g: Gamma),
-    WFC d u g -> 
-    forall (x : EVar) (tau : Tau),
-      DisjointKinding (KindTVarsAtB tau) d = true ->
-      WFC ((KindTVarsAtB tau) ++ d) u ([(x, tau)] ++ g).
-Proof.
-  intros d u g WFCder.
-  apply (WFC_ind
-           (fun (d : Delta) (u : Upsilon) (g : Gamma) =>
-              forall (x : EVar) (tau : Tau),
-                WFC ((KindTVarsAtB tau) ++ d) u ([(x, tau)] ++ g))).
-  Case "WFD, WFDG, WFU.".
-   intros.
-   constructor; try assumption.
-   SCase "WFDG d0 ([(x, tau)] ++ g0)".
-    constructor; try assumption.
-    admit. (* Alpha Conversion. *)
-    Tau_ind_cases (induction tau) SSCase.
-    SSCase "(tv_t t)".
-     admit.
-    SSCase "cint".
-     constructor.
-     constructor.
-    SSCase "(cross t t0)".
-     apply K_cross; try assumption.
-    SSCase "(arrow t t0)".
-     apply K_arrow; try assumption.
-    SSCase "(ptype t)".
-     constructor.
-     apply K_ptype; try assumption.
-    SSCase "(utype t k t0)".
-     apply K_utype; try assumption.
-     admit.
-     admit.
-     admit.
-    SSCase "(etype p t k t0)".
-     apply K_etype.
-     admit.
-     admit.
-     admit.
-  Case "WFC d u g".
-   assumption.
-Qed.
-
-
 (* TODO let, open, openstar and function application. *)
 Lemma A_2_Term_Weakening_2:
   forall (d: Delta) (u : Upsilon) (g : Gamma)  (e : E) (tau : Tau),
@@ -163,25 +115,25 @@ Proof.
   Case "styp_let_3_6".
    intros.
    apply styp_let_3_6 with (tau':=tau'); try assumption.
-   admit. (* Alpha conversion. *)
+   AdmitAlphaConversion.
    inversion H2; try assumption.
    assert (Z: WFC d0 u0 ([(x, tau')] ++ g0)).
    constructor; try assumption.
    constructor; try assumption.
    admit. (* Where do I get the k ? Is there a K d0 tau' A missing in styp_let?*)
+          (* Is this rtype to K A? *)
    inversion H1; try assumption.
    inversion H3; try assumption.
    apply WFU_weakening in H12; try assumption.
    apply H with (u':= u') (g':= g') in Z; try assumption.
    admit. (* WFC weakening to get WFC d0 (u0 ++ u') (([(x, tau')] ++ g0) ++ g') *)
    apply H0 with (u':= u') (g':= g') in H1; try assumption.
-
   Case "styp_open_3_7".
    intros.
    inversion H1.
    inversion H2.
    apply styp_open_3_7 with (p:= p) (k:= k) (tau':= tau'); try assumption.
-   admit. (* Alpha conversion. *)
+   AdmitAlphaConversion.
    apply H with (u':= u') (g':= g') in H1; try assumption.
    assert (Z: WFC ([(alpha, k)] ++ d0) u0 ([(x, tau')] ++ g0)).
    constructor; try assumption.
@@ -283,7 +235,7 @@ Proof.
    intros.
    constructor; try assumption.
    apply H with (u':= u') (g':= g') in H1; try assumption.
-   admit. (* Alpha Conversion. *)
+   AdmitAlphaConversion.
    admit.
    admit.
    apply H with (u':= u') (g':= g') in H1; try assumption.
@@ -355,7 +307,7 @@ Proof.
   Case "styp_let_3_6".
    intros.
    apply styp_let_3_6 with (tau':=tau'); try assumption.
-   admit. (* Alpha conversion. *)
+   AdmitAlphaConversion.
    inversion H2; try assumption.
    assert (Z: WFC d0 u0 ([(x, tau')] ++ g0)). (* How do I get this ? *)
    constructor; try assumption.
@@ -446,7 +398,7 @@ Proof.
    intros.
    constructor; try assumption.
    apply H with (u':= u') (g':= g') in H1; try assumption.
-   admit. (* Alpha Conversion. *)
+   AdmitAlphaConversion.
    admit.
    admit.
    apply H with (u':= u') (g':= g') in H1; try assumption.
@@ -517,7 +469,7 @@ Proof.
   Case "styp_let_3_6".
    intros.
    apply styp_let_3_6 with (tau':=tau'); try assumption.
-   admit. (* Alpha conversion. *)
+   AdmitAlphaConversion.
    inversion H2; try assumption.
    assert (Z: WFC d0 u0 ([(x, tau')] ++ g0)). (* How do I get this ? *)
    constructor; try assumption.
@@ -608,7 +560,7 @@ Proof.
    intros.
    constructor; try assumption.
    apply H with (u':= u') (g':= g') in H1; try assumption.
-   admit. (* Alpha Conversion. *)
+   AdmitAlphaConversion.
    admit.
    admit.
    apply H with (u':= u') (g':= g') in H1; try assumption.

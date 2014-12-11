@@ -89,7 +89,7 @@ Proof.
   destruct a.
   destruct p.
   apply WFU_A.
-  admit. (* Alpha Conversion. *)
+  AdmitAlphaConversion.
   inversion H.
   apply IHu in H5.
   assumption.
@@ -189,7 +189,7 @@ Proof.
    inversion H1.
    apply getG_None_Strengthening with (g':=g').   
    assumption.
-   admit. (* Alpha Conversion. *)
+   AdmitAlphaConversion.
    admit. (* K? *)
    crush.
    inversion H.
@@ -212,7 +212,7 @@ Proof.
    inversion H.
    apply IHd in H3.
    constructor. 
-   admit. (* Alpha Conversion. *)
+   AdmitAlphaConversion.
    assumption.
 Qed.
 
@@ -230,7 +230,7 @@ Proof.
    constructor.
   Case "[(x,tau] ++ g".
    constructor.
-   admit. (* Alpha Conversion. *)
+   AdmitAlphaConversion.
    admit. (* induction wrong, d0 instead of d. *)
    assumption.
    admit.
@@ -414,7 +414,7 @@ Proof.
    Case "styp_let_3_6".
     intros.
     apply styp_let_3_6 with (tau':= tau'); try assumption.
-    admit. (* Alpha conversion. *)
+AdmitAlphaConversion.
     apply WFDG_xt with (d:=d0) (tau:=tau') in e1; try assumption.
     apply H with (u':= u') (g':= g') in e1; try assumption.
     inversion e1; try assumption.
@@ -424,7 +424,7 @@ Proof.
    Case "styp_open_3_7".
     intros.
     apply styp_open_3_7 with (p:= p) (k:= k) (tau':= tau'); try assumption.
-    admit. (* Alpha Conversion. *)
+AdmitAlphaConversion.
     apply H with (u':= u') (g':= g') in H1; try assumption.
     (* Construct WFDG ([(alpha, k)] ++ d0) ([(x, tau')] ++ g0)  from
               WFDG d0 g0. *)
@@ -435,7 +435,7 @@ Proof.
     apply styp_openstar_3_8 with (k:= k) (tau':= tau'); try assumption.
     apply H with (u':= u') (g':= g') in H1; try assumption.
     admit. (* See construction note above. *)
-    admit. (* Alpha Conversion. *)
+AdmitAlphaConversion.
    Case "SL_3_1".
     intros.
     apply SL_3_1 with (tau':= tau').
@@ -518,7 +518,7 @@ Proof.
     intros.
     constructor; try assumption.
     apply H with (u':= u') (g':= g') in H1; try assumption.
-    admit. (* Alpha Conversion. *)
+    AdmitAlphaConversion.
     constructor; try assumption.
     assert (Z: WFDG d0 ([(x, tau0)] ++ g0)).
     admit.

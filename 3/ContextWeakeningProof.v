@@ -147,7 +147,7 @@ Proof.
    inversion A.
    apply get_lemma_extension_neq 
     with (x':=n0) (p:=p0) (p':=p) (t1:= tau) (t2:= tau0) (t3:=tau0). 
-   admit. (* Alpha Conversion. *)
+   AdmitAlphaConversion.
    assumption.
    admit. (* ? *)
 Qed.
