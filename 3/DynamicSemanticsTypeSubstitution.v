@@ -16,10 +16,8 @@ Require Import Case.
 
 Fixpoint subst_Tau (t : Tau) (tau : Tau) (alpha : TVar) {struct t} : Tau :=
   match t with
-    | tv_t (tvar b) => 
-      match alpha with 
-        | (tvar a) => if beq_nat a b then tau else tv_t (tvar b)
-      end
+    | tv_t beta  => 
+       if beq_tvar alpha beta then tau else tv_t beta
     | cint               => cint
     | cross t0 t1        => cross (subst_Tau t0 tau alpha) (subst_Tau t1 tau alpha)
     | arrow t0 t1        => arrow (subst_Tau t0 tau alpha) (subst_Tau t1 tau alpha)

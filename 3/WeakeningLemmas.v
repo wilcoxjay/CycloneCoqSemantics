@@ -128,8 +128,11 @@ Proof.
    inversion H6.
    inversion H7.
    inversion H12.
-   destruct alpha.
+   (* 
+   destruct alpha. (* beq_tvar bug. *)
    inversion H14.
+   assumption.
+    *) 
    assumption.
   Case "K [] (utype t k t0) A".
    apply K_utype.

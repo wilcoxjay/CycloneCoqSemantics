@@ -265,7 +265,8 @@ Tactic Notation "ASGN_ind_cases" tactic(first) ident(c) :=
 Tactic Notation "WFDG_ind_cases" tactic(first) ident(c) :=
  first;
 [ Case_aux c "WFDG d []"
-|  Case_aux c "WFDG d ([(x, tau)] ++ g)"
+| Case_aux c "WFDG d ([(x, tau)] ++ g)"
+| Case_aux c "WFDG ([(alpha, k)] ++ d) g"
 ].
 
 Tactic Notation "ret_ind_cases" tactic(first) ident(c) :=

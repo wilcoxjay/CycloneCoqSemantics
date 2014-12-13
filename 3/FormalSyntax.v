@@ -38,6 +38,18 @@ Inductive Kappa : Type :=
 Inductive TVar : Type :=
  | tvar   : nat -> TVar.
 
+Function beq_tvar (x y : TVar) : bool :=
+   match x, y with
+     | (tvar x'), (tvar y') => beq_nat x' y'
+  end.
+
+Lemma beq_tvar_symmetric:
+  forall (alpha beta : TVar),
+    beq_tvar alpha beta = beq_tvar beta alpha.
+Proof.
+Admitted.
+
+
 (* A type limiting the opening of existential types. *)
 
 Inductive Phi : Type :=
@@ -79,6 +91,11 @@ Function FreeVariablesTau (tau : Tau) : list TVar :=
 
 Inductive EVar : Type :=                                        
  | evar : nat -> EVar.                                          (* variables appearing in the source language. *)
+
+Function beq_evar (x y : EVar) : bool :=
+   match x, y with
+     | (evar x'), (evar y') => beq_nat x' y'
+  end.
 
 (* The abstract syntax of terms, split into statements and expressions. *)
 (* Got rid of a bunch of _e but still have four to simplify.  *)
@@ -206,8 +223,8 @@ Definition Delta     := list DE.
 
 Function getD (d : Delta) (alpha : TVar) : option Kappa :=
   match alpha, d with 
-    | tvar a', (tvar b', k) :: d' =>
-      if beq_nat a' b' 
+    | a, (b, k) :: d' =>
+      if beq_tvar a b 
       then Some k 
       else getD d' alpha
     | _ , nil => None
