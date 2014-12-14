@@ -1,6 +1,8 @@
  This is the definition of formal syntax for Dan Grossman's Thesis, 
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
+   TODO double check that I'm blocking correctly on variable substitution.
+
    TODO Go append everywhere.
 
    TODO would a beq_tvar help?

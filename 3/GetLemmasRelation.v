@@ -12,6 +12,7 @@ Require Import ZArith.
 Require Import Init.Datatypes.
 
 Require Import FormalSyntax.
+Require Import VarLemmas.
 Require Import StaticSemanticsKindingAndContextWellFormedness.
 
 Lemma getD_None_Strengthening: 

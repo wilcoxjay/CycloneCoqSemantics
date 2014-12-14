@@ -43,13 +43,6 @@ Function beq_tvar (x y : TVar) : bool :=
      | (tvar x'), (tvar y') => beq_nat x' y'
   end.
 
-Lemma beq_tvar_symmetric:
-  forall (alpha beta : TVar),
-    beq_tvar alpha beta = beq_tvar beta alpha.
-Proof.
-Admitted.
-
-
 (* A type limiting the opening of existential types. *)
 
 Inductive Phi : Type :=

@@ -13,6 +13,7 @@ Require Import Init.Datatypes.
 Require Import Coq.Init.Logic.
 
 Require Export FormalSyntax.
+Require Export VarLemmas.
 Require Export DynamicSemanticsTypeSubstitution.
 Require Export DynamicSemanticsHeapObjects.
 Require Export DynamicSemantics.
@@ -23,6 +24,7 @@ Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export Case.
 Require Export TacticNotations.
+
 Require Export GetLemmasRelation.
 
 Lemma getD_weakening:
@@ -46,14 +48,27 @@ Proof.
   fold getD in H.
   unfold getD in H0.
   fold getD in H0.
-  destruct (beq_tvar alpha t); destruct (beq_tvar beta t);
-  try assumption; try inversion H; try inversion H0.
-  rewrite H.
-  apply IHd in H3; try assumption.
+  case_eq (beq_tvar alpha t).
+  intros.
+  rewrite H2 in H.
+  inversion H.
+  intros.
+  rewrite H2 in H.
+  case_eq (beq_tvar beta t).  
+  intros.
+  rewrite H3 in H0.
+  inversion H0.
+  intros.
+  rewrite H3 in H0.
+  apply IHd in H; try assumption.
   simpl.
-  rewrite H1.
-  destruct (beq_tvar beta t).
-  admit.  (* Must invert, don't have information to invert. *)
+  case_eq (beq_tvar beta alpha).
+  intros.
+  inversion H4.
+  rewrite H1 in H4.
+  discriminate.
+  intros.
+  rewrite H3.
   assumption.
 Qed.
 
@@ -67,18 +82,32 @@ Proof.
   intros.
   induction d.
   Case "[]".
-   destruct alpha.
    inversion H.
   Case "a :: d".
-   destruct a. 
-   unfold getD in H0.
-   fold   getD in H0.
-   unfold getD in H.
-   fold   getD in H.
-   destruct (beq_tvar alpha t); destruct (beq_tvar beta t); 
-    try assumption; try inversion H0.
-   admit. (* TODO Losing getd alpha = Some k. *)
+   case_eq a.
+   intros.
+   crush.
+   case_eq (beq_tvar alpha t); case_eq (beq_tvar beta t); case_eq (beq_tvar alpha beta); intros; try reflexivity.
+   (* four contradictions to invert away. *)
+   rewrite H2 in H0.
+   inversion H0.
+   apply beq_tvar_eq in H1.
+   apply beq_tvar_eq in H3.
+   apply beq_tvar_neq in H2.
+   rewrite H1 in H3.
+   congruence.
+
+   apply beq_tvar_eq in H1.
+   apply beq_tvar_eq in H2.
+   apply beq_tvar_neq in H3.
+   rewrite H1 in H3.
+   congruence.
+
+   (* Can't discriminate away on this on variables.  *)
+   rewrite H3 in H.
+   rewrite H2 in H0.
    apply IHd in H; try assumption.
+   congruence.
 Qed.
 
 Lemma substitution_with_different_type_variables:
@@ -138,32 +167,54 @@ Proof.
   Case  "K d (arrow t0 t1) A".
    crush.
   Case  "K d (ptype tau) B".
-   crush.
-  Case  "K d (utype alpha k tau) A".
-   intros alpha0 AlphaNotInDomd tau0.
+   intros. (* crush does this but why not look at a case. *)
+   apply IHkder with (tau0:= tau0) in H.
    unfold subst_Tau.
    fold subst_Tau.
-   specialize (IHkder alpha0).
-   apply getD_weakening with (alpha:= alpha) (beta:= alpha0) (k:=k) in H0; 
-     try assumption.
-   apply IHkder with (tau0:= tau0) in H0.
-   rewrite H0.
+   rewrite H.
    reflexivity.
-   AdmitAlphaConversion.
+  Case  "K d (utype alpha k tau) A".
+   intros alpha0 AlphaNotInDomd tau0.
+   (* Am I unfolding too soon ?  No same stuck point. *)
+   case_eq (beq_tvar alpha0 alpha).
+   SCase "alpha0 = alpha".
+    intros.
+    simpl.
+    rewrite H1.
+    reflexivity.
+   SCase "alpha0 <> alpha".
+    intros.
+    unfold subst_Tau.
+    fold subst_Tau.
+    rewrite H1.
+    specialize (IHkder alpha0).
+    assert (Z: getD ([(alpha, k)] ++ d) alpha0 = None).
+    apply getD_weakening; try assumption.
+    apply IHkder with (tau0:= tau0) in Z.
+    rewrite Z.
+    reflexivity.
   Case  "K d (etype p alpha k tau) A)".
    intros alpha0 AlphaNotInDomd tau0.
    unfold subst_Tau.
    fold subst_Tau.
-   specialize (IHkder alpha0).
-   apply getD_weakening with (alpha:= alpha) (beta:= alpha0) (k:=k) in H0; 
-     try assumption.
-   apply IHkder with (tau0:= tau0) in H0.
-   rewrite H0.
-   reflexivity.
-   AdmitAlphaConversion.
+   case_eq (beq_tvar alpha0 alpha).
+   SCase "alpha0 = alpha".
+    intros.
+    (* The induction hypothesis is false, to tau0 must be connected by? *)
+    apply beq_tvar_eq in H1.
+    (* I see nothing to invert on. *)
+    (* Is this now AlphaConversion? *)
+    AdmitAlphaConversion.
+   SCase "alpha0 <> alpha".
+    intros.
+    specialize (IHkder alpha0).
+    assert (Z: getD ([(alpha, k)] ++ d) alpha0 = None).
+    apply getD_weakening; try assumption.
+    apply IHkder with (tau0:= tau0) in Z.
+    rewrite Z.
+    reflexivity.
 Qed.
 
-(* use subst_Gamma_over_app *)
 Lemma A_4_Useless_Substitutions_2:
   forall (d : Delta) (alpha : TVar),
     getD d alpha = None ->
@@ -173,22 +224,21 @@ Lemma A_4_Useless_Substitutions_2:
         subst_Gamma g tau alpha = g.
 Proof.
   intros d alpha getd g WFDGder.
-  Print WFDG_ind.
   WFDG_ind_cases (induction WFDGder) Case.
   Case "WFDG d []".
    intros.
    reflexivity.
   Case "WFDG d ([(x, tau)] ++ g)".
    intros.
+   assert (Z: getD d alpha = None). 
+   assumption.
    apply IHWFDGder with (tau:= tau0) in getd.
-   (* Gonna need lemma 1. *)
    unfold subst_Gamma.
    simpl.
    fold subst_Gamma.
    rewrite getd.
    rewrite A_4_Useless_Substitutions_1 with (d:=d) (k:=A); try assumption.
    reflexivity.
-   admit. (* Remember goal issue, jrw. *)
   Case "WFDG ([(alpha, k)] ++ d) g".
    intros tau.
    inversion getd.
@@ -224,27 +274,96 @@ Proof.
     crush. (* Just applies the inductive hypothesis. *)
 Qed.
 
+Lemma NotFreeIn_Tau_subst_useless:
+  forall (beta : TVar) (tau : Tau),
+    NotFreeInTau beta tau ->
+     forall (tau' : Tau),
+       subst_Tau tau tau' beta = tau.
+Proof.
+  intros.
+  Tau_ind_cases(induction tau) Case.
+  Case "(tv_t t)".
+   case_eq (beq_tvar beta t).
+   SCase "beta = t".
+    intros.
+    unfold NotFreeInTau in H.
+    rewrite H0 in H.
+    inversion H.
+   SCase "beta <> t".
+    intros.
+    unfold subst_Tau.
+    rewrite H0.
+    reflexivity.
+  Case "cint".
+   crush.
+  Case "(cross t t0)".
+   crush.
+  Case "(arrow t t0)".
+   crush.
+  Case "(ptype t)".
+   crush.
+  Case "(utype t k t0)".
+   case_eq (beq_tvar beta t).
+   SCase "beta = t".
+    intros.
+    unfold subst_Tau.
+    fold subst_Tau.
+    rewrite H0.
+    reflexivity.
+   SCase "beta <> t".
+    intros.
+    unfold subst_Tau.
+    fold subst_Tau.
+    rewrite H0.
+    unfold NotFreeInTau in H.
+    fold NotFreeInTau in H.
+    rewrite H0 in H.
+    apply IHtau in H.
+    rewrite H.
+    reflexivity.
+  Case "(etype p t k t0)".
+   case_eq (beq_tvar beta t).
+   SCase "beta = t".
+    intros.
+    unfold subst_Tau.
+    fold subst_Tau.
+    rewrite H0.
+    reflexivity.
+   SCase "beta <> t".
+    intros.
+    unfold subst_Tau.
+    fold subst_Tau.
+    rewrite H0.
+    unfold NotFreeInTau in H.
+    fold NotFreeInTau in H.
+    rewrite H0 in H.
+    apply IHtau in H.
+    rewrite H.
+    reflexivity.
+Qed.    
+
 Lemma A_5_Commuting_Substitutions:
   forall (beta : TVar) (t2 : Tau),
-    NotFreeInTau beta t2 = true ->
+    NotFreeInTau beta t2 ->
     forall (alpha : TVar) (t0 t1 : Tau),
-      (subst_Tau (subst_Tau t0 t1 beta) t2 alpha) = 
+      (subst_Tau (subst_Tau t0 t1 beta) t2 alpha) =
       (subst_Tau (subst_Tau t0 t2 alpha)
                  (subst_Tau t1 t2 alpha)
                  beta).
 Proof.
   intros beta t2 notfreeder alpha t0.
   (Tau_ind_cases (induction t0) Case).
-  (* crush leaves 1/7. *)
-  (* Need a working tautology on variable equality. *)
-   Case "(tv_t t)".
+  (* crush leaves 3/7. *)
+  Case "(tv_t t)".
     intros.
-    (* Destruct as per Dan's notes, three ways. t = alpha, beta or other. *)
-    destruct (beq_tvar t alpha); destruct (beq_tvar t beta).
-    admit.
-    admit.
-    admit.
-    admit.
+    case_eq (beq_tvar alpha beta); case_eq (beq_tvar alpha t); case_eq (beq_tvar beta t); crush.
+    SCase "alpha = beta = t".
+     apply NotFreeIn_Tau_subst_useless with (tau':= (subst_Tau t1 t2 alpha)) in notfreeder.
+     rewrite notfreeder.
+     admit.
+     admit.
+     admit.
+     admit.
    Case "cint".
     crush.
    Case "(cross t t0)".
@@ -254,54 +373,102 @@ Proof.
    Case "(ptype t)".
     crush.
    Case "(utype t k t0)".
-    crush.
+    intros.
+    unfold subst_Tau.
+    fold subst_Tau.
+    admit.
    Case "(etype p t k t0)".
-    crush.
+    admit. 
 Qed.
 
-(* TODO Dan, are these induction on AKder or Kder?  I think the Kder. *)
-
 Lemma A_6_Substitution_1:
-  forall (d : Delta)  (tau : Tau) (k: Kappa),
-    AK d tau k -> 
-    forall (alpha : TVar) (tau' : Tau) (k' : Kappa),
-      K ([(alpha,k)] ++ d) tau' k' ->
+  forall (alpha : TVar) (k : Kappa) (d : Delta) (tau' : Tau) (k' : Kappa),
+    K ([(alpha,k)] ++ d) tau' k' ->
+    forall (tau : Tau),
+      AK d tau k -> 
       K d (subst_Tau tau' tau alpha) k'.
 Proof.
-  intros d tau k AKder alpha tau' k' Kder.
-  K_ind_cases (induction Kder) Case.
-
+  intros alpha k d tau' k'.
+  apply (K_ind 
+           (fun (d: Delta) (tau' : Tau) (k' : Kappa) =>
+              K ([(alpha,k)] ++ d) tau' k' ->
+              forall (tau : Tau),
+                AK d tau k -> 
+                K d (subst_Tau tau' tau alpha) k')).
   Case "K d cint B".
    simpl.
    constructor.
   Case "K d (tv_t alpha) B".
-   admit.
+   intros.
+   inversion H0.
+   unfold subst_Tau.
+   fold subst_Tau.
+   case_eq (beq_tvar alpha alpha0).
+   SCase "alpha=alpha0".
+    intros.
+    crush.
+    admit.
+    admit.
   Case "K d (ptype (tv_t alpha)) B".
-   admit.
+   intros.
+   unfold subst_Tau.
+   fold subst_Tau.
+   case_eq (beq_tvar alpha alpha0).
+   SCase "alpha = alpha0".
+    intros.
+    constructor.
+    inversion H1.
+    destruct k.
+    constructor.
+    assumption.
+    assumption.
+    admit.
+   SCase "alpha <> alpha0".
+    intros.
+    constructor; try assumption.
   Case "K d tau A".
+   intros.
    constructor.
-   assumption.
+   admit.
+
   Case "K d (cross t0 t1) A".
+   intros.
    unfold subst_Tau.
    fold subst_Tau.
+   pose proof H.
    apply K_cross; try assumption.
+   inversion H3.
+   inversion H6.
+   apply H0 with (tau:= tau) in H9; try assumption.
+   inversion H3.
+   inversion H6.
+   apply H2 with (tau:= tau) in H10; try assumption.
   Case "K d (arrow t0 t1) A".
+   intros.
    unfold subst_Tau.
    fold subst_Tau.
+   pose proof H.
    apply K_arrow; try assumption.
+   inversion H3.
+   inversion H6.
+   apply H0 with (tau:= tau) in H9; try assumption.
+   inversion H3.
+   inversion H6.
+   apply H2 with (tau:= tau) in H10; try assumption.
   Case "K d (ptype tau) B".
+   intros.
    unfold subst_Tau.
    fold subst_Tau.
    constructor.
-   assumption.
+   inversion H1.
+   admit.
+   apply H0 with (tau0:= tau0) in H5; try assumption.
   Case "K d (utype alpha k tau) A".
    unfold subst_Tau.
    fold subst_Tau.
-   apply K_utype; try assumption.
+   admit.
+   (* apply K_utype; try assumption. *)
    (* Where did d0 come from? *)
-   admit.
-   admit.
-   admit.
   Case "K d (etype p alpha k tau) A)".
    admit.
 Qed.
@@ -495,13 +662,18 @@ Qed.
 Lemma A_6_Substitution_7:
   forall (u : Upsilon) (x : EVar) (p p': P) (t1 t2: Tau),
     gettype u x p t1 p' t2 ->
-    forall (d: Delta) (tau : Tau) (k : Kappa) (alpha : TVar),
+    forall (d: Delta) (tau : Tau) (k : Kappa) (beta : TVar),
       AK d tau k -> 
       WFU u ->
-        gettype u x p (subst_Tau t1 tau alpha) p' (subst_Tau t2 tau alpha).
+        gettype u x p (subst_Tau t1 tau beta) p' (subst_Tau t2 tau beta).
 Proof.
   intros u x p p' t1 t2 gettypder.
-  gettype_ind_cases (induction gettypder) Case.
+  apply (gettype_ind 
+           (fun (u : Upsilon) (x : EVar) (p : P) (t1 : Tau) (p' : P) (t2 : Tau) =>
+              forall (d: Delta) (tau : Tau) (k : Kappa) (beta : TVar),
+                AK d tau k -> 
+                WFU u ->
+                gettype u x p (subst_Tau t1 tau beta) p' (subst_Tau t2 tau beta))).
   Case "gettype u x p tau [] tau".
    intros.
    constructor.
@@ -509,21 +681,28 @@ Proof.
    intros.
    simpl.
    constructor.
-   apply IHgettypder with (alpha:= alpha) in H; try assumption.
+   apply H0 with (beta:= beta) in H1; try assumption.
   Case "gettype u x p (cross t0 t1) (i_pe one_pe :: p') tau".
    intros.
    simpl.
    constructor.
-   apply IHgettypder with (alpha:= alpha) in H; try assumption.
+   apply H0 with (beta:= beta) in H1; try assumption.
   Case "gettype u x p (etype aliases alpha k tau') (u_pe :: p') tau)".
    intros.
    simpl.
-   apply gettype_etype with (tau'':= tau''); try assumption.
-   apply IHgettypder with 
-    (d:= d) (tau0:= tau') (k:=k0) (alpha0:= alpha0) in H0; try assumption.
-   (* It's failing to generalize alpha in the IH. *)
-   admit.
+   destruct (beq_tvar beta alpha).
    
+   admit.
+   admit.
+   assumption.
+   apply gettype_etype with (tau'':= tau''); try assumption.
+   (* The alpha is from the etype. *)
+   apply H1  with 
+    (d:= d) (tau0:= tau0) (k:=k0) (beta:= beta) in H2; try assumption.
+   crush.
+   (* Is this alpha conversion? It does not seem so. *)
+   (* Alpha and alpha0 swapped in goal term. Capture? Bug? *)
+   admit.
 Qed.
 
 (* Dan, is that last ltyp supposed to be an styp? *)

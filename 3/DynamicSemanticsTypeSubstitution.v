@@ -22,8 +22,11 @@ Fixpoint subst_Tau (t : Tau) (tau : Tau) (alpha : TVar) {struct t} : Tau :=
     | cross t0 t1        => cross (subst_Tau t0 tau alpha) (subst_Tau t1 tau alpha)
     | arrow t0 t1        => arrow (subst_Tau t0 tau alpha) (subst_Tau t1 tau alpha)
     | ptype t0           => ptype (subst_Tau t0 tau alpha)
-    | utype   beta k t'  => utype   beta k (subst_Tau t' tau alpha)
-    | etype p beta k t'  => etype p beta k (subst_Tau t' tau alpha)
+(* Bug 41, assuming beta != alpha ! Block not alpha convert.*)
+    | utype   beta k t'  => 
+       if beq_tvar alpha beta then t else utype beta k (subst_Tau t' tau alpha)
+    | etype p beta k t'  => 
+       if beq_tvar alpha beta then t else etype p beta k (subst_Tau t' tau alpha)
 end.
 
 Fixpoint subst_E (e : E) (tau : Tau) (alpha : TVar) {struct e} : E :=
@@ -96,20 +99,20 @@ Proof.
   reflexivity.
 Qed.
 
-Fixpoint NotFreeInTau (beta : TVar) (tau : Tau) : bool :=
-  let n1 := (match beta with tvar n1 => n1 end) in
+Function NotFreeInTau (beta : TVar) (tau : Tau) : Prop :=
   match tau with 
-    | tv_t (tvar n0) => 
-      if beq_nat n0 n1 then false else true
-    | cint        => true 
+    | tv_t alpha => 
+      if beq_tvar beta alpha then False else True
+    | cint        => True 
     | cross t0 t1 => 
-      if eqb true (NotFreeInTau beta t0) then NotFreeInTau beta t1 else false
+       (NotFreeInTau beta t0) /\ (NotFreeInTau beta t1)
     | arrow t0 t1 => 
-      if eqb true (NotFreeInTau beta t0) then NotFreeInTau beta t1 else false
+        (NotFreeInTau beta t0) /\ (NotFreeInTau beta t1)
     | ptype t     => NotFreeInTau beta t
-    | utype (tvar n0) _ t =>
-      if beq_nat n0 n1 then true else NotFreeInTau beta t
-    | etype _ (tvar n0) _ t =>  
-      if beq_nat n0 n1 then true else NotFreeInTau beta t
+    | utype alpha _ t =>
+      if beq_tvar beta alpha then True else NotFreeInTau beta t
+    | etype _ alpha _ t =>  
+      if beq_tvar beta alpha then True else NotFreeInTau beta t
   end.
+
 
