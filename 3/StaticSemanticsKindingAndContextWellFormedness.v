@@ -35,18 +35,10 @@ Inductive K : Delta -> Tau -> Kappa -> Prop :=
                  getD d alpha = Some A -> 
                  K  d (ptype (tv_t alpha)) B
 
- (* TODO does dan mean tau has not free type variables ?  
-         Or is the thesis typo AK ?*)
+ | K_B_A     : forall (d : Delta) (tau : Tau),
+                  K  d tau B ->
+                  K  d tau A
 
- | K_B_A     : forall (d : Delta) (tau : Tau),
-                  K  d tau B ->
-                  K  d tau A
-(*
- | K_B_A     : forall (d : Delta) (tau : Tau),
-                  FreeVariablesTau tau = [] ->
-                  K  d tau B ->
-                  K  d tau A
-*)
  | K_cross   : forall (d : Delta) (t0 t1 : Tau),
                     K d t0 A ->
                     K d t1 A ->
@@ -122,13 +114,6 @@ Inductive WFU : Upsilon -> Prop :=
                  WFU  u ->
                  K nil tau A ->
                  WFU ([((x,p), tau)] ++ u).
-
-Lemma WFU_weakening:
-  forall (u u' : Upsilon),
-   WFU (u ++ u') ->
-   WFU u.
-Proof.
-Admitted.
 
 Inductive WFDG : Delta -> Gamma -> Prop :=
   | WFDG_d_nil : forall (d: Delta),

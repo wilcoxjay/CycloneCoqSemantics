@@ -96,7 +96,6 @@ Ltac list_splitter :=
      | [ |- WFDG _ ?x           ]   
        => try (left_list_recurse_gamma x; constructor)
 
-
      | [ |- WFD (?x ++ ?y)   ]   => try constructor
      | [ |- WFD ?x           ]   
        => try (left_list_recurse_delta x; constructor)
@@ -108,6 +107,11 @@ Ltac list_splitter :=
      | [ |- refp _ (?x ++ ?y)   ]   => try constructor
      | [ |- refp _ ?x           ]   
        => try (left_list_recurse_upsilon x; constructor)
+
+     | [ |- getU (?x ++ ?y) _ _ _ ]   => try constructor
+     | [ |- getU ?x _ _ _         ]   
+       => try (left_list_recurse_upsilon x; constructor)
+
    end.
 
 Hint Extern 3 (htyp _ _ _ _)   => list_splitter.
@@ -115,6 +119,7 @@ Hint Extern 3 (ASGN _  _)      => list_splitter.
 Hint Extern 3 (WFU  _   )      => list_splitter.
 Hint Extern 3 (WFDG _ _)       => list_splitter.
 Hint Extern 3 (refp _ _)       => list_splitter.
+Hint Extern 3 (getU _ _ _ _)   => list_splitter.
 
 Hint Extern 5 ([] ++ _ = _) => try reflexivity.
 Hint Extern 5 (_ = [] + _)  => try reflexivity.

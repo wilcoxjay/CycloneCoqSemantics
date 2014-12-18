@@ -13,6 +13,7 @@ Require Import Init.Datatypes.
 
 Require Import FormalSyntax.
 Require Import VarLemmas.
+Require Import ListLemmas.
 Require Import StaticSemanticsKindingAndContextWellFormedness.
 
 Lemma getD_None_Strengthening: 
@@ -29,16 +30,14 @@ Proof.
  Case "a :: d".
   destruct a.
   unfold getD.
-  destruct alpha.
   fold getD.
-  destruct t.
   unfold getD in H.
   simpl in H.
   fold getD in H.
-  destruct (beq_nat n n0).
+  destruct (beq_tvar alpha t).
   inversion H.
   apply IHd in H.
-  admit. (* beq_tvar bug. *)
+  assumption.
 Qed.
 
 Lemma getG_None_Strengthening: 
@@ -55,16 +54,21 @@ Proof.
  Case "a :: g".
   destruct a.
   unfold getG.
-  destruct x.
   fold getG.
-  destruct e.
+  rewrite cons_is_append_singleton in H.
+  rewrite <- app_assoc in H.
+  case_eq (beq_evar x e).
+  intros.
+  inversion H.
+  rewrite H0 in H2.
+  inversion H2.
+  intros.
   unfold getG in H.
   simpl in H.
   fold getG in H.
-  destruct (beq_nat n n0).
-  inversion H.
+  rewrite H0 in H.
   apply IHg in H.
-  admit. (* beq_tvar bug. *)
+  assumption.
 Qed.
 
 Lemma getD_Some_Weakening:
@@ -91,6 +95,7 @@ Proof.
   functional induction (getG g x); crush.
 Qed.
 
+(* Not used yet. *)
 Lemma getD_Some_None_Implies_Different_Variables:
   forall (alpha : TVar) (d : Delta) (n : nat) (k : Kappa),
       getD d (tvar n ) = Some k ->

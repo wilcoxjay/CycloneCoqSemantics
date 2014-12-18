@@ -140,14 +140,15 @@ with    F_ind_mutual := Induction for F Sort Prop.
 Combined Scheme Term_ind_mutual from St_ind_mutual, E_ind_mutual, F_ind_mutual.
 
 (* jrw why can't coqie invert? *)
-Function path_eq (p q : P) : bool := 
+Function beq_path (p q : P) : bool := 
   match p, q with
     | [], [] => true
-    | (i_pe zero_pe) :: p', (i_pe zero_pe) :: q' => path_eq p' q'
-    | (i_pe one_pe)  :: p', (i_pe one_pe ) :: q' => path_eq p' q'
-    | u_pe :: p', u_pe :: q'  => path_eq p' q' (* Bug 39, failed to recurse. *)
+    | (i_pe zero_pe) :: p', (i_pe zero_pe) :: q' => beq_path p' q'
+    | (i_pe one_pe)  :: p', (i_pe one_pe ) :: q' => beq_path p' q'
+    | u_pe :: p', u_pe :: q'  => beq_path p' q' (* Bug 39, failed to recurse. *)
     | _  , _ => false
   end.
+(* TODO on inversion write the last clause to explicitly match the other cases. *)
 
 (* Make a value type judgement. The thesis does this syntactically 
 but that's not representable in Coq. *)
@@ -184,12 +185,14 @@ Definition H  : Type := list HE.
 
 Function getH (h : H) (x : EVar) : option E :=
     match x, h with 
-    | evar x', (evar y',v) :: h' =>
-      if beq_nat x' y'
+    | x, (y,v) :: h' =>
+      if beq_evar x y
       then Some v 
       else getH h' x
     | _ , nil => None
   end.
+
+(* TODO move to beq_evar. *)
 
 Function setH (h : H) (x : EVar) (e : E) : H :=
   match x, h with
@@ -305,14 +308,12 @@ Definition Gamma     := list GE.
 
 Function getG (g : Gamma) (x: EVar) : option Tau :=
   match x, g with 
-    | evar x', (evar y', t) :: g' =>
-      if beq_nat x' y' 
+    | x, (y, t) :: g' =>
+      if beq_evar x y 
       then Some t
       else getG g' x
-    | _ , [] => None
+    | _, [] => None
   end.
-
-
 
 (* The thesis uses a statement here, (p_e x p), but it certainly makes the
   proofs unnecessarily hard. So I'll use a pair. *)
@@ -321,18 +322,18 @@ Definition Upsilon   := list UE.
  
 Inductive getU : Upsilon -> EVar -> P -> Tau -> Prop :=
   | getU_top  : forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
-                 getU (cons ((x,p),tau) u) x p tau
+                 getU ([((x,p),tau)] ++ u) x p tau
   | getU_next : forall (u : Upsilon) (x y: EVar) (p p': P) (tau tau': Tau),
-                 x <> y \/ p <> p'->
-                 getU u x p tau -> 
-                 getU (cons ((y,p'),tau') u) x p tau.
+                 beq_evar x y = false \/ beq_path p p' = false ->
+                 getU u x p tau ->
+                 getU ([((y,p'),tau')] ++ u) x p tau.
 
 (* TODO warning on inversion, do I need a relation here also? *)
 Function NotInDomU (u : Upsilon) (x : EVar) (p : P) : Prop :=
   match x, u with 
     | _, [] => True
-    | evar n, ((((evar n'),p'),_) :: u') =>
-       if andb (beq_nat n n') (path_eq p p')
+    | x, (((y,p'),_) :: u') =>
+       if andb (beq_evar x y) (beq_path p p')
        then True
        else NotInDomU u' x p
    end.

@@ -1,9 +1,11 @@
 -include coq.depends
-all: TAGS src tactic test proof TODOS
+all: TAGS src tactic lemma  test proof TODOS
 
-SRCFILES=FormalSyntax.vo VarLemmas.v GetLemmasRelation.vo  ListLemmas.vo AlphaConversion.vo WeakeningLemmas.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TacticNotations.vo TypeSafety.vo
+SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TacticNotations.vo TypeSafety.vo
 
 TESTFILES=TestUtilities.vo FormalSyntaxTest.vo DynamicSemanticsHeapObjectsTest.vo DynamicSemanticsTypeSubstitutionTest.vo DynamicSemanticsTest.vo StaticSemanticsTest.vo StaticSemanticsKindingAndContextWellFormednessTest.vo StaticSemanticsTypingHeapObjectsTest.vo MutualRecursionProof.vo KindingTest.vo
+
+LEMMAFILES= AlphaConversion.vo VarLemmas.v GetLemmasRelation.vo ListLemmas.vo PathLemmas.vo WeakeningLemmas.vo
 
 PROOFFILES=TypeSafetyProof.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
 
@@ -16,9 +18,11 @@ src:  TAGS depends $(SRCFILES)
 
 tactic: TAGS src $(TACTICFILES)
 
-test: TAGS depends src $(TESTFILES)
+test: TAGS depends tactic src $(TESTFILES)
 
-proof: TAGS depends src $(PROOFFILES)
+lemma: TAGS depends tactic src $(LEMMAFILES)
+
+proof: TAGS depends tactic lemma src $(PROOFFILES)
 
 clean:
 	rm -f *.vo
@@ -69,4 +73,15 @@ ttpbis:
 dan: 
 	echo "Ask Dan's"
 	grep -e Dan *.v | grep -v formal | wc -l
+
+
+PROOFS=TypeSafetyProof.v ContextWeakeningProof.v TermWeakeningProof.v HeapWeakeningProof.v SubstitutionsProof.v TypingWellFormednessProof.v ReturnPreservationProof.v CannonicalFormsProof.v PathExtensionProof.v HeapObjectSafetyProof.v TermPreservationProof.v TermProgressProof.v
+
+LEMMAS=GetLemmasRelation.v ListLemmas.v VarLemmas.v WeakeningLemmas.v
+
+theorems:
+	grep -e 'Lemma ' -e Theorem -e Qed -e admit -e AdmitAlphaConversion -e Admitted $(PROOFS)
+
+lemmas:
+	grep -e 'Lemma ' -e Theorem -e Qed -e admit -e AdmitAlphaConversion -e Admitted $(LEMMAS)
 

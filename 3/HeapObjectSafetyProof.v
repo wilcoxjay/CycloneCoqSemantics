@@ -291,7 +291,7 @@ Check A_11_Heap_Object_Safety_3.
 *)
 
 (* Just instantiating the above at H(x) = v and p1 = nil. *)
-(* Dan, is U; \Gamma supposed to be \Upsilon ; \Gamma ? *)
+(* Dan, is U; \Gamma supposed to be \Upsilon ; \Gamma ?  Yes! *)
 Lemma A_11_Heap_Object_Safety_3_Corollary :
   forall (h : H) (u : Upsilon) (g : Gamma) 
          (x : EVar) (v1 : E) (t1 t2: Tau) 

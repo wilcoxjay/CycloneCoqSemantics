@@ -376,3 +376,12 @@ Proof.
    assumption.
 Qed.
 
+Lemma K_A_all_Tau:
+  forall (d : Delta) (tau : Tau),
+    K d tau B ->
+    K d tau A.
+Proof.
+  intros.
+  apply K_B_A.
+  assumption.
+Qed.

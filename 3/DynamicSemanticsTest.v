@@ -198,7 +198,6 @@ Proof.
   eauto 20 with Chapter3.
 Qed.
 
-(* Dan Bug, initial assignment. *)
 Example R_initial_assign_3_2_test:
   R [] (e_s (assign (p_e x []) (i_e (i_i 3))))
     [(x,(i_e (i_i 3)))] (e_s (i_e (i_i 3))).

@@ -40,52 +40,32 @@ Lemma A_7_Typing_Well_Formedness_1 :
         K d tau' A.
 Proof.
   intros u WFUder d tau Kder x tau' p p' gettypeder.
-  admit. (* TODO broken proof due to move from functional to relational. *)
-(*
+  gettype_ind_cases (induction gettypeder) Case.
   Case "gettype u x p tau [] tau".
-   induction p'0.   
-   inversion Kder.
-   SCase "K d (cross t0 t1) B".
-    inversion H.
-   SCase "K d (cross t0 t1) A".
-    apply IHo in H2.
-    assumption.
-    assumption.
-    inversion Kder.
-    inversion H.
-    apply IHo in H2.
-    assumption.
-    assumption.
+   assumption.
   Case "gettype u x p (cross t0 t1) (i_pe zero_pe :: p') tau".
    inversion Kder.
    inversion H.
-   apply IHo in H3.
+   apply IHgettypeder in WFUder.
    assumption.
    assumption.
-  Case "etype".
+  Case "gettype u x p (cross t0 t1) (i_pe one_pe :: p') tau".
    inversion Kder.
    inversion H.
-   inversion e4.
-   rewrite <- H3 in *.
-   rewrite <- H4 in *.
-   move Kder after H7.
-   move IHo  after H7.
-   move e4   after H7.
-   move e3   after H4.
-   move H2   after H4.
-   move H5   before H7.
-   clear e4.
-   apply A_1_Context_Weakening_2 with (u:=u) (x:=x) (p:=p).
+   apply IHgettypeder in WFUder.
    assumption.
-   (* At this point I just need to know that tau' = tau'' and getU is a 
-      total function, but defined as a fixpoint. Even if I make a function of
-     it, it does not get inversion information.
-     How do I get this? *)
-   (* Really I'm stuck at inverting the gettype in H7. *)
-   apply getU_function_inversion with (tau':= tau') in e3.
-   inversion e3.
    assumption.
-*)
+  Case "gettype u x p (etype aliases alpha k tau') (u_pe :: p') tau)".
+   apply IHgettypeder in WFUder. 
+   assumption.
+   inversion Kder.
+   inversion H0.
+   apply A_1_Context_Weakening_2 with (u:= u) (x:= x) (p:= p) (d:= d) (tau:= tau'')
+     in WFUder; try assumption.
+   apply A_6_Substitution_1 with (k:= k) (tau:= tau''); try assumption.
+   constructor.
+   destruct k; try assumption.
+   admit. (* K d tau'' B *)
 Qed.
 
 Lemma A_7_Typing_Well_Formedness_2 :
@@ -226,9 +206,9 @@ Proof.
    split.
    assumption.
    apply A_6_Substitution_1 with (k:=k).
-   assumption.
    inversion H1.
    inversion H2.
+   assumption.
    assumption.
   Case "SR_3_12".
    twf3.
@@ -236,14 +216,21 @@ Proof.
    intros.
    split.
    inversion H.
-   apply WFC_weakening in H0.
-   assumption.
+   rewrite <- app_nil_r with (l:= d0) in H0.
+   rewrite <- app_nil_r with (l:= u0) in H0.
+   (* Need a lemma saying I can rearrange the context Gamma. *)
+   apply WFC_weakening with (d:= d0) (d':=[]) (u:= u0) (g':= g0)
+     in H0.
+   admit. (* assumption.*)
    apply K_arrow.
    inversion H.
    (* WFDG to K d0 tau0 A.*)
+   inversion H0; try assumption.
+   inversion H3; try assumption.
+   inversion H; try assumption.
+   (* WFDG d2 to K d2 tau0 A. *)
    admit.
-   inversion H.
-   assumption.
+   inversion H; try assumption.
   Case "SR_3_14".
    intros.
    split.

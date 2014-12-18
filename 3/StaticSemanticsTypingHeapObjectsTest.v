@@ -14,7 +14,6 @@ Require Import Init.Datatypes.
 Require Export FormalSyntax.
 Require Export DynamicSemanticsTypeSubstitution.
 Require Export Tacticals.
-
 Require Export TestUtilities.
 
 Example gettype_empty_test2:
@@ -24,16 +23,9 @@ Proof.
 Qed.
 
 Definition pnil : P := [].
-Definition u := (((x,pnil)), cint) :: [].
 
-Example gettype_etype_test_failed:
-  getU u x [] cint.
-Proof.
- eauto 20 with Chapter3.
-Qed.
-
-Example getu_for_etype:
- getU [((x, pnil), cint)] x pnil cint.
+Example getu_for_cint:
+ getU ([((x, pnil), cint)] ++ []) x pnil cint.
 Proof.
   eauto 20 with Chapter3.
 Qed.

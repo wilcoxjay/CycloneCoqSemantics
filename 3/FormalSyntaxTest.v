@@ -234,7 +234,7 @@ Qed.
 *)
 
 Example path_eq:
-  path_eq [] [] = true.
+  beq_path [] [] = true.
 Proof.
   reflexivity.
 Qed.
@@ -252,7 +252,7 @@ Example getUyx :
 Proof.
   constructor.
   left.
-  discriminate.
+  constructor.
   constructor.
 Qed.
 

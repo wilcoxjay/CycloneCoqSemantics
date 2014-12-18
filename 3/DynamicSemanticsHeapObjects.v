@@ -15,8 +15,6 @@ Require Export FormalSyntax.
 
 (* TODO When I dish a value out, it's a value. *)
 Inductive get : E -> P -> E -> Prop := 
-(* Dan Bug, v' required. *)
-(* Bug X, forgot value v', no it's v.  *)
  | get_pdot: forall (v : E),
                Value v ->
                get v [] v

@@ -388,13 +388,15 @@ Lemma A_6_Substitution_1:
       AK d tau k -> 
       K d (subst_Tau tau' tau alpha) k'.
 Proof.
-  intros alpha k d tau' k'.
+  intros alpha k d tau' k' Kder.
   apply (K_ind 
            (fun (d: Delta) (tau' : Tau) (k' : Kappa) =>
-              K ([(alpha,k)] ++ d) tau' k' ->
               forall (tau : Tau),
                 AK d tau k -> 
                 K d (subst_Tau tau' tau alpha) k')).
+  admit.  admit.  admit.  admit.  admit.  admit.  admit.  admit.  admit.
+
+(*
   Case "K d cint B".
    simpl.
    constructor.
@@ -459,10 +461,23 @@ Proof.
    intros.
    unfold subst_Tau.
    fold subst_Tau.
-   constructor.
+   apply K_ptype.
    inversion H1.
+   unfold subst_Tau.
+   fold subst_Tau.
+   case_eq (beq_tvar alpha alpha0); destruct k; intros; try assumption; crush.
+   inversion H2.
+   constructor; try assumption; crush.
+   inversion H2; try assumption; crush.
+   inversion H2.
+   assumption.
+   inversion H2.
+   assumption.
+   crush.
+   crush.
+   crush.
    admit.
-   apply H0 with (tau0:= tau0) in H5; try assumption.
+   admit.
   Case "K d (utype alpha k tau) A".
    unfold subst_Tau.
    fold subst_Tau.
@@ -471,31 +486,41 @@ Proof.
    (* Where did d0 come from? *)
   Case "K d (etype p alpha k tau) A)".
    admit.
+  Case "base".
+   admit.
+   admit.
+*)
+  admit.
 Qed.
 
 Lemma A_6_Substitution_2:
-  forall (d : Delta)  (tau : Tau) (k : Kappa),
-    AK d tau k -> 
-    forall (alpha : TVar) (tau' : Tau) (k' : Kappa), 
-      AK ([(alpha,k)] ++ d) tau' k' ->
-      AK d (subst_Tau tau' tau alpha) k'.
+  forall (d : Delta) (tau : Tau) (k : Kappa),
+       AK d tau k -> 
+       forall  (alpha : TVar)  (tau' : Tau)  (k' : Kappa),
+         AK ([(alpha,k)] ++ d) tau' k' ->
+         AK d (subst_Tau tau' tau alpha) k'.
 Proof.
-  intros d tau k AKder alpha tau' k' AKder2.
-  AK_ind_cases (induction AKder) Case. 
+  intros d tau k AKder.
+  apply (AK_ind 
+           (fun (d : Delta) (tau : Tau) (k : Kappa) =>
+              forall  (alpha : TVar)  (tau' : Tau)  (k' : Kappa),
+                AK ([(alpha,k)] ++ d) tau' k' ->
+                AK d (subst_Tau tau' tau alpha) k')).
+
   Case "AK d (tv_t alpha) A".
+   intros.
    constructor.
-   (* apply A_6_Substitution_1 
-     with (alpha:= alpha) (tau':= tau') (k:= k) (k':= k) in AKder.*)
-   admit. (* Where is d0 coming from? *)
+   apply A_6_Substitution_1 with (k:=k); try assumption.
+   admit.
+   admit.
+
   Case "AK d (subst_Tau (tv_t alpha0) alpha k) A".
-   inversion AKder2.
-   crush.
-   apply A_6_Substitution_1 
-     with (alpha:= alpha) (tau':= tau') (k:= k') (k':= k') in AKder2.
+   intros.
+   constructor.
    admit.
-   admit.
-   crush.
-   admit. (* Not liking this at all. *)
+
+  Case "base".
+   assumption.
 Qed.
 
 Lemma A_6_Substitution_3:
@@ -694,7 +719,8 @@ Proof.
    
    admit.
    admit.
-   assumption.
+   (* 
+
    apply gettype_etype with (tau'':= tau''); try assumption.
    (* The alpha is from the etype. *)
    apply H1  with 
@@ -702,6 +728,8 @@ Proof.
    crush.
    (* Is this alpha conversion? It does not seem so. *)
    (* Alpha and alpha0 swapped in goal term. Capture? Bug? *)
+   admit.
+*)
    admit.
 Qed.
 

@@ -18,6 +18,7 @@ Require Export StaticSemanticsTypingHeapObjects.
 Require Export StaticSemanticsKindingAndContextWellFormedness.
 Require Export StaticSemantics.
 Require Export TacticNotations.
+Require Export VarLemmas.
 Require Export ListLemmas.
 Require Export GetLemmasRelation.
 
@@ -78,6 +79,35 @@ Proof.
    assumption.
 Qed.
 
+Lemma NotInDomU_weakening:
+  forall (u u' : Upsilon) (x : EVar) (p : P),
+    WFU (u ++ u') ->
+    NotInDomU (u ++ u') x p ->
+    NotInDomU u x p.
+Proof.
+  intros u u' x p.
+  induction u.
+  Case "u = []".
+   rewrite app_nil_l.
+   intros.
+   constructor.
+  Case "a::u".
+   intros.
+   destruct a.
+   destruct p0.
+   case_eq (beq_evar x e); case_eq (beq_path p p0).
+   intros.
+   inversion H.
+   apply IHu in H8.
+   unfold NotInDomU.
+   fold NotInDomU.
+   rewrite H1.
+   rewrite H2.
+   simpl.
+   tauto.
+   apply beq_evar_eq in H2.
+Admitted.  
+
 Lemma WFU_weakening:
  forall (u u' : Upsilon),
    WFU (u ++ u') ->
@@ -89,7 +119,8 @@ Proof.
   destruct a.
   destruct p.
   apply WFU_A.
-  AdmitAlphaConversion.
+  inversion H.
+  apply NotInDomU_weakening with (u':= u') (x:= e) (p:= p) in H5; try assumption.
   inversion H.
   apply IHu in H5.
   assumption.
@@ -218,8 +249,6 @@ Proof.
    AdmitAlphaConversion.
    assumption.
 Qed.
-
-
 
 (* jrw what is wrong here ? *)
 Lemma WFDG_d_weakening:

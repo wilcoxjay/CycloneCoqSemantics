@@ -71,3 +71,61 @@ Proof.
   apply beq_nat_false in H.
   congruence.
 Qed.  
+
+Lemma beq_evar_symmetric:
+  forall (x y : EVar),
+    beq_evar x y = beq_evar y x.
+Proof.
+  intros x y.
+  case_eq (beq_evar x y); case_eq (beq_evar y x); intros; try reflexivity; destruct x; destruct y; unfold beq_evar in H; unfold beq_evar in H0.
+  symmetry in H0.
+  apply beq_nat_eq in H0.
+  apply beq_nat_false in H.
+  congruence.
+  symmetry in H.
+  apply beq_nat_eq in H.
+  apply beq_nat_false in H0.
+  congruence.
+Qed.
+
+Lemma beq_evar_eq:
+  forall (x y : EVar),
+    beq_evar x y = true ->
+    x = y.
+Proof.
+  intros.
+  case_eq (beq_evar x y).
+  intros.
+  destruct x; destruct y.
+  unfold beq_evar in H.
+  unfold beq_evar in H0.
+  symmetry in H.
+  apply beq_nat_eq in H.
+  rewrite H.
+  reflexivity.
+  intros.
+  rewrite H in H0.
+  inversion H0.
+Qed.
+
+Lemma beq_evar_neq:
+  forall (x y : EVar),
+    beq_evar x y = false ->
+    x <> y.
+Proof.
+  intros.
+  case_eq (beq_evar x y).
+  intros.
+  destruct x; destruct y.
+  unfold beq_evar in H.
+  unfold beq_evar in H0.
+  apply beq_nat_false in H.
+  congruence.
+  intros.
+  destruct x; destruct y.  
+  unfold beq_evar in H.
+  fold beq_evar in H.
+  apply beq_nat_false in H.
+  congruence.
+Qed.  
+

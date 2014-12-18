@@ -422,93 +422,100 @@ Proof.
 Qed.
 
 Example NotFreeInTau_int :
-  NotFreeInTau beta cint = true.
+  NotFreeInTau beta cint.
 Proof.
   reflexivity.
 Qed.
 
 Example NotFreeInTau_intcrossint :
-  NotFreeInTau beta (cross cint cint) = true.
+  NotFreeInTau beta (cross cint cint).
 Proof.
-  reflexivity.
+  constructor; try reflexivity.
 Qed.
 
 Example NotFreeInTau_intcrossint_1 :
-  NotFreeInTau beta (cross (tv_t beta) cint) = false.
+  ~(NotFreeInTau beta (cross (tv_t beta) cint)).
 Proof.
-  reflexivity.
+  compute.
+  tauto.
 Qed.
 
 Example NotFreeInTau_intcrossint_2 :
-  NotFreeInTau beta (cross cint (tv_t beta)) = false.
+  ~NotFreeInTau beta (cross cint (tv_t beta)).
 Proof.
-  reflexivity.
+  compute.
+  tauto.
 Qed.
 
 Example NotFreeInTau_intarrow :
-  NotFreeInTau beta (arrow cint cint) = true.
+  NotFreeInTau beta (arrow cint cint).
 Proof.
-  reflexivity.
+  constructor; try reflexivity.
 Qed.
 
 Example NotFreeInTau_intarrow_1:
-  NotFreeInTau beta (arrow (tv_t beta) cint) = false.
+  ~NotFreeInTau beta (arrow (tv_t beta) cint).
 Proof.
-  reflexivity.
+  compute.
+  tauto.
 Qed.
 
 Example NotFreeInTau_intarrow_2:
-  NotFreeInTau beta (arrow cint (tv_t beta)) = false.
+ ~ NotFreeInTau beta (arrow cint (tv_t beta)).
 Proof.
-  reflexivity.
+  compute.
+  tauto.
 Qed.
 
 Example NotFreeInTau_ptype: 
-  NotFreeInTau beta (ptype cint) = true.
+  NotFreeInTau beta (ptype cint).
 Proof.
   reflexivity.
 Qed.
 
 Example NotFreeInTau_ptype_false:
-  NotFreeInTau beta (ptype (tv_t beta)) = false.
+ ~NotFreeInTau beta (ptype (tv_t beta)).
 Proof.
-  reflexivity.
+  compute.
+  tauto.
 Qed.
 
 Example NotFreeInTau_utype_bound:
-  NotFreeInTau beta (utype beta A cint) = true.
+  NotFreeInTau beta (utype beta A cint).
 Proof.
   reflexivity.
 Qed.
 
 Example NotFreeInTau_utype_bound_2:
-  NotFreeInTau beta (utype beta A (tv_t beta)) = true.
+  NotFreeInTau beta (utype beta A (tv_t beta)).
 Proof.
   reflexivity.
 Qed.
 
 Example NotFreeInTau_utype_bound_3:
-  NotFreeInTau beta (utype alpha A (tv_t beta)) = false.
+  ~NotFreeInTau beta (utype alpha A (tv_t beta)).
 Proof.
-  reflexivity.
+  compute.
+  tauto.
 Qed.
 
 Example NotFreeInTau_etype_bound:
-  NotFreeInTau beta (etype aliases beta A cint) = true.
+  NotFreeInTau beta (etype aliases beta A cint).
 Proof.
   reflexivity.
 Qed.
 
 Example NotFreeInTau_etype_bound_2:
-  NotFreeInTau beta (etype aliases beta A (tv_t beta)) = true.
+  NotFreeInTau beta (etype aliases beta A (tv_t beta)).
 Proof.
   reflexivity.
 Qed.
 
 Example NotFreeInTau_etype_bound_3:
-  NotFreeInTau beta (etype aliases alpha A (tv_t beta)) = false.
+  ~NotFreeInTau beta (etype aliases alpha A (tv_t beta)).
 Proof.
-  reflexivity.
+  compute.
+  tauto.
 Qed.
 
 
