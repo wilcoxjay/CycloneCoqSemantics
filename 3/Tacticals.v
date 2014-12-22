@@ -18,6 +18,7 @@ Require Export DynamicSemanticsHeapObjects.
 Require Export DynamicSemantics.
 Require Export StaticSemanticsKindingAndContextWellFormedness.
 Require Export StaticSemantics.
+Require Export ContextExtensionRelation.
 
 Create HintDb Chapter3.
 Hint Constructors Value     : Chapter3.
@@ -42,6 +43,8 @@ Hint Constructors WFDG      : Chapter3.
 Hint Constructors WFU       : Chapter3.
 Hint Constructors WFC       : Chapter3.
 Hint Constructors WFD       : Chapter3.
+Hint Constructors ExtendedByD   : Chapter3.
+
 Hint Extern 4 => discriminate : Chapter3. (* For ifs. *)
 
 (* Getting eauto to evaluate functions requires some of this. *)

@@ -17,54 +17,74 @@ Require Export CpdtTactics.
 Require Export Case.
 Require Export StaticSemanticsKindingAndContextWellFormedness.
 Require Export VarLemmas.
-Require Export ContextExtension.
+Require Export ContextExtensionRelation.
 Require Export TestUtilities.
+Require Export Tacticals.
 
 Example ExtendedByD_1:
-  ExtendedByD [] [] = true.
+  ExtendedByD [] [].
 Proof.
- reflexivity.
+  constructor.
 Qed.
 
 Example ExtendedByD_2:
-  ExtendedByD [(alpha,A)] [] = false.
+ ~ExtendedByD [(alpha,A)] [].
 Proof.
-  reflexivity.
+  unfold not.
+  intros.
+  inversion H.
+  inversion H4.
 Qed.
 
 Example ExtendedByD_3:
-  ExtendedByD [(alpha,A)] [(alpha,B)] = false.
+  ~ExtendedByD [(alpha,A)] [(alpha,B)].
 Proof.
-  reflexivity.
+  unfold not.
+  intros.
+  inversion H.
+  inversion H4.
 Qed.
 
 Example ExtendedByD_4:
-  ExtendedByD [(alpha,A)] [(beta,A)] = false.
+  ~ExtendedByD [(alpha,A)] [(beta,A)].
 Proof.
-  reflexivity.
+  unfold not.
+  intros.
+  inversion H.
+  inversion H4.
 Qed.
 
 Example ExtendedByD_5:
-  ExtendedByD [(alpha,A)] [(alpha,A)] = true.
+  ExtendedByD [(alpha,A)] [(alpha,A)].
 Proof.
+  constructor.
   reflexivity.
+  constructor.
 Qed.
 
 Example ExtendedByD_6:
-  ExtendedByD [(alpha,A); (beta,A)] [(beta,A); (alpha,A)] = true.
+  ExtendedByD [(alpha,A); (beta,A)] [(beta,A); (alpha,A)].
 Proof.
-  reflexivity.
+  eauto 20 with Chapter3.
 Qed.
 
 Example ExtendedByD_7:
-  ExtendedByD [(alpha,A); (beta,A)] [(beta,A); (alpha,B)] = false.
+  ~ExtendedByD [(alpha,A); (beta,A)] [(beta,A); (alpha,B)].
 Proof.
-  reflexivity.
+  unfold not.
+  intros.
+  inversion H.
+  inversion H4.
 Qed.
 
 Example ExtendedByD_8:
-  ExtendedByD [(alpha,A); (beta,A)] [(alpha,A)] = false.
+  ~ExtendedByD [(alpha,A); (beta,A)] [(alpha,A)].
 Proof.
-  reflexivity.
+  unfold not.
+  intros.
+  inversion H.
+  inversion H5.
+  inversion H10.
 Qed.
+
 

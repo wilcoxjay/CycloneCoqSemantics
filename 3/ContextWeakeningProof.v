@@ -31,7 +31,7 @@ Require Export AlphaConversion.
 Require Export WeakeningLemmas.
 Require Export VarLemmas.
 Require Export PathLemmas.
-Require Export ContextExtension.
+Require Export ContextExtensionRelation.
 
 Lemma A_1_Context_Weakening_1:
   forall (d : Delta) (tau : Tau) (k : Kappa),
@@ -145,7 +145,7 @@ Proof.
   intros.
   inversion H1.
   SCase "getU_top".
-   assert (Y: ExtendedByD [] d = true).
+   assert (Y: ExtendedByD [] d).
    constructor.
    assert (Z: WFD []).
    constructor.

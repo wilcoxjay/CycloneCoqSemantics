@@ -125,7 +125,7 @@ Proof.
   inversion H4.
 Qed.
 
-Lemma getD_extension_agreement_wfd:
+Lemma getD_extension_agreement:
   forall (d : Delta) (alpha : TVar) (k : Kappa),
     getD d  alpha = Some k ->
     WFD d ->
@@ -192,7 +192,7 @@ Lemma K_weakening:
       K d tau k -> 
       forall (d' : Delta),
         WFD d' ->
-        ExtendedByD d d' = true ->
+        ExtendedByD d d' ->
         K d' tau k.
 Proof.
  intros d tau k WFDder Kder.
