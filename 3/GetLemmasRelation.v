@@ -108,3 +108,11 @@ Proof.
   (* TODO It's true but how to show it? *)
 Admitted.
 
+Lemma getD_Some_non_empty_d:
+  forall (d : Delta) (alpha : TVar) (k : Kappa),
+    getD d alpha = Some k ->
+    d <> [].
+Proof.
+  intros d alpha k getDder.
+  crush.
+Qed.

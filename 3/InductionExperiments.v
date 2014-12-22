@@ -752,31 +752,24 @@ Inductive J : Delta -> Tau -> Kappa -> Prop :=
 .
 
 Print J_ind.
-
-(* Wait on this, try dependent induction. 
 Definition J_ind_2 := 
-fun 
-  (P : Delta -> Tau -> Kappa -> Prop)
-  (f : forall d : Delta, P d cint B)
-  (f0 : forall (d : Delta) (t0 t1 : Tau),
-        J [] t0 A -> P d t0 A -> 
-        J [] t1 A -> P d t1 A -> 
-        P d (cross t0 t1) A) =>
-fix F (d : Delta) (t : Tau) (k : Kappa) (j : J [] t A) {struct j} : 
+fun (P : Delta -> Tau -> Kappa -> Prop) 
+    (f : forall d : Delta, P d cint B)
+   (f0 : forall (d : Delta) (t0 t1 : Tau),
+        J d t0 A -> P d t0 A -> J d t1 A -> P d t1 A -> P d (cross t0 t1) A) =>
+fix F (d : Delta) (t : Tau) (k : Kappa) (j : J d t k) {struct j} : 
 P d t k :=
   match j in (J d0 t0 k0) return (P d0 t0 k0) with
   | J_int d0 => f d0
   | J_cross d0 t0 t1 j0 j1 => f0 d0 t0 t1 j0 (F d0 t0 A j0) j1 (F d0 t1 A j1)
   end.
 
-Check J_ind_2 : 
-     forall P : Delta -> Tau -> Kappa -> Prop,
+
+Check J_ind_2 : forall P : Delta -> Tau -> Kappa -> Prop,
        (forall d : Delta, P d cint B) ->
        (forall (d : Delta) (t0 t1 : Tau),
         J d t0 A -> P d t0 A -> J d t1 A -> P d t1 A -> P d (cross t0 t1) A) ->
        forall (d : Delta) (t : Tau) (k : Kappa), J d t k -> P d t k.
-
-*)
 
 
 (* 

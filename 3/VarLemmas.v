@@ -15,6 +15,52 @@ Require Export CpdtTactics.
 Require Export Case.
 Require Export FormalSyntax.
 
+Lemma beq_Kappa_reflexive:
+  forall (k : Kappa),
+    beq_Kappa k k = true.
+Proof.
+  destruct k.
+  reflexivity.
+  reflexivity.
+Qed.
+
+Lemma beq_Kappa_eq:
+  forall (k k': Kappa),
+    beq_Kappa k k' = true ->
+    k = k'.
+Proof.
+  intros.
+  destruct k; destruct k'.
+  reflexivity.
+  inversion H.
+  inversion H.
+  reflexivity.
+Qed.
+
+Lemma beq_Kappa_neq:
+  forall (k k': Kappa),
+    beq_Kappa k k' = false ->
+    k <> k'.
+Proof.
+  intros.
+  destruct k; destruct k'.
+  inversion H.
+  discriminate.
+  discriminate.
+  inversion H.
+Qed.
+
+Lemma beq_tvar_reflexive:
+ forall (alpha : TVar),
+   beq_tvar alpha alpha = true.
+Proof.
+  intros.
+  destruct alpha.
+  unfold beq_tvar.
+  apply eq_sym.
+  apply beq_nat_refl.
+Qed.
+
 Lemma beq_tvar_symmetric:
   forall (alpha beta : TVar),
     beq_tvar alpha beta = beq_tvar beta alpha.

@@ -1,6 +1,8 @@
  This is the definition of formal syntax for Dan Grossman's Thesis, 
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
+   TODO rethink SS3.1 
+
    TODO make a lemma phase in makefile 
 
    TODO is it better to use beq_path and beq_evar in getU? 

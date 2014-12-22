@@ -32,6 +32,14 @@ Inductive Kappa : Type :=
  | B                         (* 'boxed' kind. *)
  | A.                        (* 'any'   kind. *)
 
+Function beq_Kappa (k k' : Kappa) : bool :=
+   match k, k' with
+     |  A, A => true
+     |  B, B => true
+     |  _, _ => false
+  end.
+
+
 (* The abstract syntax of types. *)
 
 (* A type variable, numbered. *)
