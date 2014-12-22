@@ -26,6 +26,7 @@ proof: TAGS depends tactic lemma src $(PROOFFILES)
 
 clean:
 	rm -f *.vo
+	rm -f #*#
 	rm -f *~ 
 	rm -f *.glob
 	rm -f TAGS
@@ -85,3 +86,5 @@ theorems:
 lemmas:
 	grep -e 'Lemma ' -e Theorem -e Qed -e admit -e AdmitAlphaConversion -e Admitted $(LEMMAS)
 
+lemmasused:
+	grep -i 'apply ' *.v | grep -v IH | grep -v ' H' | grep -v SR | grep -v SL | grep -v SS | grep -v ind | grep -v ' K_' | grep -v 'S_' | grep -v 'L_' | grep -v 'R_' | grep -v 'A_' | grep -v ex_intro  | grep -v beq | grep -v Value

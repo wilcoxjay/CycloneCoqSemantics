@@ -9,6 +9,7 @@
 
 Require Export Case.
 Require Export FormalSyntax.
+Require Export StaticSemantics.
 
 (* This marks all spots of alpha conversion. *)
 Tactic Notation "AdmitAlphaConversion" :=
@@ -277,4 +278,16 @@ Tactic Notation "ret_ind_cases" tactic(first) ident(c) :=
 | Case_aux c "ret (letx x e s)"
 | Case_aux c "ret (open e alpha x s)"
 | Case_aux c "ret (openstar e alpha x s))"
+].
+
+Tactic Notation "htyp_ind_cases" tactic(first) ident(c) :=
+ first;
+[ Case_aux c "htyp u g [] []"
+| Case_aux c "htyp u g h ([(x, tau)] ++ g')"
+].
+
+Tactic Notation "refp_ind_cases" tactic(first) ident(c) :=
+ first;
+[ Case_aux c "refp h []"
+| Case_aux c "refp h ([(x, p, tau')] ++ u)"
 ].

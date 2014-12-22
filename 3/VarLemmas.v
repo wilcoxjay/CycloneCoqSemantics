@@ -118,6 +118,17 @@ Proof.
   congruence.
 Qed.  
 
+Lemma beq_evar_reflexive:
+ forall (x : EVar),
+   beq_evar x x = true.
+Proof.
+  intros.
+  destruct x.
+  unfold beq_evar.
+  apply eq_sym.
+  apply beq_nat_refl.
+Qed.
+
 Lemma beq_evar_symmetric:
   forall (x y : EVar),
     beq_evar x y = beq_evar y x.

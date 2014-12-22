@@ -85,7 +85,6 @@ Proof.
   assumption.
 Qed.
 
-(* TODO strengthen this with WFCDG or build a WFG? *)
 Lemma getG_Some_Weakening:
  forall (x: EVar) (tau : Tau) (g g' : Gamma),
    getG g x = Some tau ->
