@@ -26,6 +26,32 @@ Require Export GetLemmasRelation.
 Require Export ContextExtensionRelation.
 Require Export ContextExtensionLemmas.
 
+Fixpoint no_bound_vars (t : Tau) (d : Delta) : Prop :=
+  match t with
+    | tv_t tv => True
+    | cint => True
+    | cross t1 t2 => no_bound_vars t1 d /\ no_bound_vars t2 d
+    | arrow t1 t2 => no_bound_vars t1 d /\ no_bound_vars t2 d
+    | ptype t' => no_bound_vars t' d
+    | utype tv k t' => (forall k, ~ In (tv,k) d) /\ no_bound_vars t' ((tv,k)::d)
+    | etype phi tv k t' => (forall k, ~ In (tv,k) d) /\ no_bound_vars t' ((tv,k)::d)
+  end.
+
+Lemma not_in_getD_none :
+  forall d alpha,
+    (forall k, ~ In (alpha,k) d) ->
+    getD d alpha = None.
+Proof.
+  induction d; intros; simpl in *; auto.
+  destruct a.
+  destruct (beq_tvar alpha t) eqn:?; auto.
+  - apply beq_tvar_eq in Heqb. subst. exfalso. eapply H; eauto.
+  - apply beq_tvar_neq in Heqb.
+    apply IHd.
+    intros. intro.
+    eapply H; eauto.
+Qed.
+
 Lemma K_weakening:
   forall (d : Delta) (tau : Tau) (k : Kappa),
       WFD d ->
@@ -33,6 +59,7 @@ Lemma K_weakening:
       forall (d' : Delta),
         WFD d' ->
         ExtendedByD d d' ->
+        no_bound_vars tau d' ->
         K d' tau k.
 Proof.
  intros d tau k WFDder Kder.
@@ -56,35 +83,34 @@ Proof.
   apply IHKder with (d':= d') in WFDder; try assumption.
   constructor; try assumption.
  Case "K d (cross t0 t1) A".
-  intros.
+  intros. simpl in H1.  destruct H1.
   pose proof WFDder as WFDder2.
   apply IHKder1 with (d':= d') in WFDder; try assumption.
   apply IHKder2 with (d':= d') in WFDder2; try assumption.
   apply K_cross; try assumption.
  Case "K d (arrow t0 t1) A".
-  intros.
+  intros. simpl in H1. destruct H1.
   pose proof WFDder as WFDder2.
   apply IHKder1 with (d':= d') in WFDder; try assumption.
   apply IHKder2 with (d':= d') in WFDder2; try assumption.
   apply K_arrow; try assumption.
  Case "K d (ptype tau) B".
-  intros.
+  intros. simpl in H1.
   apply IHKder with (d':= d') in WFDder; try assumption.
   constructor.
   assumption.
  Case "K d (utype alpha k tau) A".
-  intros.
-  assert (Z: getD d' alpha = None).
-  AdmitAlphaConversion.
+  intros. simpl in H3. destruct H3.
+  assert (Z: getD d' alpha = None) by auto using not_in_getD_none.
+
   apply IHKder with (d':= ([(alpha, k)] ++ d')) in H; try assumption.
   apply K_utype; try assumption.
   constructor; try  assumption.
   constructor; try assumption.
   apply ExtendedByD_preserved_under_add_alpha_k; try assumption.
  Case "K d (etype p alpha k tau) A)".
-  intros.
-  assert (Z: getD d' alpha = None).
-  AdmitAlphaConversion.
+  intros. simpl in H3. destruct H3.
+  assert (Z: getD d' alpha = None) by auto using not_in_getD_none.
   apply IHKder with (d':= ([(alpha, k)] ++ d')) in H; try assumption.
   apply K_etype; try assumption.
   constructor; try  assumption.
