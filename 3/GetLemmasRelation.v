@@ -12,9 +12,51 @@ Require Import ZArith.
 Require Import Init.Datatypes.
 
 Require Import FormalSyntax.
+Require Import StaticSemanticsKindingAndContextWellFormedness.
 Require Import VarLemmas.
 Require Import ListLemmas.
-Require Import StaticSemanticsKindingAndContextWellFormedness.
+Require Import ContextExtensionRelation.
+
+Lemma getU_Some_Weakening:
+  forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
+    getU u x p tau ->
+    forall (u' : Upsilon),
+      getU (u ++ u') x p tau.
+Proof.
+  intros u x p tau getUder.
+  induction u.
+  Case "[]".
+   inversion getUder.
+  Case "a :: u".
+   intros u'.
+   destruct a.
+   destruct p0.
+   inversion getUder.
+   constructor.
+   constructor.
+   assumption.
+   crush.
+Qed.
+
+(* TODO must thee be strengthened with WFDG and even WFDG d? *)
+Lemma getG_weakening:
+ forall (g : Gamma) (x : EVar) (tau : Tau),
+   getG g x = Some tau ->
+   (* WFDG [] g ->  *)
+   forall (g' : Gamma),
+     (* WFDG [] (g ++ g') -> *)
+    getG (g ++ g') x = Some tau.
+Proof.
+Admitted.
+
+Lemma getH_weakening:
+  forall (h : H) (x : EVar) (v : E),
+    getH h x = Some v -> 
+    forall (h' : H),
+      getH (h ++ h') x = Some v.
+Proof.
+Admitted.
+
 
 Lemma getD_None_Strengthening: 
   forall (d d' : Delta) (alpha : TVar),
@@ -115,3 +157,66 @@ Proof.
   intros d alpha k getDder.
   crush.
 Qed.
+
+Lemma getD_extension_agreement:
+  forall (d : Delta) (alpha : TVar) (k : Kappa),
+    getD d  alpha = Some k ->
+    WFD d ->
+    forall (d' : Delta),
+      WFD d' ->
+      ExtendedByD d d' ->
+      getD d' alpha = Some k.
+Proof.
+  (* Laphroig 10 year. *)
+  intros d alpha k.
+  functional induction (getD d alpha).
+  Case "Some k0 = k0".
+   intros.
+   apply beq_tvar_eq in e1.
+   inversion H.
+   rewrite <- e1 in H2.
+   rewrite <- e1 in H0.
+   rewrite H4 in H2.
+   rewrite H4 in H0.
+   inversion H2.
+   assumption.
+  Case "getD d' alpha = Some k".
+   intros.
+   inversion H0.
+   inversion H2.
+   apply IHo with (d'0 := d'0) in H; try assumption.
+  Case "None = Some".
+   intros.
+   inversion H.
+Qed.
+
+Lemma getD_extension_agreement_fun:
+  forall (d : Delta) (alpha : TVar) (k : Kappa),
+    getD d alpha = Some k ->
+  forall (d' : Delta),
+    WFD d' ->
+    ExtendedByD d d' ->
+    getD d' alpha = Some k.
+Proof.
+  intros d alpha k.
+  functional induction (getD d alpha).
+  intros.
+  Case "alpha = b".
+   apply beq_tvar_eq in e1.
+   inversion H1.
+   rewrite <- H2 in H1.
+   rewrite <- H2 in H6.
+   inversion H.
+   rewrite H9 in H1.
+   crush.
+  Case "?".
+   intros.
+   apply IHo with (d'0:= d'0) in H; try assumption.
+   inversion H1.
+   assumption.
+  Case "false".
+   intros.
+   inversion H.
+Qed.
+
+

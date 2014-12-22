@@ -196,7 +196,6 @@ Proof.
              (tau  := cint)
              (tau' := (cross (tv_t alpha) (tv_t alpha)));
   eauto 20 with Chapter3.
-  apply SR_3_12; eauto 20 with Chapter3.
   apply styp_e_3_1. (* with (tau':= (tv_t alpha)). *)
   eapply SR_3_1;   eauto 20 with Chapter3.
   admit. (* TODO Definite bug in test case or rules. *)
@@ -217,9 +216,9 @@ Proof.
              (tau' := (cross (tv_t alpha) (tv_t alpha)));
   eauto 20 with Chapter3.
   (* TODO lack of syntax direction. *)
-  apply SR_3_12; eauto 20 with Chapter3.
   admit. (* TODO *)
-(*  apply styp_e_3_1 with (tau':= (tv_t alpha)).
+(*   apply SR_3_12; eauto 20 with Chapter3.
+   apply styp_e_3_1 with (tau':= (tv_t alpha)).
   eapply SR_3_1;   eauto 20 with Chapter3. *)
 Qed.
 
@@ -350,7 +349,6 @@ Example SR_3_14_test:
        (utype alpha B (arrow (tv_t alpha) (tv_t alpha))).
 Proof.
   apply SR_3_14; eauto 20 with Chapter3.
-  eauto 20 with Chapter3.
 Qed.
 
 (* Test htyp. *)

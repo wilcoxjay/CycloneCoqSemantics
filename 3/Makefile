@@ -1,11 +1,11 @@
 -include coq.depends
 all: TAGS src tactic lemma  test proof TODOS
 
-SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TacticNotations.vo TypeSafety.vo 
+SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TacticNotations.vo TypeSafety.vo ContextExtensionRelation.vo
 
 TESTFILES=TestUtilities.vo FormalSyntaxTest.vo DynamicSemanticsHeapObjectsTest.vo DynamicSemanticsTypeSubstitutionTest.vo DynamicSemanticsTest.vo StaticSemanticsTest.vo StaticSemanticsKindingAndContextWellFormednessTest.vo StaticSemanticsTypingHeapObjectsTest.vo MutualRecursionProof.vo KindingTest.vo ContextExtensionTest.vo
 
-LEMMAFILES= AlphaConversion.vo VarLemmas.v GetLemmasRelation.vo ListLemmas.vo PathLemmas.vo WeakeningLemmas.vo ContextExtensionRelation.vo
+LEMMAFILES= VarLemmas.vo ListLemmas.vo PathLemmas.vo AlphaConversion.vo GetLemmasRelation.vo StaticSemanticsHeapObjectsLemmas.vo StaticSemanticsKindingLemmas.vo StaticSemanticsLemmas.vo StaticSemanticsTypingLemmas.vo StaticSemanticsWellFormednessLemmas.vo ContextExtensionLemmas.vo
 
 PROOFFILES=TypeSafetyProof.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
 
@@ -39,10 +39,12 @@ TAGS:
 
 count: 
 	echo "Source "
-	ls -1 *.v | grep -vi Test | grep -v Dead | grep -v Proof | grep -v Subset | grep -v Cpdt | xargs wc -l 
+	ls -1 *.v | grep -vi Test | grep -v Dead | grep -v Proof | grep -v Subset | grep -v Cpdt | grep -v Lemma | xargs wc -l 
 	echo "Test "
 	ls -1 *.v | grep -i Test | xargs wc -l 
-	echo "TypeSafety "
+	echo "Lemma" 
+	ls -1 *.v | grep -i Lemma | xargs wc -l 
+	echo "Proof"
 	ls -1 *.v | grep -i Proof | grep -v Subset | xargs wc -l 
 
 depends: 

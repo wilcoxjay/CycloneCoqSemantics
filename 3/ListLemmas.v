@@ -12,7 +12,6 @@ Require Import ZArith.
 Require Import Init.Datatypes.
 Require Import Coq.Init.Logic.
 
-(* Used. *)
 Lemma cons_is_append_singleton:
  forall (A : Type) (x : A) (l : list A),
    x :: l = [x] ++ l.
@@ -21,18 +20,5 @@ Proof.
   reflexivity.
 Qed.
 
-(* Unused. *)
-Lemma Nil_Not_App_Anything:
-  forall (A : Type) (g g' : list A),
-    g' <> [] ->
-    [] <> g ++ g'.
-Proof.    
-Admitted.
 
-Lemma app_equals:
-  forall (A: Type) (g g' : list A) (x y : A),
-    g ++ [x] = g' ++ [y] ->
-    g = g' /\ x = y.
-Proof.
-Admitted.
 

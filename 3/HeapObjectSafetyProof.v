@@ -179,16 +179,7 @@ Proof.
   admit.
   admit.
   admit.
-  Case "set".
-  intros v2' valv2'.
-(* TODO Value v1, should be there from the get. *)
-  functional induction (gettype u x p1 t1 p2);
-  try inversion gettypeder; (* 12/23 *)
-  try (apply ex_intro with (x:=v2'); (* 8/11 *)
-       intros B;
-       constructor;
-       assumption;
-       assumption).
+  admit.
   admit.
   admit.
   admit.
@@ -196,7 +187,7 @@ Admitted.
 
 Lemma gettype_nil_path:
   forall (u : Upsilon) (x : EVar) (p : P) (t1 t2 : Tau),
-    gettype u x p t1 [] = Some t2 ->
+    gettype u x p t1 [] t2 ->
      t1 = t2.
 Proof.
   intros u x p t1 t2.
@@ -208,13 +199,15 @@ Proof.
   crush.
   crush.
   intros.
+Admitted.
+(* 
   destruct p0.
   compute in H.
   crush.
   compute in H.
   crush.
 Qed.  
-
+*)
 Lemma A_11_Heap_Object_Safety_3_induction_tests:
   forall (h : H) (u : Upsilon) (g : Gamma) 
          (x : EVar) (vhx v1 : E) (t1 t2: Tau) 
@@ -225,7 +218,7 @@ Lemma A_11_Heap_Object_Safety_3_induction_tests:
     Value v1 ->
     get vhx p1 v1 ->
     rtyp [] u g v1 t1 ->
-    gettype u x p1 t1 p2 = Some t2 ->
+    gettype u x p1 t1 p2 t2 ->
     (exists (v2 : E),
        get vhx (p1 ++ p2) v2 /\ 
        rtyp [] u g v2 t2) /\
@@ -302,7 +295,7 @@ Lemma A_11_Heap_Object_Safety_3_Corollary :
     getH h x = Some v1 ->
     get v1 [] v1 ->
     rtyp [] u g v1 t1 ->
-    gettype u x [] t1 p2 = Some t2 ->
+    gettype u x [] t1 p2 t2 ->
     (exists (v2 : E),
        get v1 ([] ++ p2) v2 /\ 
        rtyp [] u g v2 t2) /\
@@ -330,6 +323,8 @@ Proof.
   reflexivity.
 Qed.
 
+(* Yuck. *)
+(*
 Lemma A_11_Heap_Object_Safety_4: 
   forall (h : H) (u : Upsilon) (g : Gamma) 
          (x : EVar) (vhx v1 : E) (t1 t2: Tau) 
@@ -340,7 +335,7 @@ Lemma A_11_Heap_Object_Safety_4:
     getH h x = Some vhx ->
     get vhx p1 v1 ->
     rtyp [] u g v1 t1 ->
-    gettype u x p1 t1 p2 = Some t2 ->
+    gettype u x p1 t1 p2 t2 ->
     (exists (v2 : E),
        get vhx (p1 ++ p2) v2 /\ 
        rtyp [] u g v2 t2) /\
@@ -385,4 +380,6 @@ Lemma A_11_Heap_Object_Safety_5.
 Admitted.
 Lemma A_11_Heap_Object_Safety_5_Corollary.
 Admitted.
+*)
+
 *)

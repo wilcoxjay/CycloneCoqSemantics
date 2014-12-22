@@ -176,6 +176,7 @@ Proof.
    crush.
   Case "S_exp_3_9_1".
    crush.
+   admit.
   Case "S_ret_3_9_2".
    crush.
   Case "S_if_3_9_3".
@@ -305,6 +306,7 @@ Qed.
 Admitted.
 *)
 
+(* Bad induction setup on tau' for some reason. 
 Lemma A_13_Term_Preservation_2:
   forall (s s' : St) (h h' : H),
     R h s  h' s' ->
@@ -451,6 +453,8 @@ Proof.
   Case "assumption, why do I get this?".
    assumption.
 Qed.
+
+*)
 
 Lemma A_13_Term_Preservation_3:
   forall (s s': St)  (h h' : H),

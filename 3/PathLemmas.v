@@ -15,8 +15,10 @@ Require Export CpdtTactics.
 Require Export Case.
 Require Export FormalSyntax.
 
-(* TODO finish proofs. *)
+(* Unused but they may be needed as I go into heap weakening. *)
 
+
+(* Unused *)
 Lemma beq_path_symmetric:
   forall (p p' : P),
     beq_path p p' = beq_path p' p.
@@ -41,6 +43,7 @@ Proof.
    admit.
 Qed.   
 
+(* Unused. *)
 Lemma beq_path_eq:
   forall (p p' : P),
     beq_path p p' = true ->
@@ -67,6 +70,7 @@ Proof.
   inversion H0.
 Qed.
 
+(* Unused. *)
 Lemma beq_path_neq:
   forall (p p' : P),
     beq_path p p' = false ->

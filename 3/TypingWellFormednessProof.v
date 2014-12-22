@@ -66,6 +66,8 @@ Proof.
    constructor.
    destruct k; try assumption.
    admit. (* K d tau'' B *)
+   inversion H4.
+   assumption.
 Qed.
 
 Lemma A_7_Typing_Well_Formedness_2 :
@@ -236,9 +238,9 @@ Proof.
    split.
    assumption.
    apply K_utype.
+   admit.
    assumption.
-   inversion H.
-   assumption.
+   admit.
   Case "base".
    assumption.
 Qed.
@@ -357,9 +359,9 @@ Case "styp_e_3_1".
    split.
    assumption.
    apply A_6_Substitution_1 with (k:=k).
-   assumption.
    inversion H1.
    inversion H2.
+   assumption.
    assumption.
   Case "SR_3_12".
    twf3.
@@ -367,9 +369,11 @@ Case "styp_e_3_1".
    intros.
    split.
    inversion H.
+   (* 
    apply WFC_weakening in H0.
    assumption.
    apply K_arrow.
+    *)
    admit.
    admit.
   Case "SR_3_14".
@@ -377,9 +381,10 @@ Case "styp_e_3_1".
    split.
    assumption.
    apply K_utype.
-   assumption.
+   admit. (* assumption.*)
    inversion H.
    assumption.
+   admit.
   Case "base".
    assumption.
 Qed.
@@ -406,11 +411,12 @@ Proof.
    intros.
    split.
    inversion H.
-   apply WFC_weakening in H.
-   apply WFDG_weakening in H0.
    assumption.
    inversion H.
+   inversion H1.
    assumption.
+   admit. (* TODO come back and fix this. *)
+   admit.
 Qed.
 
 Lemma A_7_Typing_Well_Formedness_5 :
@@ -518,8 +524,8 @@ Proof.
    intros.
    inversion H.
    apply A_6_Substitution_1 with (k:=k).
+   admit.
    assumption.
-   inversion H0.
    admit.
   Case "SR_3_12".
    crush.
@@ -528,6 +534,7 @@ Proof.
   Case "SR_3_14".
    intros.
    apply K_utype.
+   admit.
    assumption.
    assumption.
   Case "base".

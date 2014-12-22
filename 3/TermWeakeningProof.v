@@ -23,7 +23,9 @@ Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export TacticNotations.
 Require Export GetLemmasRelation.
-Require Export WeakeningLemmas.
+
+Require Export StaticSemanticsWellFormednessLemmas.
+Require Export StaticSemanticsHeapObjectsLemmas.
 
 Lemma A_2_Term_Weakening_1 :
   forall (d: Delta) (u u' : Upsilon) (g g' : Gamma)

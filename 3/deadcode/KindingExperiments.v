@@ -23,7 +23,6 @@ Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export TacticNotations.
 Require Export GetLemmasRelation.
-Require Export WeakeningLemmas.
 Require Export SubstitutionsProof.
 
 (* I don't think that this is strong enough. *)

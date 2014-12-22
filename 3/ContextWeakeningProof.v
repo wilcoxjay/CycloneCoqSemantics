@@ -26,12 +26,13 @@ Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export Case.
 Require Export TacticNotations.
+
 Require Export GetLemmasRelation.
 Require Export AlphaConversion.
-Require Export WeakeningLemmas.
 Require Export VarLemmas.
 Require Export PathLemmas.
 Require Export ContextExtensionRelation.
+Require Export StaticSemanticsKindingLemmas.
 
 Lemma A_1_Context_Weakening_1:
   forall (d : Delta) (tau : Tau) (k : Kappa),
