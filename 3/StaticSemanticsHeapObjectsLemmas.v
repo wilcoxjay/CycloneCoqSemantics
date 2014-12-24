@@ -58,3 +58,23 @@ Proof.
    assumption.
 Qed.
 
+Lemma refp_weakening:
+  forall (h : H) (u : Upsilon),
+    refp h u ->
+    forall (h' : H),
+      refp (h ++ h') u.
+Proof.
+  intros h u refpder.
+  (* h, h' or refp. *)
+  induction refpder.
+  Case "u = []".
+   intros.
+   constructor.
+  Case "refp_pack".
+   intros.
+   apply refp_pack with (tau:= tau) (alpha:= alpha) (k:= k) (v:= v) (v':= v');
+     try assumption.
+   apply getH_Some_weakening; try assumption.
+   apply IHrefpder.
+   (* Scotch Whiskey society wierd but wonderful. *)
+Qed.

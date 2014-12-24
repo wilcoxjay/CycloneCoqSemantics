@@ -5,7 +5,7 @@ SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHea
 
 TESTFILES=TestUtilities.vo FormalSyntaxTest.vo DynamicSemanticsHeapObjectsTest.vo DynamicSemanticsTypeSubstitutionTest.vo DynamicSemanticsTest.vo StaticSemanticsTest.vo StaticSemanticsKindingAndContextWellFormednessTest.vo StaticSemanticsTypingHeapObjectsTest.vo MutualRecursionProof.vo KindingTest.vo ContextExtensionTest.vo
 
-LEMMAFILES= VarLemmas.vo ListLemmas.vo PathLemmas.vo AlphaConversion.vo GetLemmasRelation.vo StaticSemanticsHeapObjectsLemmas.vo StaticSemanticsKindingLemmas.vo StaticSemanticsLemmas.vo StaticSemanticsTypingLemmas.vo StaticSemanticsWellFormednessLemmas.vo ContextExtensionLemmas.vo
+LEMMAFILES= VarLemmas.vo ListLemmas.vo PathLemmas.vo AlphaConversion.vo GetLemmasRelation.vo StaticSemanticsHeapObjectsLemmas.vo StaticSemanticsKindingLemmas.vo StaticSemanticsLemmas.vo StaticSemanticsTypingLemmas.vo StaticSemanticsWellFormednessLemmas.vo ContextExtensionLemmas.vo ValueLemmas.vo
 
 PROOFFILES=TypeSafetyProof.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
 
@@ -76,11 +76,6 @@ ttpbis:
 dan: 
 	echo "Ask Dan's"
 	grep -e Dan *.v | grep -v formal | wc -l
-
-
-PROOFS=TypeSafetyProof.v ContextWeakeningProof.v TermWeakeningProof.v HeapWeakeningProof.v SubstitutionsProof.v TypingWellFormednessProof.v ReturnPreservationProof.v CannonicalFormsProof.v PathExtensionProof.v HeapObjectSafetyProof.v TermPreservationProof.v TermProgressProof.v
-
-LEMMAS=GetLemmasRelation.v ListLemmas.v VarLemmas.v WeakeningLemmas.v
 
 theorems:
 	grep -e 'Lemma ' -e Theorem -e Qed -e admit -e AdmitAlphaConversion -e Admitted $(PROOFS)

@@ -22,23 +22,14 @@ Require Export StaticSemantics.
 Require Export TypeSafety.
 Require Export CpdtTactics.
 Require Export TacticNotations.
+Require Export ContextExtensionRelation.
+
 Require Export VarLemmas.
 Require Export GetLemmasRelation.
 
-Lemma Duplicate_Alpha_implies_not_WFD:
-  forall (d' : Delta) (alpha : TVar) (k k' : Kappa),
-    getD d' alpha = Some k -> 
-    ~ WFD ((alpha,k') :: d').
-Proof.
-  intros d' alpha k k' getDder.
-  unfold not.
-  intros WFDder.
-  inversion WFDder.
-  rewrite H1 in getDder.
-  inversion getDder.
-Qed.
+Require Export AlphaConversion.
 
-Lemma NotInDomU_weakening:
+Lemma NotInDomU_strengthening:
   forall (u u' : Upsilon) (x : EVar) (p : P),
     WFU (u ++ u') ->
     NotInDomU (u ++ u') x p ->
@@ -65,9 +56,15 @@ Proof.
    simpl.
    tauto.
    apply beq_evar_eq in H2.
+   admit.
+   intros.
+   admit.
+   intros.
+   admit.
+   admit.
 Admitted.  
 
-Lemma WFU_weakening:
+Lemma WFU_strengthening:
  forall (u u' : Upsilon),
    WFU (u ++ u') ->
    WFU u.
@@ -79,11 +76,10 @@ Proof.
   destruct p.
   apply WFU_A.
   inversion H.
-  apply NotInDomU_weakening with (u':= u') (x:= e) (p:= p) in H5; try assumption.
+  apply NotInDomU_strengthening with (u':= u') (x:= e) (p:= p) in H5; try assumption.
   inversion H.
   apply IHu in H5.
   assumption.
-  (* How do I get an A kinding ? Invert on variables ?*)
   destruct t.
   Case "K [] (tv_t t) A".
    inversion H.
@@ -118,11 +114,6 @@ Proof.
    inversion H6.
    inversion H7.
    inversion H12.
-   (* 
-   destruct alpha. (* beq_tvar bug. *)
-   inversion H14.
-   assumption.
-    *) 
    assumption.
   Case "K [] (utype t k t0) A".
    apply K_utype.
@@ -156,7 +147,7 @@ Proof.
    assumption.
 Qed.
 
-Lemma WFDG_g_weakening:
+Lemma WFDG_g_strengthening:
   forall (d : Delta) (g g' : Gamma),
     WFDG d (g ++ g') ->
     WFDG d g.
@@ -182,6 +173,7 @@ Proof.
    inversion H1.
    apply getG_None_Strengthening with (g':=g').   
    assumption.
+   crush.
    AdmitAlphaConversion.
    admit. (* K? *)
    crush.
@@ -190,9 +182,7 @@ Proof.
    admit.
 Qed.
 
-(* All unused after this. *)
-
-Lemma WFD_weakening:
+Lemma WFD_strengthening:
  forall (d d' : Delta),
    WFD (d ++ d') ->
    WFD d.
@@ -209,8 +199,8 @@ Proof.
    assumption.
 Qed.
 
-(* jrw what is wrong here ? *)
-Lemma WFDG_d_weakening:
+(* used. *)
+Lemma WFDG_d_strengthening:
   forall (d d' : Delta) (g  : Gamma),
     WFDG (d ++ d') g ->
     WFDG d g.
@@ -227,94 +217,19 @@ Proof.
    admit.
 Qed.
 
-Lemma WFDG_d_weakening2:
-  forall (d d' : Delta) (g  : Gamma),
-    WFDG (d ++ d') g ->
-    WFDG d g.
-Proof.
- (*
-  intros d d' g WFDGder.
-  apply (WFDG_ind
-           (fun (d : Delta) (g: Gamma) =>
-                WFDG (d ++ d') g ->
-                WFDG d g)).
-  Case "g = []".
-   intros.
-   constructor.
-  Case "[(x,tau] ++ g".
-   intros.
-   constructor.
-   inversion H3.
-   assumption.
-   assumption.
-   assumption.
-   admit. (* TODO *)
-  Case "d ++ d'".
-   induction g.
-   SCase "g = []".
-    constructor.
-    assumption.
-    assumption.
-   SCase "a :: g".
-    inversion WFDGder.
-    destruct a.
-    constructor.
-    assumption.
-    apply IHg in H4.
-    crush.
-    rewrite cons_is_append_singleton in WFDGder.
-    inversion WFDGder.
-    apply IHg in H8.
-    destruct g.
-    crush.
-    destruct e.
-    admit. (* How do I get this to go away ? *)
-    inversion WFDGder.
-    admit. (* K weakening ? *)
-    admit.
-    (* Lemma time I think. *)
-    apply IHg in H4.
-    assumption.
-  Case "(d ++ d') g".
-   assumption.
-  *)
-Admitted.
-
-Lemma WFDG_weakening:
+Lemma WFDG_strengthening:
   forall (d d' : Delta) (g g' : Gamma),
     WFDG (d ++ d') (g ++ g') ->
     WFDG d g.
 Proof.
   intros.
-  apply WFDG_d_weakening in H.
-  apply WFDG_g_weakening in H.
+  apply WFDG_d_strengthening in H.
+  apply WFDG_g_strengthening in H.
   assumption.
 Qed.
 
-Lemma WFC_g_weakening:
-  forall (d : Delta) (u : Upsilon) (g : Gamma)
-         (x : EVar) (tau : Tau),
-    WFC d u ([(x, tau)] ++ g) ->
-    WFC d u g.
-Proof.
-  intros d u g x tau WFCder.
- (*  induction WFCder. *) (* jrw Bug, g0 not connected to g. *)
-  apply (WFC_ind
-           (fun (d : Delta) (u : Upsilon) (g : Gamma) =>
-              WFC d u ([(x, tau)] ++ g) ->
-              WFC d u g)).
-  intros.
-  Case "WFC d0 u0 g0".
-   constructor; try assumption.
-  Case "WFC d u g".
-   inversion WFCder.
-   inversion H0.
-   admit. (* Have to break stuff down and build up the right WFC. *)
-   admit.
-   admit.
-Qed.
-
-Lemma WFC_weakening:
+(* Is this really true? *)
+Lemma WFC_strengthening:
   forall (d d': Delta) (u u' : Upsilon) (g g': Gamma),
     WFC (d ++ d') (u ++ u') (g ++ g') ->
     WFC d u g.
@@ -330,9 +245,47 @@ Proof.
   Case "WFC d u g".
    inversion WFCder.
    crush.
-   apply WFD_weakening in H; try assumption.
-   apply WFU_weakening in H1; try assumption.
-   apply WFDG_weakening in H0; try assumption.
+   apply WFD_strengthening in H; try assumption.
+   apply WFU_strengthening in H1; try assumption.
+   apply WFDG_strengthening in H0; try assumption.
    constructor; try assumption.
    assumption.
 Qed.
+
+(* This one might be true. *)
+Lemma WFDG_g_weakening:
+  forall (d : Delta) (g: Gamma),
+    WFDG d g -> 
+    forall (g' : Gamma),
+      WFDG d g' -> 
+      WFDG d (g ++ g').
+Proof.
+  intros d g WFDGder.
+  induction g.
+  Case "g = []".
+   intros.
+   rewrite app_nil_l.
+   assumption.
+  Case "a :: g".
+   intros.
+   SCase "((x, tau) :: g) ++ g'".
+    destruct a.
+    constructor; try assumption.
+    AdmitAlphaConversion.
+    admit. (* K again. *)
+(* 
+   SCase "[(alpha, k)] ++ d0".
+    destruct a.
+    apply WFDG_xt; try assumption.
+    AdmitAlphaConversion.
+    inversion H1.
+    apply K_weakening with (d:= d0); try assumption.
+    admit. (* Perhaps we need WFD in WFDG ? *)
+    admit.
+    admit. (* Simple lemma. *)
+    admit.
+    apply WFDG_alphak; try assumption.
+    inversion WFDGder; try assumption.
+    apply IHg in H10.
+*)    
+Admitted.

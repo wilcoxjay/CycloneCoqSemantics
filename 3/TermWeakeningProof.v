@@ -115,6 +115,8 @@ Proof.
    apply H1 with (u':= u') (g':= g') in H2; try assumption.
 
   Case "styp_let_3_6".
+  (* OKay this works, modulo alpha conversion but the case is a 
+      repetitive mess. *)
    intros.
    apply styp_let_3_6 with (tau':=tau'); try assumption.
    AdmitAlphaConversion.
@@ -122,41 +124,44 @@ Proof.
    assert (Z: WFC d0 u0 ([(x, tau')] ++ g0)).
    constructor; try assumption.
    constructor; try assumption.
-   admit. (* Where do I get the k ? Is there a K d0 tau' A missing in styp_let?*)
-          (* Is this rtype to K A? *)
    inversion H1; try assumption.
    inversion H3; try assumption.
-   apply WFU_weakening in H12; try assumption.
+   apply WFU_strengthening in H12; try assumption.
    apply H with (u':= u') (g':= g') in Z; try assumption.
-   admit. (* WFC weakening to get WFC d0 (u0 ++ u') (([(x, tau')] ++ g0) ++ g') *)
+   constructor; try assumption.
+   apply WFDG_xt.
+   AdmitAlphaConversion.
+   assumption.
+   apply H0 with (u':= u') (g':= g') in H1; try assumption.
+   inversion H3.
+   assumption.
+   inversion H3; try assumption.
    apply H0 with (u':= u') (g':= g') in H1; try assumption.
   Case "styp_open_3_7".
    intros.
    inversion H1.
    inversion H2.
+   crush.
    apply styp_open_3_7 with (p:= p) (k:= k) (tau':= tau'); try assumption.
    AdmitAlphaConversion.
-   apply H with (u':= u') (g':= g') in H1; try assumption.
-   assert (Z: WFC ([(alpha, k)] ++ d0) u0 ([(x, tau')] ++ g0)).
+   apply H16 in H2; try assumption.
+   apply H0; try assumption.
    constructor; try assumption.
    constructor; try assumption.
    constructor; try assumption.
-   admit. (* Again a K? Introduce or invert on a WFDG? *)
-   constructor; try assumption.
-   apply H0 with (u':= u') (g':= g') in Z; try assumption.
+   admit. (* Don't know where to get this K, it's coming from the pack that is e0. *)
    constructor; try assumption.
    constructor; try assumption.
+   constructor; try assumption.   
+   constructor; try assumption.   
+   constructor; try assumption.   
+   constructor; try assumption.      
+   constructor; try assumption.   
+   AdmitAlphaConversion.
+   admit. (* Don't know where to get this K. *)
    constructor; try assumption.
-   constructor; try assumption.
-   constructor; try assumption.
-   inversion Z; try assumption.
-   constructor; try assumption.
-   admit. (* TODO *)
-   inversion H3; try assumption.
-   admit. (* ? K *)
-   fold app.
-   crush.
-   admit. (* ? *)
+   admit. (* WFDG weakening. *)
+   (* What do I have here to make a WFDG true ? *)
    inversion H3; try assumption.
   Case "styp_openstar_3_8".
    admit. (* Will have the similar problems with let. *)
@@ -282,6 +287,7 @@ Proof.
                 WFC d u' g' ->
                 WFC d (u ++ u') (g ++ g') ->
                 rtyp d (u ++ u') (g ++ g') e t)).
+(*
   Case "styp_e_3_1".
    intros.
    constructor.
@@ -317,24 +323,31 @@ Proof.
    admit.
    admit.
    admit.
+   admit.
+   admit.
+   (* 
    apply H with (u':= u') (g':= g') in Z; try assumption.
    admit.
    apply H0 with (u':= u') (g':= g') in H1; try assumption.
+   *)
   Case "styp_open_3_7".
    admit. (* Will have the similar problems with let. *)
   Case "styp_openstar_3_8".
    admit. (* Will have the similar problems with let. *)
   Case "SL_3_1".
+  (* Should use the previous theorem.
    intros.
-   apply SL_3_1 with (tau':=tau'); try assumption.
+   apply SL_3_1 with (tau':= tau0); try assumption.
    apply getG_Some_Weakening; try assumption.
    apply gettype_weakening; try assumption.
    inversion H; try assumption.
    inversion H1; try assumption.
+   *)
+  admit.
   Case "SL_3_2".
    intros.
-   constructor; try assumption.
-   apply H with (u':= u') (g':= g') in H0; try assumption.
+   admit. (* constructor; try assumption. *)
+   (* apply H with (u':= u') (g':= g') in H0; try assumption. *)
   Case "SL_3_3".
    intros.
    apply SL_3_3 with (t1:= t1); try assumption.
@@ -572,4 +585,5 @@ Proof.
    admit.
   Case "base".
    assumption.
-Qed.
+*)
+Admitted.

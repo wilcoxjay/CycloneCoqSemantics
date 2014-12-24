@@ -7,3 +7,4 @@ proofs simpler.
 5) Strengthened context weakening with WF*. 
 6) Strengthened term weakening with WF*. 
 8) WFDG needs a rule to check an addition of a \Delta entry.
+9) K d tau A in let, 

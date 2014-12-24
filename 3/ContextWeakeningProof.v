@@ -91,41 +91,20 @@ Case "K d (arrow t0 t1) A".
    assumption.
   Case "K d (utype alpha k tau) A".
    intros.
-   apply K_utype. 
-   constructor.
-   apply alpha_conversion_punt_getD with (k:=k).
-   assumption.
-   assumption.
-   assumption.
-   apply alpha_conversion_punt_getD with (k:=k).
-   assumption.
-   assumption.
-   apply IHKder with (d':= d') in H. 
-   assumption.
-   constructor.
-   apply alpha_conversion_punt_getD with (k:=k).
-   assumption.
-   assumption.
-   assumption.
-
+   apply K_utype; try assumption. 
+   constructor;  try assumption.
+   AdmitAlphaConversion.
+   AdmitAlphaConversion.
+   apply IHKder with (d':= d') in H; try assumption.
+   AdmitAlphaConversion.
   Case "K d (etype p alpha k tau) A)".
    intros.
-   apply K_etype.
-   constructor.
-   apply alpha_conversion_punt_getD with (k:=k).
-   assumption.
-   assumption.
-   assumption.
-   apply alpha_conversion_punt_getD with (k:=k).
-   assumption.
-   assumption.
-   apply IHKder with (d':= d') in H. 
-   assumption.
-   constructor.
-   apply alpha_conversion_punt_getD with (k:=k).
-   assumption.
-   assumption.
-   assumption.
+   apply K_etype; try assumption. 
+   constructor;  try assumption.
+   AdmitAlphaConversion.
+   AdmitAlphaConversion.
+   apply IHKder with (d':= d') in H; try assumption.
+   AdmitAlphaConversion.
 Qed.
 
 Lemma A_1_Context_Weakening_2:

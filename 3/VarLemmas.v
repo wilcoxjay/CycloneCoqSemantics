@@ -15,18 +15,18 @@ Require Export CpdtTactics.
 Require Export Case.
 Require Export FormalSyntax.
 
-Lemma beq_Kappa_reflexive:
+Lemma beq_kappa_reflexive:
   forall (k : Kappa),
-    beq_Kappa k k = true.
+    beq_kappa k k = true.
 Proof.
   destruct k.
   reflexivity.
   reflexivity.
 Qed.
 
-Lemma beq_Kappa_eq:
+Lemma beq_kappa_eq:
   forall (k k': Kappa),
-    beq_Kappa k k' = true ->
+    beq_kappa k k' = true ->
     k = k'.
 Proof.
   intros.
@@ -37,9 +37,9 @@ Proof.
   reflexivity.
 Qed.
 
-Lemma beq_Kappa_neq:
+Lemma beq_kappa_neq:
   forall (k k': Kappa),
-    beq_Kappa k k' = false ->
+    beq_kappa k k' = false ->
     k <> k'.
 Proof.
   intros.

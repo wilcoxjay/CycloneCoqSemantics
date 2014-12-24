@@ -84,6 +84,7 @@ Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
                                (x : EVar)  (tau tau' : Tau) 
                                (s : St) (e : E),
                           getG g x = None ->
+                          K d tau' A ->  (* Thesis change. *)
                           styp d u ([(x,tau')] ++ g) tau s ->
                           rtyp d u g e    tau' ->
                           styp d u g tau  (letx x e s)

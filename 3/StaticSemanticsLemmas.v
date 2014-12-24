@@ -119,7 +119,7 @@ Proof.
   Case "rtyp  d u g (f_e (ufun alpha k f12)) (utyp alpha k tau))".
    intros.
    apply SR_3_14; try assumption.
-   apply WFC_weakening with (d':= []) (u':= u') (g':= g'); try assumption.
+   apply WFC_strengthening with (d':= []) (u':= u') (g':= g'); try assumption.
    admit. (* Think more, it's here. *)
    apply IHrtypder.
 Qed.
@@ -356,5 +356,3 @@ Proof.
    assumption.
    assumption.
 Qed.
-
-

@@ -25,90 +25,9 @@ Require Export CpdtTactics.
 Require Export Case.
 Require Export TacticNotations.
 
+Require Export AlphaConversion.
 Require Export GetLemmasRelation.
-
-Lemma getD_weakening:
-  forall (d : Delta) (alpha beta : TVar),
-    getD d alpha = None -> 
-    getD d beta = None ->
-    (beq_tvar beta alpha) = false -> (* Alpha Conversion. *)
-    forall (k : Kappa),
-      getD ([(alpha, k)] ++ d) beta = None.
-Proof.
-  intros.
-  induction d.
-  Case "[]".
-   rewrite app_nil_r.
-   unfold getD.
-   rewrite H1.
-   reflexivity.
- Case "a :: d".
-  destruct a.
-  unfold getD in H.
-  fold getD in H.
-  unfold getD in H0.
-  fold getD in H0.
-  case_eq (beq_tvar alpha t).
-  intros.
-  rewrite H2 in H.
-  inversion H.
-  intros.
-  rewrite H2 in H.
-  case_eq (beq_tvar beta t).  
-  intros.
-  rewrite H3 in H0.
-  inversion H0.
-  intros.
-  rewrite H3 in H0.
-  apply IHd in H; try assumption.
-  simpl.
-  case_eq (beq_tvar beta alpha).
-  intros.
-  inversion H4.
-  rewrite H1 in H4.
-  discriminate.
-  intros.
-  rewrite H3.
-  assumption.
-Qed.
-
-Lemma getD_alpha_some_beta_none:
-  forall (d : Delta) (alpha : TVar) (k : Kappa),
-    getD d alpha = Some k ->
-    forall (beta : TVar),
-      getD d beta  = None ->
-      beq_tvar alpha beta = false.
-Proof.
-  intros.
-  induction d.
-  Case "[]".
-   inversion H.
-  Case "a :: d".
-   case_eq a.
-   intros.
-   crush.
-   case_eq (beq_tvar alpha t); case_eq (beq_tvar beta t); case_eq (beq_tvar alpha beta); intros; try reflexivity.
-   (* four contradictions to invert away. *)
-   rewrite H2 in H0.
-   inversion H0.
-   apply beq_tvar_eq in H1.
-   apply beq_tvar_eq in H3.
-   apply beq_tvar_neq in H2.
-   rewrite H1 in H3.
-   congruence.
-
-   apply beq_tvar_eq in H1.
-   apply beq_tvar_eq in H2.
-   apply beq_tvar_neq in H3.
-   rewrite H1 in H3.
-   congruence.
-
-   (* Can't discriminate away on this on variables.  *)
-   rewrite H3 in H.
-   rewrite H2 in H0.
-   apply IHd in H; try assumption.
-   congruence.
-Qed.
+Require Export GetLemmasRelation.
 
 Lemma substitution_with_different_type_variables:
   forall (alpha beta: TVar),

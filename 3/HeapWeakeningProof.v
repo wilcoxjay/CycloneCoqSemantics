@@ -26,6 +26,7 @@ Require Export TermWeakeningProof.
 
 Require Export GetLemmasRelation.
 Require Export StaticSemanticsLemmas.
+Require Export StaticSemanticsHeapObjectsLemmas.
 
 Lemma A_3_Heap_Weakening_1:
   forall (u u' : Upsilon) (g g' g'': Gamma) (h : H),
@@ -44,16 +45,6 @@ Proof.
    assumption.
 Qed.
 
-Lemma refp_weakening:
-  forall (h : H) (u : Upsilon),
-    refp h u ->
-    forall (h' : H),
-      refp (h ++ h') u.
-Proof.
-  
-Admitted.
-
-
 Lemma A_3_Heap_Weakening_2:
   forall (u : Upsilon) (h : H),
     refp h u ->
@@ -69,6 +60,6 @@ Proof.
    intros.
    apply refp_pack 
    with (tau:= tau) (alpha:= alpha) (k:= k) (v:= v) (v':= v'); try assumption.
-   apply getH_weakening; try assumption.
+   apply getH_Some_weakening; try assumption.
    apply refp_weakening; try assumption.
 Qed.
