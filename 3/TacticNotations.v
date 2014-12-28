@@ -347,3 +347,12 @@ Tactic Notation "Value_ind_cases" tactic(first) ident(c) :=
 | Case_aux c "(cpair v0 v1)"
 | Case_aux c "(pack tau v tau')"
 ].
+
+Tactic Notation "get_ind_cases" tactic(first) ident(c) :=
+ first;
+[ Case_aux c "v [] v"
+| Case_aux c "(cpair v0 v1) (i_pe zero_pe :: p) v"
+| Case_aux c "(cpair v0 v1) (i_pe one_pe :: p) v"
+| Case_aux c "(pack tau' v1 (etype aliases alpha k tau)) (u_pe :: p)v"
+].
+

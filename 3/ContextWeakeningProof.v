@@ -6,7 +6,7 @@
 
 *)
 
-(* Done modulo Kappa bug in K_nil_A. *)
+(* Done modulo alpha conversion. *)
 Require Import List.
 Export ListNotations.
 Require Import ZArith.

@@ -28,6 +28,7 @@ Require Export GetLemmasRelation.
 Require Export StaticSemanticsLemmas.
 Require Export StaticSemanticsHeapObjectsLemmas.
 
+(* Requires WFC_strengthening. *)
 Lemma A_3_Heap_Weakening_1:
   forall (u u' : Upsilon) (g g' g'': Gamma) (h : H),
     WFC [] (u ++ u') (g ++ g') ->
@@ -39,10 +40,14 @@ Proof.
   Case "htyp u g [] []".
    constructor.
   Case "htyp u g h ([(x, tau)] ++ g')".
-   apply IHhtypder in WFCder; try assumption.
    apply htyp_xv with (h':= h') (v:= v); try assumption.
-   apply rtyp_weakening.
-   assumption.
+   apply IHhtypder in WFCder; try assumption.
+   apply A_2_Term_Weakening_3; try assumption.
+   rewrite <- append_nil_noop with (l:= []) in WFCder.
+   apply WFC_strengthening in WFCder; try assumption.
+   rewrite <- append_nil_noop with (l:= []) in WFCder.
+   apply WFC_strengthening_right in WFCder.
+   try assumption.
 Qed.
 
 Lemma A_3_Heap_Weakening_2:

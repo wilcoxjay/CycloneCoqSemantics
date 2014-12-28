@@ -56,6 +56,8 @@ Proof.
    assumption.
 Qed.
 
+(* What is really breaking this is the K [] t A which comes from the
+   typing of the term but I need down in the strengthening. *)
 (* TODO let, open, openstar and function application. *)
 Lemma A_2_Term_Weakening_2:
   forall (d: Delta) (u : Upsilon) (g : Gamma)  (e : E) (tau : Tau),
@@ -91,7 +93,7 @@ Proof.
                 rtyp d (u ++ u') (g ++ g') e t)).
   Case "styp_e_3_1".
    intros.
-   constructor.
+   apply styp_e_3_1 with (tau':= tau').
    apply H with (u':= u') (g':= g') in H1; try assumption.
   Case "styp_return_3_2".
    intros.
@@ -113,7 +115,6 @@ Proof.
    apply H with (u':= u') (g':= g') in H2; try assumption.
    apply H0 with (u':= u') (g':= g') in H2; try assumption.
    apply H1 with (u':= u') (g':= g') in H2; try assumption.
-
   Case "styp_let_3_6".
   (* OKay this works, modulo alpha conversion but the case is a 
       repetitive mess. *)
@@ -149,6 +150,7 @@ Proof.
    constructor; try assumption.
    constructor; try assumption.
    constructor; try assumption.
+   (*  K ((alpha, k) :: d0) tau' A *)
    admit. (* Don't know where to get this K, it's coming from the pack that is e0. *)
    constructor; try assumption.
    constructor; try assumption.
@@ -158,9 +160,11 @@ Proof.
    constructor; try assumption.      
    constructor; try assumption.   
    AdmitAlphaConversion.
+   (*  K ((alpha, k) :: d0) tau' A *) 
    admit. (* Don't know where to get this K. *)
    constructor; try assumption.
-   admit. (* WFDG weakening. *)
+   (* WFDG d0 (g0 ++ g') given WFDG d0 g0 *)
+   admit. (* WFDG strengthening. *)
    (* What do I have here to make a WFDG true ? *)
    inversion H3; try assumption.
   Case "styp_openstar_3_8".
@@ -249,6 +253,7 @@ Proof.
    admit.
    admit.
   Case "SR_3_14".
+   intros.
    admit.
   Case "base".
    assumption.
@@ -424,6 +429,8 @@ Proof.
   Case "base".
    assumption.
 Qed.
+*)
+Admitted.
 
 Lemma A_2_Term_Weakening_4:
   forall (d: Delta) (u : Upsilon) (g : Gamma)  (s : St) (tau : Tau),
@@ -459,7 +466,7 @@ Proof.
                 rtyp d (u ++ u') (g ++ g') e t)).
   Case "styp_e_3_1".
    intros.
-   constructor.
+   apply styp_e_3_1 with (tau':= tau').
    apply H with (u':= u') (g':= g') in H1; try assumption.
   Case "styp_return_3_2".
    intros.
@@ -482,6 +489,8 @@ Proof.
    apply H0 with (u':= u') (g':= g') in H2; try assumption.
    apply H1 with (u':= u') (g':= g') in H2; try assumption.
   Case "styp_let_3_6".
+   admit.
+   (* 
    intros.
    apply styp_let_3_6 with (tau':=tau'); try assumption.
    AdmitAlphaConversion.
@@ -489,12 +498,11 @@ Proof.
    assert (Z: WFC d0 u0 ([(x, tau')] ++ g0)). (* How do I get this ? *)
    constructor; try assumption.
    constructor; try assumption.
-   admit.
-   admit.
-   admit.
+
    apply H with (u':= u') (g':= g') in Z; try assumption.
    admit.
    apply H0 with (u':= u') (g':= g') in H1; try assumption.
+    *)
   Case "styp_open_3_7".
    admit. (* Will have the similar problems with let. *)
   Case "styp_openstar_3_8".
@@ -585,5 +593,5 @@ Proof.
    admit.
   Case "base".
    assumption.
-*)
+
 Admitted.

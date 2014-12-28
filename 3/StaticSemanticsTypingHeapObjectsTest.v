@@ -31,8 +31,9 @@ Proof.
 Qed.
 
 Example gettype_etype_test2:
-  gettype [((x, pnil), cint)] x pnil (etype aliases alpha k cint) [u_pe] cint.
+  gettype [((x, pnil), cint)] x pnil (etype aliases alpha k cint) [u_pe]  cint.
 Proof.
+  left_list_recurse_path [u_pe].
   eauto 20 with Chapter3.
 Qed.
 

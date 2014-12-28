@@ -20,5 +20,12 @@ Proof.
   reflexivity.
 Qed.
 
-
+Lemma append_nil_noop:
+ forall (A : Type) (l : list A),
+   [] ++ l = l.
+Proof.
+  intros.
+  compute.
+  reflexivity.
+Qed.
 

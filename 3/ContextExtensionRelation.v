@@ -36,7 +36,6 @@ Inductive ExtendedByD : Delta -> Delta -> Prop :=
 *)
 
 
-
 Inductive ExtendedByG : Gamma -> Gamma -> Prop := 
   | ExtendedByG_nil   : forall (d' : Gamma),
                           ExtendedByG [] d'

@@ -24,10 +24,33 @@ Require Export CpdtTactics.
 Require Export TacticNotations.
 Require Export ContextExtensionRelation.
 
+Require Export ListLemmas.
 Require Export VarLemmas.
 Require Export GetLemmasRelation.
 
 Require Export AlphaConversion.
+
+Lemma NotInDomU_strengthening':
+  forall (u u' : Upsilon) (x : EVar) (p : P),
+    WFU (u ++ u') ->
+    NotInDomU (u ++ u') x p ->
+    NotInDomU u x p.
+Proof.
+  intros u u' x p.
+  induction u.
+  Case "u = []".
+   rewrite app_nil_l.
+   intros.
+   constructor.
+  Case "(x,p,t) :: u".
+   intros.
+   destruct a as [ yp t].
+   destruct yp as [ y p' ].
+   inversion H.
+   unfold NotInDomU in H0.
+   fold NotInDomU in H0.
+   apply IHu in H6.
+Admitted.
 
 Lemma NotInDomU_strengthening:
   forall (u u' : Upsilon) (x : EVar) (p : P),
@@ -64,87 +87,28 @@ Proof.
    admit.
 Admitted.  
 
+(* Dan, This should work as it uses K [] tau A and tau should be a ground type
+   to be stored in memory but we don't have it here.  *)
 Lemma WFU_strengthening:
  forall (u u' : Upsilon),
    WFU (u ++ u') ->
    WFU u.
 Proof.
   intros.
-  induction u.
-  constructor.
-  destruct a.
-  destruct p.
-  apply WFU_A.
-  inversion H.
-  apply NotInDomU_strengthening with (u':= u') (x:= e) (p:= p) in H5; try assumption.
-  inversion H.
-  apply IHu in H5.
-  assumption.
-  destruct t.
-  Case "K [] (tv_t t) A".
-   inversion H.
-   assumption.
+  WFU_ind_cases (induction u) Case.
+  Case "WFU []".
    constructor.
-  Case "K [] cint B".
-   apply K_int.
-  Case "K [] (cross t1 t2) A".
-   apply K_cross.
-   inversion H.
-   inversion H6.
-   inversion H7.
-   assumption.
-   inversion H.
-   inversion H6.
-   inversion H7.
-   assumption.
-  Case "K [] (arrow t1 t2) A".
-   apply K_arrow.
-   inversion H.
-   inversion H6.
-   inversion H7.
-   assumption.
-   inversion H.
-   inversion H6.
-   inversion H7.
-   assumption.
-  Case "K [] (ptype t) A".
+  Case "WFU ([(x, p, tau)] ++ u)".
+   destruct a as [ xp t].
+   destruct xp as [x p].
    constructor.
-   apply K_ptype.
-   inversion H.
-   inversion H6.
-   inversion H7.
-   inversion H12.
-   assumption.
-  Case "K [] (utype t k t0) A".
-   apply K_utype.
-   rewrite app_nil_r.
-   constructor.
-   simpl.
-   destruct t.
-   reflexivity.
-   constructor.
-   simpl.
-   destruct t.
-   reflexivity.
-   inversion H.
-   inversion H6.
-   inversion H7.
-   assumption.
-  Case "K [] (etype p0 t k t0) A".
-   apply K_etype.
-   rewrite app_nil_r.
-   constructor.
-   simpl.
-   destruct t.
-   reflexivity.
-   constructor.
-   simpl.
-   destruct t.
-   reflexivity.
-   inversion H.
-   inversion H6.
-   inversion H7.
-   assumption.
+   SCase "NotInDomU u x p".
+    AdmitAlphaConversion.
+   SCase "WFU u".
+    inversion H.
+    apply IHu in H5; try assumption.
+   SCase "K [] t A".
+    admit. (* Thesis bug ? *)
 Qed.
 
 Lemma WFDG_g_strengthening:
@@ -245,14 +209,34 @@ Proof.
   Case "WFC d u g".
    inversion WFCder.
    crush.
-   apply WFD_strengthening in H; try assumption.
-   apply WFU_strengthening in H1; try assumption.
-   apply WFDG_strengthening in H0; try assumption.
+   apply WFD_strengthening in H; try assumption.   (* Proven. *)
+   apply WFU_strengthening in H1; try assumption.  (* Proven. *)
+   apply WFDG_strengthening in H0; try assumption. (* not proven. *)
    constructor; try assumption.
    assumption.
 Qed.
 
-(* This one might be true. *)
+(* Too much work to do it this way. *)
+Lemma WFC_strengthening_right:
+  forall (d d': Delta) (u u' : Upsilon) (g g': Gamma),
+    WFC (d ++ d') (u ++ u') (g ++ g') ->
+    WFC d' u' g'.
+Proof.
+Admitted.
+
+(* Weakening *)
+
+Lemma WFU_weakening:
+  forall (u : Upsilon),
+    WFU u ->
+    forall (u' : Upsilon),
+      WFU u' ->
+      WFU (u ++ u').
+Admitted.
+
+
+(* This one might be true and needed. Might needs extendedbyG. 
+  Heck might need both extended bys. *)
 Lemma WFDG_g_weakening:
   forall (d : Delta) (g: Gamma),
     WFDG d g -> 
@@ -270,22 +254,28 @@ Proof.
    intros.
    SCase "((x, tau) :: g) ++ g'".
     destruct a.
+    rewrite cons_is_append_singleton.
+    rewrite <- app_assoc.
     constructor; try assumption.
     AdmitAlphaConversion.
-    admit. (* K again. *)
-(* 
-   SCase "[(alpha, k)] ++ d0".
-    destruct a.
-    apply WFDG_xt; try assumption.
-    AdmitAlphaConversion.
-    inversion H1.
-    apply K_weakening with (d:= d0); try assumption.
-    admit. (* Perhaps we need WFD in WFDG ? *)
-    admit.
-    admit. (* Simple lemma. *)
-    admit.
-    apply WFDG_alphak; try assumption.
     inversion WFDGder; try assumption.
-    apply IHg in H10.
-*)    
+    crush.
+    inversion WFDGder; try assumption.
+    inversion WFDGder; try assumption.
+    inversion WFDGder; try assumption.
+    inversion WFDGder; try assumption.
+    crush.
+    (* in a loop so good sign I need to strengthen the theorem. *)
+ Admitted.
+
+Lemma WFDG_g_weakening_2:
+  forall (g : Gamma) (x : EVar) (t : Tau),
+    ExtendedByG g ([(x,t)] ++ g) ->
+    forall (d : Delta),
+      WFDG d g -> 
+      WFDG d ([(x,t)] ++ g).
+Proof.
+  (* Lost on all induction and all cases. *)
 Admitted.
+
+

@@ -188,9 +188,7 @@ Proof.
    admit. (* This is rtype strengthening so I'm not buying the proof case. *)
           (* I'd need a lemma saying all values have closed delta typing. *)
   SCase "~ value e0".
-   
-  
-
+   admit.
  Case "SL_3_3".
   admit.
  Case "SL_3_4".
@@ -226,9 +224,8 @@ Proof.
  Case "SR_3_14".
   admit.
  Case "base".
-  (* Looks unsolvable. *)
-  
-
+  (* Unsolvable. *)
+   admit.
 Qed.
 
 Lemma A_14_Term_Progress_2:

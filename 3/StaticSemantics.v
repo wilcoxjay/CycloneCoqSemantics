@@ -49,10 +49,10 @@ Inductive ret : St -> Prop :=
 Inductive styp : Delta -> Upsilon -> Gamma -> Tau -> St   -> Prop :=
 (* This is correct, return at end of program. *)
   | styp_e_3_1    : forall (d : Delta) (u : Upsilon) (g : Gamma) 
-                           (tau : Tau) (e : E),      
+                           (tau tau': Tau) (e : E),      
                       (* This just messes up the proofs. *)
-                      (* rtyp d u g e  tau' -> *)
-                      rtyp d u g e  tau ->
+                      rtyp d u g e  tau' -> 
+                      (* rtyp d u g e  tau -> *)
                       styp d u g tau (e_s e)
 
   | styp_return_3_2 : forall (d : Delta) (u : Upsilon) (g : Gamma)
