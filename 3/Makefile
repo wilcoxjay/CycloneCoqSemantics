@@ -1,5 +1,5 @@
 -include coq.depends
-all: TAGS src tactic lemma  test proof TODOS
+all: TAGS src tactic lemma  test proof experiment TODOS
 
 SRCFILES=FormalSyntax.vo DynamicSemanticsTypeSubstitution.vo DynamicSemanticsHeapObjects.vo DynamicSemantics.vo StaticSemanticsKindingAndContextWellFormedness.vo StaticSemanticsTypingHeapObjects.vo StaticSemantics.vo Tacticals.vo TacticNotations.vo TypeSafety.vo ContextExtensionRelation.vo
 
@@ -10,6 +10,8 @@ LEMMAFILES= VarLemmas.vo ListLemmas.vo PathLemmas.vo AlphaConversion.vo GetLemma
 PROOFFILES=TypeSafetyProof.vo ContextWeakeningProof.vo TermWeakeningProof.vo HeapWeakeningProof.vo SubstitutionsProof.vo TypingWellFormednessProof.vo ReturnPreservationProof.vo CannonicalFormsProof.vo PathExtensionProof.vo HeapObjectSafetyProof.vo TermPreservationProof.vo TermProgressProof.vo
 
 TACTICFILES=CpdtTactics.vo Case.vo
+
+EXPERIMENTFILES=KindingExperiments.vo
 
 %.vo: %.v 
 	coqc $<
@@ -23,6 +25,8 @@ test: TAGS depends tactic src $(TESTFILES)
 lemma: TAGS depends tactic src $(LEMMAFILES)
 
 proof: TAGS depends tactic lemma src $(PROOFFILES)
+
+experiment: TAGS depends tactic src lemma proof $(PROOFFILES)
 
 clean:
 	rm -f *.vo

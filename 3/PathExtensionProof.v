@@ -26,7 +26,6 @@ Require Export TacticNotations.
 Require Export ListLemmas.
 Require Export GetLemmasRelation.
 
-
 Lemma A_10_Path_Extension_1_A_good_get:
   forall (v v' v0 v1 : E) (p : P),
     Value v  ->
@@ -282,14 +281,15 @@ Qed.
           as the other cases proved out right.
 *)
 Lemma A_10_Path_Extension_2_B':
-  forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau) (p' : P) (tau' tau'': Tau),
+  forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau) (p' : P) (tau' : Tau),
     gettype u x p tau p' tau' ->
     forall (alpha : TVar) (k : Kappa) (t0: Tau), 
       tau' = (etype aliases alpha k t0) ->
-      getU u x p tau'' ->
-      gettype u x p tau (p' ++ [u_pe]) (subst_Tau t0 tau'' alpha).
+      forall (tau'' : Tau),
+        getU u x p tau'' ->
+        gettype u x p tau (p' ++ [u_pe]) (subst_Tau t0 tau'' alpha).
 Proof.
-  intros u x p tau p' tau' tau'' gettypeder.
+  intros u x p tau p' tau' gettypeder.
   gettype_ind_cases (induction gettypeder) Case.
   Case "gettype u x p tau [] tau".
    intros.
@@ -302,7 +302,7 @@ Proof.
    intros.
    rewrite <- app_assoc.
    constructor; try assumption.
-   apply IHgettypeder in H; try assumption.
+   apply IHgettypeder with (tau'':= tau'') in H; try assumption.
    admit. (* GetU wrong path? *)
   Case "gettype u x p (cross t0 t1) (i_pe one_pe :: p') tau".
    intros.
