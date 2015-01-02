@@ -306,7 +306,7 @@ Tactic Notation "ASGN_ind_cases" tactic(first) ident(c) :=
 | Case_aux c "ASGN d (cross t0 t1)"
 | Case_aux c "ASGN d (arrow t0 t1)"
 | Case_aux c "ASGN d (utype alpha k tau)"
-| Case_aux c "ASGN d (etype nowitnesschange alpha k tau))"
+| Case_aux c "ASGN d (etype witnesschanges alpha k tau))"
 ].
 
 Tactic Notation "WFDG_ind_cases" tactic(first) ident(c) :=

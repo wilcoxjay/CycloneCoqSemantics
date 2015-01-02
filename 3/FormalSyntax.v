@@ -54,7 +54,7 @@ Function beq_tvar (x y : TVar) : bool :=
 (* A type limiting the opening of existential types. *)
 
 Inductive Phi : Type :=
- | nowitnesschange  : Phi                            (* Allowing witness changes. \delta *)
+ | witnesschanges  : Phi                            (* Allowing witness changes. \delta *)
  | aliases        : Phi.                             (* Allowing aliases as the opened type. \amp *)
 
 (* The types. *)

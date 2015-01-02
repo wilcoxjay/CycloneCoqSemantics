@@ -495,7 +495,7 @@ Qed.
    simpl. (* What the heck is d0? *)
    constructor; try assumption.
 
-  Case "ASGN d (etype nowitnesschange alpha k tau))".
+  Case "ASGN d (etype witnesschanges alpha k tau))".
    admit.
 *)
 

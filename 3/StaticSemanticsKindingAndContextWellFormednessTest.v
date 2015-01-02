@@ -77,7 +77,7 @@ Proof.
 Qed.
 
 Example K_etype_test:
-  K [] (etype nowitnesschange alpha k tau) A.
+  K [] (etype witnesschanges alpha k tau) A.
 Proof.
  apply K_etype;  eauto 20 with Chapter3.
 Qed.
@@ -141,7 +141,7 @@ Proof.
 Qed.
 
 Example ASGN_etype_test:
-  ASGN [] (etype nowitnesschange alpha k tau).
+  ASGN [] (etype witnesschanges alpha k tau).
 Proof.
  apply ASGN_etype;
  eauto 20 with Chapter3.

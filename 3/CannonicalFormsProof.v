@@ -104,9 +104,9 @@ Lemma A_9_Cannonical_Forms_6:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau' : Tau) (alpha : TVar)
          (k : Kappa),
     Value v ->
-    rtyp [] u g v (etype nowitnesschange alpha k tau') ->
+    rtyp [] u g v (etype witnesschanges alpha k tau') ->
     exists (tau'' : Tau) (v' : E),
-      v = (pack tau'' v' (etype nowitnesschange alpha k tau')).
+      v = (pack tau'' v' (etype witnesschanges alpha k tau')).
 Proof.
   intros u g v tau' alpha kappa valv.
   intros rtypder.

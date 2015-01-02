@@ -94,30 +94,273 @@ Proof.
     constructor; try assumption.
 Qed.
 
-Lemma A_10_Path_Extension_1_A:
-  forall (v v' v0 v1 : E) (p : P),
+
+Lemma A_10_Path_Extension_1_A_bad_get_almost:
+  forall (v v' : E) (p : P),
     Value v  ->
     Value v' ->
     get v p v' ->
-    v' = (cpair v0 v1) ->
-    (~get v (p ++ [i_pe zero_pe]) v0 /\ ~get v (p ++ [i_pe one_pe]) v1) ->
+    ~(exists v0 : E, exists v1 : E, v=(cpair v0 v1)) -> 
     forall (p' : P) (v'' : E),
       ~(get v (p ++ [i_pe one_pe] ++ p') v'') /\
       ~(get v (p ++ [i_pe zero_pe] ++ p') v'').
 Proof.
-  intros v v' v0 v1 p Valuev Valuev' getder.
-  intros.
-  inversion H0.
-  split.
-  unfold not.
-  intros.
-  induction H3.
-  
-  admit.
-  admit.
-  admit.
-  admit.
-  admit.
+  intros v v' p Valuev Valuev'  getder.
+  get_ind_cases (induction getder) Case.  
+
+  Case "v [] v".
+   intros.
+   split.
+
+   unfold not.
+   intros.
+
+   rewrite app_nil_l in H1.
+   rewrite <- cons_is_append_singleton in H1.
+
+   inversion H1.
+   unfold not in H0.
+   destruct H0.
+   apply ex_intro with (x:= v1).
+   apply ex_intro with (x:= v2).
+   symmetry.
+   assumption.
+
+   unfold not.
+   intros.
+   rewrite app_nil_l in H1.
+   rewrite <- cons_is_append_singleton in H1.
+   inversion H1.
+   unfold not in H0.
+   destruct H0.
+   apply ex_intro with (x:= v1).
+   apply ex_intro with (x:= v2).
+   symmetry.
+   assumption.
+
+  Case "(cpair v0 v1) (i_pe zero_pe :: p) v".
+   intros.
+   destruct H2.
+   apply ex_intro with (A:= E) (x:= v0).
+   apply ex_intro with (A:= E) (x:= v1).
+   reflexivity.
+
+  Case "(cpair v0 v1) (i_pe one_pe :: p) v".
+   intros.
+   destruct H2.
+   apply ex_intro with (A:= E) (x:= v0).
+   apply ex_intro with (A:= E) (x:= v1).
+   reflexivity.
+
+  Case "(pack tau' v1 (etype aliases alpha k tau)) (u_pe :: p)v".
+   intros.
+   unfold not in H1.
+   rewrite cons_is_append_singleton.
+   rewrite <- app_assoc with (l:= [u_pe]).
+   apply IHgetder with (p':= p') (v'':= v'') in H0; try assumption.
+   inversion H0.
+   unfold not in H2.
+   unfold not in H3.
+
+   split.
+
+   unfold not.
+   intros.
+   inversion H4.
+   apply H2 in H14.
+   inversion H14.
+
+   unfold not.
+   intros.
+   inversion H4.
+   apply H3 in H14.
+   inversion H14.
+
+   SCase "~ (exists v3 v4 : E, v2 = cpair v3 v4)".
+    unfold not.
+    intros.
+    destruct v1; try solve [inversion H2; inversion H3; inversion H4].
+    (* now I need a contradiction. *)
+    inversion H2.
+    inversion H3.
+    admit.
+Qed.
+
+Lemma A_10_Path_Extension_1_A_bad_get_induction_length_p:
+  forall (v v' : E),
+    Value v  ->
+    Value v' ->
+    forall (n : nat),
+     forall (p : P),
+       length p = n -> 
+       get v p v' ->
+       ~(exists v0 : E, exists v1 : E, v=(cpair v0 v1)) -> 
+       forall (p' : P) (v'' : E),
+         ~(get v (p ++ [i_pe one_pe] ++ p') v'') /\
+         ~(get v (p ++ [i_pe zero_pe] ++ p') v'').
+Proof.
+  intros v v' Valuev valuev' n.
+  induction n.
+  Case "n = 0".
+   intros.
+   apply list_of_length_0_is_nil in H.
+   rewrite H in H0.
+   rewrite H.
+   rewrite app_nil_l.
+   rewrite app_nil_l.
+   inversion H0.
+   rewrite <- H5.
+   split. 
+   SCase "~ get v ([i_pe one_pe] ++ p') v''".
+    unfold not.
+    intros.
+    inversion H4.
+    symmetry in H10.
+    destruct H1.
+    apply ex_intro with (x:= v2).
+    apply ex_intro with (x:= v3).
+    assumption.
+  SCase "~ get v ([i_pe zero_pe] ++ p') v''".
+    admit. (* similar, let's see if I can get the induction step. *)
+  Case "length p = S n".
+   intros.
+   destruct p as [| pe p ].
+   inversion H. (* P can't be nil as it has length n+1. *)
+   destruct pe; try destruct i.
+   SCase "zero_pe".
+    inversion H.
+    apply IHn with (p:= p) (p':= p') (v'':= v'') in H3;  try assumption.
+    inversion H3.
+    inversion H0.
+    destruct H1.
+    symmetry in H9.
+    apply ex_intro with (x:= v1).
+    apply ex_intro with (x:= v2).
+    assumption.
+    SSCase "get v p v'".
+     inversion H0.
+     symmetry in H7.
+     destruct H1.
+     apply ex_intro with (x:= v1).
+     apply ex_intro with (x:= v2).
+     assumption.
+   SCase "one_pe".
+    inversion H.
+    apply IHn with (p:= p) (p':= p') (v'':= v'') in H3;  try assumption.
+    inversion H3.
+    inversion H0.
+    destruct H1.
+    symmetry in H9.
+    apply ex_intro with (x:= v1).
+    apply ex_intro with (x:= v2).
+    assumption.
+    SSCase "get v p v'".
+     inversion H0.
+     symmetry in H7.
+     destruct H1.
+     apply ex_intro with (x:= v1).
+     apply ex_intro with (x:= v2).
+     assumption.
+   SCase "u_pe".
+   
+    inversion H.
+    inversion H0.
+    rewrite <- H6 in *.
+    apply IHn with (p:= p) (p':= p') (v'':= v'') in H3;  try assumption.
+    inversion H3.
+    split.
+    unfold not.
+    intros.
+    inversion H11.
+    admit.
+    admit.
+    admit.
+Qed.
+
+Lemma A_10_Path_Extension_1_A_bad_get_induction_length_p_tighten_v:
+    forall (n : nat),
+     forall (p : P),
+       length p = n -> 
+       forall (v v' : E),
+         Value v  ->
+         Value v' ->
+         get v p v' ->
+         ~(exists v0 : E, exists v1 : E, v=(cpair v0 v1)) -> 
+         forall (p' : P) (v'' : E),
+           ~(get v (p ++ [i_pe one_pe] ++ p') v'') /\
+           ~(get v (p ++ [i_pe zero_pe] ++ p') v'').
+Proof.
+  intros n.
+  induction n.
+  Case "n = 0".
+   intros.
+   apply list_of_length_0_is_nil in H.
+   rewrite H in *.
+   rewrite app_nil_l.
+   rewrite app_nil_l.
+   inversion H2.
+   rewrite <- H7.
+   split.
+   SCase "~ get v ([i_pe one_pe] ++ p') v''".
+    unfold not.
+    intros.
+    inversion H6.
+    symmetry in H12.
+    destruct H3.
+    apply ex_intro with (x:= v2).
+    apply ex_intro with (x:= v3).
+    assumption.
+  SCase "~ get v ([i_pe zero_pe] ++ p') v''".
+    admit. (* similar, let's see if I can get the induction step. *)
+    (* Can I prove this with stronger v v'. *)
+  Case "length p = S n".
+   intros.
+   destruct p as [| pe p ].
+   SCase "p = nil".
+    inversion H. (* P can't be nil as it has length n+1. *)
+   destruct pe; try destruct i.
+   SCase "zero_pe".
+    inversion H.
+    apply IHn with (p:= p) (p':= p') (v:= v) (v':= v') 
+                           (v'':= v'') in H5;  try assumption.
+    inversion H5.
+    inversion H2.
+    destruct H3.
+    symmetry in H11.
+    apply ex_intro with (x:= v1).
+    apply ex_intro with (x:= v2).
+    assumption.
+    SSCase "get v p v'".
+     inversion H2.
+     symmetry in H9.
+     destruct H3.
+     apply ex_intro with (x:= v1).
+     apply ex_intro with (x:= v2).
+     assumption.
+   SCase "one_pe".
+    inversion H.
+    apply IHn with (p:= p) (p':= p') (v:= v) (v':= v') 
+                           (v'':= v'') in H5;  try assumption.
+    inversion H5.
+    inversion H2.
+    destruct H3.
+    symmetry in H11.
+    apply ex_intro with (x:= v1).
+    apply ex_intro with (x:= v2).
+    assumption.
+    SSCase "get v p v'".
+     inversion H2.
+     symmetry in H9.
+     destruct H3.
+     apply ex_intro with (x:= v1).
+     apply ex_intro with (x:= v2).
+     assumption.
+   SCase "u_pe".
+    inversion H.
+    specialize (IHn p H5).
+    inversion H2.
+    specialize (IHn v' v''). (* wrong vs?*)
+    admit.
 Qed.
 
 Lemma A_10_Path_Extension_1_B_good_get:
@@ -247,15 +490,24 @@ Proof.
    constructor.
   Case "gettype u x p (cross t0 t1) (i_pe zero_pe :: p') tau".
    intros.
+  (* Should these invert away as only way to go into an etype is with a u ? *)
+   rewrite H in gettypeder.
    rewrite <- app_assoc.
    constructor; try assumption.
-   apply IHgettypeder with (tau'':= tau'') in H; try assumption.
-   admit. (* GetU wrong path? *)
+   destruct tau''. 
+  (* Six cases to whittle away with inversion gettypeder? *)
+   admit.
+   admit.
+   SCase "cross t _".
+    apply IHgettypeder with (tau'':= (cross tau''1 tau''2)) in H.
+    try assumption.
+    admit.
+   SCase "cross _ t".
+    admit.
+   admit.
+   admit.
+   admit.
   Case "gettype u x p (cross t0 t1) (i_pe one_pe :: p') tau".
-   intros.
-   rewrite <- app_assoc.
-   constructor; try assumption.
-   apply IHgettypeder with (tau'':= tau'') in H; try assumption.
    admit.
   Case "gettype u x p (etype aliases alpha k tau') (u_pe :: p') tau)".
    intros.
@@ -316,4 +568,59 @@ Proof.
    apply gettype_etype with (tau'':= tau''); try assumption.
    apply IHgettypeder with (k:= k0); try assumption.
    admit. (* GetU wrong path ? *)
+Qed.
+
+Lemma A_10_Path_Extension_2_B_length_p':
+  forall (n : nat),
+    forall (p' : P),
+      length p' = n ->
+      forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau) (tau' : Tau),
+        gettype u x p tau p' tau' ->
+        forall (alpha : TVar) (k : Kappa) (t0: Tau), 
+          tau' = (etype aliases alpha k t0) ->
+          forall (tau'' : Tau), 
+            getU u x p tau'' ->
+            gettype u x p tau (p' ++ [u_pe]) (subst_Tau t0 tau'' alpha).
+Proof.
+  intros n.
+  induction n.
+  SCase "n = 0".
+   intros.
+   apply list_of_length_0_is_nil in H.
+   rewrite H.
+   rewrite app_nil_l.
+   rewrite H in H0.
+   inversion H0.
+   rewrite H1.
+   apply gettype_etype with (tau'':= tau''); try assumption.
+   apply gettype_nil.
+  SCase "n = S n".
+   intros.
+   case_eq (rev p').
+   SSCase "rev p' = []".
+    intros.
+    apply rev_nil in H3.
+    rewrite H3.
+    rewrite app_nil_l.
+    rewrite H1 in H0.
+    rewrite H3 in H0.
+    inversion H0.
+    apply gettype_etype with (tau'':= tau''); try assumption.
+    apply gettype_nil.
+   SSCase "rev p' = p0 :: (rev l)".
+    intros.
+    apply rev_cons_app in H3.
+    (* False! *)
+    assert (Y: length ((rev l) ++ [p0]) = n).
+    admit.
+    apply IHn with (u:= u) (x:= x) (p:= p) (p':= (rev l) ++ [p0]) (tau:= tau)
+                           (tau':=(etype aliases alpha k t0)) 
+      (alpha:= alpha) (k:= k) (t0:= t0) (tau'':= tau'') in Y; try assumption.
+    rewrite H1 in H0; try assumption.
+    rewrite H3.
+    assumption.
+    rewrite H3 in H0.
+    rewrite H1 in H0.
+    assumption.
+    reflexivity.
 Qed.

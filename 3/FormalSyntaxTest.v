@@ -20,7 +20,7 @@ Check B : Kappa.
 
 Check (tvar 0) : TVar.
 
-Check nowitnesschange : Phi.
+Check witnesschanges : Phi.
 Check aliases         : Phi.
 
 Check (tv_t (tvar 0)) : Tau.

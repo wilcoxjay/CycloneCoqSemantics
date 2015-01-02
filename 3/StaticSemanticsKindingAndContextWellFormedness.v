@@ -105,7 +105,7 @@ Inductive ASGN : Delta -> Tau -> Prop :=
   | ASGN_etype : forall (d : Delta) (alpha : TVar) (k : Kappa) (tau : Tau),
                    getD d alpha = None ->
                    ASGN ([(alpha, k)] ++ d) tau ->
-                   ASGN d (etype nowitnesschange alpha k tau).
+                   ASGN d (etype witnesschanges alpha k tau).
 
 Inductive WFU : Upsilon -> Prop :=
   | WFU_nil : WFU nil
