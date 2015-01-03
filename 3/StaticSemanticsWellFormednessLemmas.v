@@ -192,7 +192,7 @@ Proof.
   assumption.
 Qed.
 
-(* Is this really true? *)
+(* Is this really true? No due to delta constraints!*)
 Lemma WFC_strengthening:
   forall (d d': Delta) (u u' : Upsilon) (g g': Gamma),
     WFC (d ++ d') (u ++ u') (g ++ g') ->
