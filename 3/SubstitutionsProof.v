@@ -27,7 +27,7 @@ Require Export TacticNotations.
 
 Require Export AlphaConversion.
 Require Export GetLemmasRelation.
-Require Export GetLemmasRelation.
+Require Export ContextExtensionRelation.
 
 Lemma substitution_with_different_type_variables:
   forall (alpha beta: TVar),
@@ -300,123 +300,160 @@ Proof.
     admit. 
 Qed.
 
-Lemma A_6_Substitution_1:
-  forall (alpha : TVar) (k : Kappa) (d : Delta) (tau' : Tau) (k' : Kappa),
-    K ([(alpha,k)] ++ d) tau' k' ->
-    forall (tau : Tau),
+(* Then try with extends1 step. *)
+(* This is going to work but it requires new lemmas, can I use
+  the more general extends more simply? *)
+
+Inductive Extends1D : TVar -> Kappa -> Delta -> Delta -> Prop := 
+  | Extends1D_alpha_kappa : 
+      forall (alpha : TVar) (k : Kappa) (d : Delta) (d' : Delta), 
+      d' = ([(alpha,k)] ++ d) ->
+      WFD d' ->
+      Extends1D alpha k d d'.
+        
+Lemma A_6_Substitution_1_1:
+  forall (d : Delta) (tau : Tau) (k : Kappa),
       AK d tau k -> 
-      K d (subst_Tau tau' tau alpha) k'.
+      forall (d' : Delta) (alpha : TVar) (k' : Kappa) (tau' : Tau), 
+        K ([(alpha,k)] ++ d) tau' k' ->
+        K d (subst_Tau tau' tau alpha) k'.
 Proof.
-  intros alpha k d tau' k' Kder.
-  apply (K_ind 
-           (fun (d: Delta) (tau' : Tau) (k' : Kappa) =>
-              forall (tau : Tau),
-                AK d tau k -> 
-                K d (subst_Tau tau' tau alpha) k')).
-  admit.  admit.  admit.  admit.  admit.  admit.  admit.  admit.  admit.
+  intros d tau k AKder d' alpha k' tau' Kder.
+  K_ind_cases(induction Kder) Case.
+ Case "K d cint B".
+  admit.
+ Case "K d (tv_t alpha) B".
+  admit.
+ Case "K d (ptype (tv_t alpha)) B".
+  admit.
+ Case "K d tau A".
+  admit.
+ Case "K d (cross t0 t1) A".
+  admit.
+ Case "K d (arrow t0 t1) A".
+  admit.
+ Case "K d (ptype tau) B".
+  admit.
+ Case "K d (utype alpha k tau) A".
+  admit.
+ Case "K d (etype p alpha k tau) A)".
+  admit.
+Qed.
+
 
 (*
+Lemma A_6_Substitution_1_extends1D:
+  forall (d : Delta) (tau : Tau) (k : Kappa),
+      WFD d ->
+      AK d tau k -> 
+      forall (d' : Delta) (alpha : TVar) (k' : Kappa) (tau' : Tau), 
+        K d' tau' k' ->
+        WFD d' ->
+        Extends1D alpha k d d' ->
+        K d (subst_Tau tau' tau alpha) k'.
+Proof.
+  intros d tau k WFDder AKder d' alpha k' tau' Kder.
+  K_ind_cases(induction Kder) Case.
   Case "K d cint B".
+   intros.
    simpl.
    constructor.
   Case "K d (tv_t alpha) B".
    intros.
-   inversion H0.
-   unfold subst_Tau.
-   fold subst_Tau.
+   simpl.
    case_eq (beq_tvar alpha alpha0).
-   SCase "alpha=alpha0".
+   SCase "(beq_tvar alpha alpha0) = true".
+    admit.
+   SCase "(beq_tvar alpha alpha0) = false".
     intros.
-    crush.
-    admit.
-    admit.
+    apply K_B.
+    (* This is getD some weakening but a new form for Extends1D. *)
+    admit.  
   Case "K d (ptype (tv_t alpha)) B".
    intros.
-   unfold subst_Tau.
-   fold subst_Tau.
+   simpl.
    case_eq (beq_tvar alpha alpha0).
-   SCase "alpha = alpha0".
+   SCase "(beq_tvar alpha alpha0) = true".
     intros.
-    constructor.
+    apply beq_tvar_eq in H2.
+    rewrite <- H2 in H.
+    apply K_ptype.
     inversion H1.
-    destruct k.
-    constructor.
-    assumption.
-    assumption.
     admit.
-   SCase "alpha <> alpha0".
+   SCase "(beq_tvar alpha alpha0) = false".
     intros.
-    constructor; try assumption.
+    apply K_ptype.
+    (* This is getD some weakening but a new form for Extends1D. *)
+    admit.  
   Case "K d tau A".
    intros.
+   apply IHKder in H.
    constructor.
+   assumption.
    admit.
-
   Case "K d (cross t0 t1) A".
    intros.
-   unfold subst_Tau.
-   fold subst_Tau.
-   pose proof H.
+   pose proof H as H'.
+   apply IHKder1 in H.
+   apply IHKder2 in H'.
+   simpl.
    apply K_cross; try assumption.
-   inversion H3.
-   inversion H6.
-   apply H0 with (tau:= tau) in H9; try assumption.
-   inversion H3.
-   inversion H6.
-   apply H2 with (tau:= tau) in H10; try assumption.
+   admit.
   Case "K d (arrow t0 t1) A".
    intros.
-   unfold subst_Tau.
-   fold subst_Tau.
-   pose proof H.
+   pose proof H as H'.
+   apply IHKder1 in H.
+   apply IHKder2 in H'.
+   simpl.
    apply K_arrow; try assumption.
-   inversion H3.
-   inversion H6.
-   apply H0 with (tau:= tau) in H9; try assumption.
-   inversion H3.
-   inversion H6.
-   apply H2 with (tau:= tau) in H10; try assumption.
   Case "K d (ptype tau) B".
    intros.
-   unfold subst_Tau.
-   fold subst_Tau.
-   apply K_ptype.
-   inversion H1.
-   unfold subst_Tau.
-   fold subst_Tau.
-   case_eq (beq_tvar alpha alpha0); destruct k; intros; try assumption; crush.
-   inversion H2.
-   constructor; try assumption; crush.
-   inversion H2; try assumption; crush.
-   inversion H2.
-   assumption.
-   inversion H2.
-   assumption.
-   crush.
-   crush.
-   crush.
-   admit.
-   admit.
+   apply IHKder in H.
+   simpl.
+   apply K_ptype; try assumption.
   Case "K d (utype alpha k tau) A".
-   unfold subst_Tau.
-   fold subst_Tau.
-   admit.
-   (* apply K_utype; try assumption. *)
-   (* Where did d0 come from? *)
+    intros.
+    simpl.
+    case_eq (beq_tvar alpha alpha0).
+    (* Fixing Extends1D makes this wrong, I'll need to use a full extends. *)
+    SCase "(beq_tvar alpha alpha0) = true".
+     intros.
+     unfold subst_Tau in IHKder.
+     fold subst_Tau in IHKder.
+     (* This is the alpha conversion path. *)
+     admit.
+    SCase "(beq_tvar alpha alpha0) = false".
+     intros.
+     assert (Z : Extends1D alpha k d ([(alpha0, k0)] ++ d0)).
+     (* Extends1D alpha k d d0 -> 
+        beq_tvar alpha alpha0 = false
+        Extends1D alpha k d ([(alpha0, k0)] ++ d0) *)
+     admit.
+     apply K_utype; try assumption.
+     (* WFD ([(alpha0, k0)] ++ d0) ->
+        getD d0 alpha0 = None
+        WFD ([(alpha0, k0)] ++ d) *)
+      admit.
+      (* getD d0 alpha0 = None ->
+        Extends1D alpha k d d0 ->
+        beq_tvar alpha alpha0 = false
+        getD d alpha0 = None *)
+     admit.
+     (* This is K_weakening. *)
+     admit.
   Case "K d (etype p alpha k tau) A)".
    admit.
-  Case "base".
-   admit.
-   admit.
-*)
-  admit.
 Qed.
+*)
+
 
 Lemma A_6_Substitution_2:
   forall (d : Delta) (tau : Tau) (k : Kappa),
        AK d tau k -> 
-       forall  (alpha : TVar)  (tau' : Tau)  (k' : Kappa),
+       forall  (alpha : TVar)  (tau' : Tau)  (k' : Kappa) (d' : Delta),
          AK ([(alpha,k)] ++ d) tau' k' ->
+        d = ([(alpha,k)] ++ d') ->
+
          AK d (subst_Tau tau' tau alpha) k'.
 Proof.
   intros d tau k AKder.

@@ -316,6 +316,13 @@ Tactic Notation "WFDG_ind_cases" tactic(first) ident(c) :=
 | Case_aux c "WFDG ([(alpha, k)] ++ d) g"
 ].
 
+Tactic Notation "WFD_ind_cases" tactic(first) ident(c) :=
+ first;
+[ 
+  Case_aux c "WFD []"
+| Case_aux c "WFD ([(alpha, k)] ++ d)"
+].
+
 Tactic Notation "ret_ind_cases" tactic(first) ident(c) :=
  first;
 [ Case_aux c "ret (if_s e s1 s2)"

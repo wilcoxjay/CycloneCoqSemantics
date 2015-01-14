@@ -1,20 +1,13 @@
  This is the definition of formal syntax for Dan Grossman's Thesis, 
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
+   TODO get hints to crush.
+
+   TODO why am I using Type instead of Set like Chlipala?
+
    TODO reorganize the lemmas bigtime.
 
-   TODO rethink SS3.1 
-
-   TODO make a lemma phase in makefile 
-
    TODO is it better to use beq_path and beq_evar in getU? 
-
-   TODO Go append everywhere.
-
-   TODO bugs in the test code for pack.
-
-   TODO kinding is wrong, either dan mean \tau for concrete type or 
-       there is an implementation or thesis bug.
 
    TODO standard names for lemmas.
 
@@ -22,11 +15,7 @@
 
    TODO  https://github.com/wilcoxjay/tactics
 
-   TODO learn pose.
-
    TODO Should I add syntactic sugar?
-
-   TODO get dan to answer questions.
 
    TODO prove everything.
 

@@ -11,7 +11,7 @@ PROOFFILES=TypeSafetyProof.vo ContextWeakeningProof.vo TermWeakeningProof.vo Hea
 
 TACTICFILES=CpdtTactics.vo Case.vo
 
-EXPERIMENTFILES=KindingExperiments.vo
+EXPERIMENTFILES=KindingExperiments.vo PFunExperiment.vo
 
 %.vo: %.v 
 	coqc $<
