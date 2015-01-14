@@ -82,6 +82,12 @@ Ltac left_list_recurse_upsilon m :=
   try simpl tail;
   try discriminate.
 
+Ltac left_list_recurse_path m :=
+  rewrite app_removefirst_first with (l:= m) (d:= (u_pe));
+  try simpl hd;
+  try simpl tail;
+  try discriminate.
+
 Ltac list_splitter :=
    match goal with
      | [ |- htyp _ _ _ (?x ++ ?l) ] => try eapply htyp_xv with (g':=x)
@@ -115,6 +121,10 @@ Ltac list_splitter :=
      | [ |- getU ?x _ _ _         ]   
        => try (left_list_recurse_upsilon x; constructor)
 
+     | [ |- gettype _ _ _ _ (?x ++ ?y) _ ]   => try constructor
+     | [ |- gettype _ _ _ _ ?x _ ] 
+       => try (left_list_recurse_path x; constructor)
+
    end.
 
 Hint Extern 3 (htyp _ _ _ _)   => list_splitter.
@@ -123,6 +133,7 @@ Hint Extern 3 (WFU  _   )      => list_splitter.
 Hint Extern 3 (WFDG _ _)       => list_splitter.
 Hint Extern 3 (refp _ _)       => list_splitter.
 Hint Extern 3 (getU _ _ _ _)   => list_splitter.
+Hint Extern 3 (gettype _ _ _ _ _ _)   => list_splitter.
 
 Hint Extern 5 ([] ++ _ = _) => try reflexivity.
 Hint Extern 5 (_ = [] + _)  => try reflexivity.

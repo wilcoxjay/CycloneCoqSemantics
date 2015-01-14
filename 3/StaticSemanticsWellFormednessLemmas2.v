@@ -3,7 +3,7 @@
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
    Lemmas about static semantics context well formedness.
-
+   V 2 try and get this clean. 
 *)
 
 Require Import List.
@@ -29,28 +29,6 @@ Require Export VarLemmas.
 Require Export GetLemmasRelation.
 
 Require Export AlphaConversion.
-
-Lemma NotInDomU_strengthening':
-  forall (u u' : Upsilon) (x : EVar) (p : P),
-    WFU (u ++ u') ->
-    NotInDomU (u ++ u') x p ->
-    NotInDomU u x p.
-Proof.
-  intros u u' x p.
-  induction u.
-  Case "u = []".
-   rewrite app_nil_l.
-   intros.
-   constructor.
-  Case "(x,p,t) :: u".
-   intros.
-   destruct a as [ yp t].
-   destruct yp as [ y p' ].
-   inversion H.
-   unfold NotInDomU in H0.
-   fold NotInDomU in H0.
-   apply IHu in H6.
-Admitted.
 
 Lemma NotInDomU_strengthening:
   forall (u u' : Upsilon) (x : EVar) (p : P),
@@ -87,28 +65,87 @@ Proof.
    admit.
 Admitted.  
 
-(* Dan, This should work as it uses K [] tau A and tau should be a ground type
-   to be stored in memory but we don't have it here.  *)
 Lemma WFU_strengthening:
  forall (u u' : Upsilon),
    WFU (u ++ u') ->
    WFU u.
 Proof.
   intros.
-  WFU_ind_cases (induction u) Case.
-  Case "WFU []".
+  induction u.
+  constructor.
+  destruct a.
+  destruct p.
+  apply WFU_A.
+  inversion H.
+  apply NotInDomU_strengthening with (u':= u') (x:= e) (p:= p) in H5; try assumption.
+  inversion H.
+  apply IHu in H5.
+  assumption.
+  destruct t.
+  Case "K [] (tv_t t) A".
+   inversion H.
+   assumption.
    constructor.
-  Case "WFU ([(x, p, tau)] ++ u)".
-   destruct a as [ xp t].
-   destruct xp as [x p].
+  Case "K [] cint B".
+   apply K_int.
+  Case "K [] (cross t1 t2) A".
+   apply K_cross.
+   inversion H.
+   inversion H6.
+   inversion H7.
+   assumption.
+   inversion H.
+   inversion H6.
+   inversion H7.
+   assumption.
+  Case "K [] (arrow t1 t2) A".
+   apply K_arrow.
+   inversion H.
+   inversion H6.
+   inversion H7.
+   assumption.
+   inversion H.
+   inversion H6.
+   inversion H7.
+   assumption.
+  Case "K [] (ptype t) A".
    constructor.
-   SCase "NotInDomU u x p".
-    AdmitAlphaConversion.
-   SCase "WFU u".
-    inversion H.
-    apply IHu in H5; try assumption.
-   SCase "K [] t A".
-    admit. (* Thesis bug ? *)
+   apply K_ptype.
+   inversion H.
+   inversion H6.
+   inversion H7.
+   inversion H12.
+   assumption.
+  Case "K [] (utype t k t0) A".
+   apply K_utype.
+   rewrite app_nil_r.
+   constructor.
+   simpl.
+   destruct t.
+   reflexivity.
+   constructor.
+   simpl.
+   destruct t.
+   reflexivity.
+   inversion H.
+   inversion H6.
+   inversion H7.
+   assumption.
+  Case "K [] (etype p0 t k t0) A".
+   apply K_etype.
+   rewrite app_nil_r.
+   constructor.
+   simpl.
+   destruct t.
+   reflexivity.
+   constructor.
+   simpl.
+   destruct t.
+   reflexivity.
+   inversion H.
+   inversion H6.
+   inversion H7.
+   assumption.
 Qed.
 
 Lemma WFDG_g_strengthening:
@@ -192,7 +229,7 @@ Proof.
   assumption.
 Qed.
 
-(* Is this really true? No due to delta constraints!*)
+(* Is this really true? *)
 Lemma WFC_strengthening:
   forall (d d': Delta) (u u' : Upsilon) (g g': Gamma),
     WFC (d ++ d') (u ++ u') (g ++ g') ->
@@ -209,9 +246,9 @@ Proof.
   Case "WFC d u g".
    inversion WFCder.
    crush.
-   apply WFD_strengthening in H; try assumption.   (* Proven. *)
-   apply WFU_strengthening in H1; try assumption.  (* Proven. *)
-   apply WFDG_strengthening in H0; try assumption. (* not proven. *)
+   apply WFD_strengthening in H; try assumption.
+   apply WFU_strengthening in H1; try assumption.
+   apply WFDG_strengthening in H0; try assumption.
    constructor; try assumption.
    assumption.
 Qed.
@@ -223,17 +260,6 @@ Lemma WFC_strengthening_right:
     WFC d' u' g'.
 Proof.
 Admitted.
-
-(* Weakening *)
-
-Lemma WFU_weakening:
-  forall (u : Upsilon),
-    WFU u ->
-    forall (u' : Upsilon),
-      WFU u' ->
-      WFU (u ++ u').
-Admitted.
-
 
 (* This one might be true and needed. Might needs extendedbyG. 
   Heck might need both extended bys. *)
@@ -278,4 +304,11 @@ Proof.
   (* Lost on all induction and all cases. *)
 Admitted.
 
+Lemma WFU_weakening:
+  forall (u : Upsilon),
+    WFU u ->
+    forall (u' : Upsilon),
+      WFU u' ->
+      WFU (u ++ u').
+Admitted.
 

@@ -52,18 +52,19 @@ Inductive gettype : Upsilon -> EVar -> P -> Tau -> P -> Tau -> Prop :=
   | gettype_pair_zero : 
       forall (u : Upsilon) (x : EVar) (p p': P) (t0 t1 tau : Tau),
         gettype u x  (p ++ [i_pe zero_pe]) t0 p' tau ->
-        gettype u x p (cross t0 t1) ((i_pe zero_pe) :: p') tau
+        gettype u x p (cross t0 t1) ([i_pe zero_pe] ++ p') tau
 
   | gettype_pair_one  : 
       forall (u : Upsilon) (x : EVar) (p p': P) (t0 t1 tau : Tau),
         gettype u x  (p ++ [i_pe one_pe]) t1 p' tau ->
-        gettype u x p (cross t0 t1) ((i_pe one_pe) :: p') tau
+        gettype u x p (cross t0 t1) ([i_pe one_pe] ++ p') tau
 
+  (* TODO is there a bug here ? *)
   | gettype_etype     : 
       forall (u : Upsilon) (x : EVar) (p p': P) (tau tau' tau'': Tau) 
              (alpha : TVar) (k : Kappa),
         getU u x p tau'' ->
         gettype u x (p ++ [u_pe]) (subst_Tau tau' tau'' alpha) p' tau ->
-        gettype u x p (etype aliases alpha k tau') (u_pe :: p') tau.
+        gettype u x p (etype aliases alpha k tau') ([u_pe] ++ p') tau.
 
 

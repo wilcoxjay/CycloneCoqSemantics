@@ -29,7 +29,6 @@ Require Export TacticNotations.
 Require Export ContextWeakeningProof.
 Require Export SubstitutionsProof.
 
-
 Lemma A_7_Typing_Well_Formedness_1 :
   forall (u : Upsilon),
     WFU u ->
@@ -56,23 +55,33 @@ Proof.
    assumption.
    assumption.
   Case "gettype u x p (etype aliases alpha k tau') (u_pe :: p') tau)".
-   apply IHgettypeder in WFUder. 
-   assumption.
-   inversion Kder.
-   inversion H0.
+   apply IHgettypeder in WFUder; try assumption.
    apply A_1_Context_Weakening_2 with (u:= u) (x:= x) (p:= p) (d:= d) (tau:= tau'')
      in WFUder; try assumption.
    apply A_6_Substitution_1 with (k:= k) (tau:= tau''); try assumption.
-   constructor.
-   destruct k; try assumption.
-   admit. (* K d tau'' B *)
-   inversion H4.
-   assumption.
+   SCase "K ([(alpha, k)] ++ d) tau' A".
+    inversion Kder.
+    inversion H0. (* Don't kind at B. *)
+    assumption.
+   SCase "AK d tau'' k".
+    constructor.
+    destruct k.
+    (* Dan, Is this a proof bug that I have to find a K d tau'' B? *)
+    SSCase "K d tau'' B".
+     admit. (* inversion WFUder; try assumption. Loops, due to B->A *)
+    SSCase "K d tau'' A".
+     assumption.
+   SCase "WFD d".
+    inversion Kder.
+    inversion H0. (* don't kind at B. *)
+    inversion H4; try assumption.
 Qed.
 
+(* Dan, strengthened with ret. *)
 Lemma A_7_Typing_Well_Formedness_2 :
   forall (d: Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau),
     ltyp d u g e tau ->
+    (* ret (e_s e) -> *)
     (WFC d u g /\ 
      K d tau A).
 Proof.
@@ -81,19 +90,17 @@ Proof.
    (apply (ltyp_ind_mutual
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (tau : Tau) (s : St)
                 (st : styp d u g tau s) => 
+              (* ret s -> *)
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau)
                 (lt : ltyp d u g e tau) =>
+              (* ret (e_s e) -> *)
               (WFC d u g /\  K d tau A))
            (fun (d : Delta) (u : Upsilon) (g : Gamma) (e : E) (tau : Tau)
                 (rt : rtyp d u g e tau) =>
+              (* ret (e_s e) -> *)
               (WFC d u g /\  K d tau A))) with (e:=e))
   Case.
- 
-  (* Crush gets 21/27 subgoals. *)
-  (* But let's look at some cases, these two are just induction hypothesis really.*)
-  (* Let's look at the uncrushed cases and see if I can see where these unsolvable things are comging from. *)
-
   Ltac twf0  := intros; assumption.
 
   Ltac twf1 := 
@@ -117,7 +124,14 @@ Proof.
          assumption).
 
   Case "styp_e_3_1".
-   twf0. (* This has been done by changing the return statement to be deterministally typed. *)
+   intros.
+   split.
+   (* apply H in H0.
+   inversion H0; try assumption. *)
+   (* ~ ret e0 as per pg 245. *)
+   admit.
+   (* Dan, This was been done by changing the return statement to be deterministally typed. *)
+   admit.
   Case "styp_return_3_2".
    twf0.
   Case "styp_seq_3_3".
@@ -221,9 +235,13 @@ Proof.
    rewrite <- app_nil_r with (l:= d0) in H0.
    rewrite <- app_nil_r with (l:= u0) in H0.
    (* Need a lemma saying I can rearrange the context Gamma. *)
-   apply WFC_weakening with (d:= d0) (d':=[]) (u:= u0) (g':= g0)
+   apply WFC_strengthening with (d:= d0) (d':=[]) (u:= u0) (g':= g0)
      in H0.
-   admit. (* assumption.*)
+   inversion H.
+   inversion H2.
+   inversion H5.
+   apply WFC_DUG with (u:= u0) in H16; try assumption.
+   admit.
    apply K_arrow.
    inversion H.
    (* WFDG to K d0 tau0 A.*)
@@ -238,9 +256,10 @@ Proof.
    split.
    assumption.
    apply K_utype.
-   admit.
+   inversion H; try assumption.
+   inversion H0; try assumption.
    assumption.
-   admit.
+   inversion H; try assumption.
   Case "base".
    assumption.
 Qed.
@@ -265,10 +284,9 @@ Proof.
               (WFC d u g /\  K d tau A))) with (e:=e))
    Case.
   (* Wow crush gets 21/26. *)
-
-    
 Case "styp_e_3_1".
-   twf0. (* This has been done by changing the return statement to be deterministally typed. *)
+   admit.
+   (* twf0. *) (* This has been done by changing the return statement to be deterministally typed. *)
   Case "styp_return_3_2".
    twf0.
   Case "styp_seq_3_3".
@@ -366,25 +384,25 @@ Case "styp_e_3_1".
   Case "SR_3_12".
    twf3.
   Case "SR_3_13".
+  (* Case SR3.13 uses the definition of wf ∆; Υ; Γ to determine the 
+   function-argument type has kind A *)
    intros.
-   split.
    inversion H.
-   (* 
-   apply WFC_weakening in H0.
-   assumption.
-   apply K_arrow.
-    *)
+   split.
+   inversion H0.
+   constructor; try assumption.
+   inversion H3; try assumption.
+   crush.
    admit.
    admit.
   Case "SR_3_14".
    intros.
    split.
    assumption.
-   apply K_utype.
+   apply K_utype; try assumption.
    admit. (* assumption.*)
    inversion H.
    assumption.
-   admit.
   Case "base".
    assumption.
 Qed.
@@ -446,6 +464,7 @@ Proof.
          try crush).
   Case "styp_e_3_1".
    crush.
+   admit.
   Case "styp_return_3_2".
    crush.
   Case "styp_seq_3_3".

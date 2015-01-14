@@ -20,6 +20,7 @@ Require Export ContextExtensionRelation.
 
 Require Export VarLemmas.
 Require Export ListLemmas.
+Require Export GetLemmasRelation.
 Require Export StaticSemanticsWellFormednessLemmas.
 
 Lemma ExtendedByD_weakening:
@@ -38,9 +39,9 @@ Proof.
    intros.
    constructor.
 
-   case_eq(beq_tvar alpha alpha0); case_eq(beq_Kappa k k0); intros.
+   case_eq(beq_tvar alpha alpha0); case_eq(beq_kappa k k0); intros.
    SCase "alpha0 = alpha, k = k0.".
-    apply beq_Kappa_eq in H1.
+    apply beq_kappa_eq in H1.
     apply beq_tvar_eq in H2.
     rewrite H1.
     rewrite H2.
@@ -105,3 +106,21 @@ Proof.
   inversion H4.
 Qed.
 
+
+Lemma ExtendedByD_reflexive:
+  forall d, 
+    WFD d -> 
+    ExtendedByD d d.
+Proof.
+  intros.
+  induction d.
+  constructor.
+  destruct a.
+  constructor.
+  simpl.
+  rewrite beq_tvar_reflexive.
+  reflexivity.
+  apply ExtendedByD_weakening; try assumption.
+  inversion H.
+  apply IHd in H4; try assumption.
+Qed.

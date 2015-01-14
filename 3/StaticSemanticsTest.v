@@ -121,7 +121,7 @@ Qed.
 Example styp_e_test:
   styp [] [] [] tau (e_s e).
 Proof.
-  apply styp_e_3_1; (* with (tau':= cint); *)
+  apply styp_e_3_1 with (tau':= cint);
   eauto 20 with Chapter3.
 Qed.
 
@@ -195,10 +195,7 @@ Proof.
              (k    := B)
              (tau  := cint)
              (tau' := (cross (tv_t alpha) (tv_t alpha)));
-  eauto 20 with Chapter3.
-  apply styp_e_3_1. (* with (tau':= (tv_t alpha)). *)
-  eapply SR_3_1;   eauto 20 with Chapter3.
-  admit. (* TODO Definite bug in test case or rules. *)
+   eauto 20 with Chapter3.
 Qed.
 
 Example styp_openstar_test:
@@ -215,11 +212,6 @@ Proof.
              (tau  := cint)
              (tau' := (cross (tv_t alpha) (tv_t alpha)));
   eauto 20 with Chapter3.
-  (* TODO lack of syntax direction. *)
-  admit. (* TODO *)
-(*   apply SR_3_12; eauto 20 with Chapter3.
-   apply styp_e_3_1 with (tau':= (tv_t alpha)).
-  eapply SR_3_1;   eauto 20 with Chapter3. *)
 Qed.
 
 (* Test rtyp. *)

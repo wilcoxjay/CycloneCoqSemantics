@@ -2,7 +2,8 @@
  This is the definition of formal syntax for Dan Grossman's Thesis, 
   "SAFE PROGRAMMING AT THE C LEVEL OF ABSTRACTION". 
 
- This defines the formal syntax, pg. 57. 
+  A copy to try and get inversion working on getD as it breaks
+ K induction.
 
 *)
 
@@ -224,6 +225,8 @@ Function deleteH (h : H) (x : EVar) : H :=
 
 Definition DE : Type := prod TVar Kappa.
 Definition Delta     := list DE.
+ 
+(* Inversion on getD may be the bug in K induction as d0 keeps appearing. *)
 
 Function getD (d : Delta) (alpha : TVar) : option Kappa :=
   match alpha, d with 
@@ -234,114 +237,10 @@ Function getD (d : Delta) (alpha : TVar) : option Kappa :=
     | _ , nil => None
   end.
 
-Function setD (d : Delta) (alpha : TVar) (k : Kappa) : Delta :=
-  match alpha, d with 
-    | tvar a', (tvar b', k') :: d' =>
-      if beq_nat a' b' 
-      then (alpha,k) :: d' 
-      else (tvar b', k') :: (setD d' alpha k)
-    | _ , nil => [(alpha,k)]
-  end.
+Print getD_equation.
+Print getD_ind.
+Print getD_rec.
+Print getD_rect.
+Print R_getD_correct.
+Print R_getD_complete.
 
-Function deleteD (d : Delta) (alpha : TVar) : Delta :=
-    match alpha, d with
-    | tvar x', (tvar y',v) :: h' =>
-      if beq_nat x' y'
-      then h'
-      else (tvar y',v) :: (deleteD h' alpha)
-    | _, [] => []
- end.
-
-Function DeleteKinding (alpha : TVar) (d : Delta) : Delta :=
-  match alpha, d with 
-   | _, [] => [] 
-   | (tvar n), (tvar n', k) :: d' => 
-     if beq_nat n n' 
-     then DeleteKinding alpha d'
-     else (tvar n', k) :: DeleteKinding alpha d'             
-  end.
-
-Function KindTVarsAtA (tau : Tau) : Delta :=
-  match tau with
-   | tv_t t            => [(t, A)]
-   | cint              => []
-   | cross t0 t1       => KindTVarsAtA t0 ++ KindTVarsAtA t1
-   | arrow t0 t1       => KindTVarsAtA t0 ++ KindTVarsAtA t1
-   | ptype t           => KindTVarsAtA t 
-   | utype   alpha k t => DeleteKinding alpha (KindTVarsAtA t)
-   | etype p alpha k t => DeleteKinding alpha (KindTVarsAtA t)
-  end.
-
-Function InDomD (alpha : TVar) (d : Delta) : bool :=
-  match alpha, d with
-   | _, [] => true
-   | tvar n, ((tvar n'), _) :: d' =>
-     if beq_nat n n' 
-     then false 
-     else InDomD alpha d'
- end.
-
-Function KindingUnion (d d' : Delta) : Delta :=
-  match d with 
-   | (alpha,k) :: d0 => 
-     if InDomD alpha d' 
-     then KindingUnion d0 d'
-     else (alpha, k) :: KindingUnion d0 d'
-   | [] => []
-  end.
-
-Function KindUnkindedTVarsAtB (tau : Tau) (d : Delta) : Delta :=
-  match tau with
-   | tv_t t            => 
-     if InDomD t d then [] else [(t, B)]
-   | cint              => []
-   | cross t0 t1       => KindingUnion (KindUnkindedTVarsAtB t0 d) 
-                                       (KindUnkindedTVarsAtB t1 d)
-   | arrow t0 t1       => KindingUnion (KindUnkindedTVarsAtB t0 d) 
-                                       (KindUnkindedTVarsAtB t1 d)
-   | ptype t           => KindUnkindedTVarsAtB t d
-   | utype   alpha k t => DeleteKinding alpha (KindUnkindedTVarsAtB t d)
-   | etype p alpha k t => DeleteKinding alpha (KindUnkindedTVarsAtB t d)
-  end.
-
-Function DisjointKinding (d d' : Delta) : bool :=
-  match d with
-   | (alpha,k) :: d0 => 
-     if InDomD alpha d' then false else DisjointKinding d0 d
-   | [] => true
-  end.
-
-Definition GE : Type := prod EVar Tau.
-Definition Gamma     := list GE.
-
-Function getG (g : Gamma) (x: EVar) : option Tau :=
-  match x, g with 
-    | x, (y, t) :: g' =>
-      if beq_evar x y 
-      then Some t
-      else getG g' x
-    | _, [] => None
-  end.
-
-(* The thesis uses a statement here, (p_e x p), but it certainly makes the
-  proofs unnecessarily hard. So I'll use a pair. *)
-Definition UE        := prod (prod EVar P) Tau.
-Definition Upsilon   := list UE.
- 
-Inductive getU : Upsilon -> EVar -> P -> Tau -> Prop :=
-  | getU_top  : forall (u : Upsilon) (x : EVar) (p : P) (tau : Tau),
-                 getU ([((x,p),tau)] ++ u) x p tau
-  | getU_next : forall (u : Upsilon) (x y: EVar) (p p': P) (tau tau': Tau),
-                 beq_evar x y = false \/ beq_path p p' = false ->
-                 getU u x p tau ->
-                 getU ([((y,p'),tau')] ++ u) x p tau.
-
-(* TODO warning on inversion, do I need a relation here also? *)
-Function NotInDomU (u : Upsilon) (x : EVar) (p : P) : Prop :=
-  match x, u with 
-    | _, [] => True
-    | x, (((y,p'),_) :: u') =>
-       if andb (beq_evar x y) (beq_path p p')
-       then True
-       else NotInDomU u' x p
-   end.

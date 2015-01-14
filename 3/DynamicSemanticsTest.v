@@ -325,8 +325,8 @@ Proof.
 Qed.
 
 Example R_pack_3_10_5_test:
-  R h  (e_s (pack tau' e  (etype nowitnesschange alpha k tau)))
-    h  (e_s (pack tau' e' (etype nowitnesschange alpha k tau))).
+  R h  (e_s (pack tau' e  (etype witnesschanges alpha k tau)))
+    h  (e_s (pack tau' e' (etype witnesschanges alpha k tau))).
 Proof.
   apply R_pack_3_10_5.
   eauto 20 with Chapter3.

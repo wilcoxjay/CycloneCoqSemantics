@@ -62,7 +62,7 @@ Definition t1   := cross cint cint.
 
 Definition pdot := [] : P.
 Definition p0   := [(i_pe zero_pe)].
-Definition p1   := [(i_pe zero_pe)].
+Definition p1   := [(i_pe one_pe)].
 
 Definition hdot := [] : H.
 Definition h    := [(x,e)] : H.

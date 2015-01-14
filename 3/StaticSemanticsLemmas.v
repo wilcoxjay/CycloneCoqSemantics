@@ -44,6 +44,7 @@ Lemma styp_weakening:
 Proof.
 Admitted.
 
+(* Requires getG_weakening, WFU weakening. *)
 Lemma rtyp_weakening:
   forall (u : Upsilon) (g : Gamma) (v : E) (tau : Tau),
     rtyp [] u g v tau -> 
@@ -60,8 +61,9 @@ Proof.
    apply getG_weakening; try assumption.
    apply gettype_weakening; try assumption.
    inversion H2; try assumption.
-   admit. (* WFU u ++ u' *)
-   admit. (* WFC d (u ++ u') (g ++ g') *)
+   
+   admit. (* WFU u ++ u' , not going to work, u' arbitrary. *)
+   admit. (* WFC d (u ++ u') (g ++ g') again. *)
   Case "rtyp d u g (star e) tau".
    intros.
    constructor; try assumption.
@@ -119,7 +121,7 @@ Proof.
   Case "rtyp  d u g (f_e (ufun alpha k f12)) (utyp alpha k tau))".
    intros.
    apply SR_3_14; try assumption.
-   apply WFC_weakening with (d':= []) (u':= u') (g':= g'); try assumption.
+   apply WFC_strengthening with (d':= []) (u':= u') (g':= g'); try assumption.
    admit. (* Think more, it's here. *)
    apply IHrtypder.
 Qed.
@@ -356,5 +358,3 @@ Proof.
    assumption.
    assumption.
 Qed.
-
-
