@@ -106,3 +106,21 @@ Proof.
   inversion H4.
 Qed.
 
+
+Lemma ExtendedByD_reflexive:
+  forall d, 
+    WFD d -> 
+    ExtendedByD d d.
+Proof.
+  intros.
+  induction d.
+  constructor.
+  destruct a.
+  constructor.
+  simpl.
+  rewrite beq_tvar_reflexive.
+  reflexivity.
+  apply ExtendedByD_weakening; try assumption.
+  inversion H.
+  apply IHd in H4; try assumption.
+Qed.

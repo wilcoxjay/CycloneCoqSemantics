@@ -91,3 +91,25 @@ Proof.
   constructor; try assumption.
   apply ExtendedByD_preserved_under_add_alpha_k; try assumption.
 Qed.
+
+Lemma AK_weakening:
+  forall (d : Delta) (tau : Tau) (k : Kappa),
+      WFD d ->
+      AK d tau k -> 
+      forall (d' : Delta),
+        WFD d' ->
+        ExtendedByD d d' ->
+        AK d' tau k.
+Proof.
+ intros d tau k WFDder AKder.
+ inversion AKder.
+ intros.
+ constructor.
+ apply K_weakening with (d:= d); try assumption.
+ intros.
+ rewrite <- H2 in *.
+ rewrite <- H1 in *.
+ assert (Z: getD d' alpha = Some A).
+ apply getD_extension_agreement with (d':= d') in H; try assumption.
+ apply AK_A; try assumption.
+Qed.
