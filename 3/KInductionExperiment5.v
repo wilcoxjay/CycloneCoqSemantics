@@ -36,7 +36,7 @@ Require Export GetLemmasRelation.
 Inductive Extends1D : TVar -> Kappa -> Delta -> Delta -> Prop := 
    Extends1D_alpha_kappa : 
       forall (alpha : TVar) (k : Kappa) (d : Delta) (d' : Delta), 
-        d' = ([(alpha,k)] ++ d) ->
+        (forall x, getD d' x = getD ([(alpha,k)] ++ d) x) ->
         WFD d' ->
         getD d alpha = None ->
         Extends1D alpha k d d'.
@@ -99,6 +99,16 @@ Proof.
   constructor; try assumption.
 Qed.
 
+Ltac break_if :=
+  match goal with
+    | [ |- context [ if ?X then _ else _ ] ] => destruct X eqn:?
+  end.
+
+Ltac find_apply_lem_hyp lem :=
+  match goal with
+    | [ H : _ |- _ ] => apply lem in H
+  end.
+
 (* Hmmm, this is going to be a problem to prove even though it's true. *)
 Lemma Extends1D_agreement:
   forall (alpha0 alpha : TVar),
@@ -107,20 +117,30 @@ Lemma Extends1D_agreement:
      WFD d ->
      WFD d0 ->
      Extends1D alpha0 k0 d0 d ->
+     getD d alpha = None ->
      forall (k : Kappa),
        Extends1D alpha0 k0 ([(alpha, k)] ++ d0) ([(alpha, k)] ++ d).
 Proof.
-  intros alpha0 alpha beqtvar d0 d k0 WFDd WFDd0 ext.
-  induction ext.
+  intros alpha0 alpha Hbeqtvar d0 d k0 WFDd WFDd0 ext.
+  inversion ext; subst.
+  apply beq_tvar_neq in Hbeqtvar.
   intros.
-  rewrite H.
   constructor.
-  (* Okay, I'm stuck here because I'm not using a full definition of
-     partial maps. *)
-  admit.
-  (* Are these two goals correct? *)
+  + intros. simpl.
+    repeat break_if.
+    * apply beq_tvar_eq in Heqb.
+      apply beq_tvar_eq in Heqb0.
+      congruence.
+    * auto.
+    * find_apply_lem_hyp beq_tvar_eq. subst.
+      rewrite H. simpl. rewrite beq_tvar_reflexive. auto.
+    * rewrite H. simpl. rewrite Heqb0. auto.
+  + auto using WFD_xtau.
+  + simpl. break_if.
+    * find_apply_lem_hyp beq_tvar_eq. congruence.
+    * auto.
+Qed.
 
-Admitted.
 
 Lemma K_weakening1 :
   forall d0,
